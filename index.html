@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>StarCraft TMG Field Kit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E8EDF3;--panel:#FFFFFF;--panel2:#F2F5F9;--line:#C6D2E0;--text:#13213A;--muted:#56677F;
+  --bad:#C0392B;--ok:#1E8A4C;--warn:#B7791F;
+  --T:#2F7BCB;--Z:#8E44C2;--P:#C9951A;--acc:var(--T);--accInk:#fff;
+  --display:"Chakra Petch","Arial Narrow",system-ui,sans-serif;
+  --body:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--bg:#0E1A2B;--panel:#162740;--panel2:#1C3150;--line:#2B4468;--text:#E3EBF5;--muted:#8DA2BE;--T:#4A95E6;--Z:#AE6BE0;--P:#E3B23C;--bad:#F07164;--ok:#48C27E;--warn:#E8B04C}
+}
+:root[data-theme="dark"]{--bg:#0E1A2B;--panel:#162740;--panel2:#1C3150;--line:#2B4468;--text:#E3EBF5;--muted:#8DA2BE;--T:#4A95E6;--Z:#AE6BE0;--P:#E3B23C;--bad:#F07164;--ok:#48C27E;--warn:#E8B04C}
+body[data-race="T"]{--acc:var(--T);--accInk:#fff}
+body[data-race="Z"]{--acc:var(--Z);--accInk:#fff}
+body[data-race="P"]{--acc:var(--P);--accInk:#1B1404}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font:16px/1.4 var(--body);-webkit-text-size-adjust:100%}
+button,select,input{font:inherit;color:inherit}
+h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;letter-spacing:.01em}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:3px solid var(--acc);padding:10px 14px 8px;display:flex;align-items:center;gap:10px}
+header.top h1{font-size:1.15rem;flex:1}
+header.top .race-mark{width:14px;height:22px;background:var(--acc);clip-path:polygon(0 0,100% 18%,100% 82%,0 100%)}
+main{padding:12px 12px 96px;max-width:720px;margin:0 auto}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;display:grid;grid-template-columns:repeat(4,1fr);background:var(--panel);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav.tabs button{background:none;border:0;padding:10px 0 12px;font-family:var(--display);font-weight:600;font-size:.95rem;color:var(--muted);position:relative}
+nav.tabs button[aria-current="true"]{color:var(--text)}
+nav.tabs button[aria-current="true"]::before{content:"";position:absolute;top:0;left:22%;right:22%;height:3px;background:var(--acc)}
+section.view{display:none}section.view.on{display:block}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px;margin-bottom:12px}
+.panel h2{font-size:1.02rem;margin-bottom:8px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.panel h2 small{font-family:var(--body);font-weight:500;color:var(--muted);font-size:.85rem}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.grow{flex:1;min-width:0}
+label.f{display:block;font-size:.85rem;color:var(--muted);margin-bottom:3px}
+select,input[type=text],input[type=number]{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:9px 10px;min-height:42px}
+.seg{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.seg button{flex:1;border:0;background:var(--panel2);padding:9px 4px;font-family:var(--display);font-weight:600}
+.seg button[aria-pressed="true"]{background:var(--acc);color:var(--accInk)}
+.btn{border:1px solid var(--line);background:var(--panel2);border-radius:6px;padding:9px 13px;min-height:42px;font-weight:600}
+.btn.pri{background:var(--acc);border-color:var(--acc);color:var(--accInk)}
+.btn.sm{min-height:34px;padding:5px 10px;font-size:.9rem}
+.btn:disabled{opacity:.45}
+.btn.danger{color:var(--bad)}
+.link{background:none;border:0;padding:0;color:var(--text);text-decoration:underline;text-decoration-color:var(--acc);text-underline-offset:3px;font-weight:600;text-align:left}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+/* resource bar */
+.resbar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 49px);z-index:4;background:var(--bg);padding:6px 0 8px;margin:-4px 0 8px}
+.meters{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.meter{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:6px 10px}
+.meter .n{font-family:var(--display);font-size:1.35rem;font-weight:700;line-height:1.1}
+.meter .n span{font-size:.9rem;color:var(--muted);font-weight:600}
+.meter .k{font-size:.8rem;color:var(--muted)}
+.meter .bar{height:4px;background:var(--panel2);border-radius:2px;margin-top:4px;overflow:hidden}
+.meter .bar i{display:block;height:100%;background:var(--acc)}
+.meter.over .n{color:var(--bad)}.meter.over .bar i{background:var(--bad)}
+.slots{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.slot{font-size:.85rem;border:1px solid var(--line);background:var(--panel);border-radius:4px;padding:3px 8px;font-weight:600}
+.slot b{font-family:var(--display)}
+.slot.over{border-color:var(--bad);color:var(--bad)}
+.slot.full{border-color:var(--acc)}
+/* items */
+.item{border-top:1px solid var(--line);padding:10px 0}
+.item:first-of-type{border-top:0}
+.item .hd{display:flex;gap:8px;align-items:center}
+.item .meta{font-size:.85rem;color:var(--muted)}
+.cost{font-family:var(--display);font-weight:700;white-space:nowrap}
+.tag{display:inline-block;font-size:.75rem;border:1px solid var(--line);border-radius:3px;padding:0 5px;margin-right:4px;color:var(--muted)}
+.tag.warn{border-color:var(--warn);color:var(--warn)}
+.step{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.step button{border:0;background:var(--panel2);width:36px;height:34px;font-size:1.1rem;font-weight:700}
+.step output{min-width:30px;text-align:center;font-family:var(--display);font-weight:700}
+.ups{margin-top:8px;display:grid;gap:4px}
+.ups label{display:flex;gap:8px;align-items:flex-start;font-size:.92rem;padding:4px 0}
+.ups input{width:20px;height:20px;margin:1px 0 0;accent-color:var(--acc);flex:none}
+.issues{list-style:none;padding:0;margin:0}
+.issues li{padding:6px 0 6px 18px;position:relative;font-size:.93rem}
+.issues li::before{content:"";position:absolute;left:2px;top:12px;width:8px;height:8px;border-radius:50%;background:var(--bad)}
+.issues li.ok::before{background:var(--ok)}
+.picker{display:grid;gap:6px}
+.pick{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);text-align:left;width:100%}
+.pick[disabled]{opacity:.5}
+.pick .cost{font-size:.95rem}
+details>summary{cursor:pointer;font-weight:600;list-style:none;padding:4px 0}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{content:"+ ";color:var(--acc);font-family:var(--display)}
+details[open]>summary::before{content:"– "}
+/* play */
+.bigrow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:8px;text-align:center}
+.stat .n{font-family:var(--display);font-weight:700;font-size:1.7rem;line-height:1.05}
+.stat .k{font-size:.8rem;color:var(--muted)}
+.stat.hl{border-color:var(--acc);box-shadow:inset 0 0 0 1px var(--acc)}
+.phases{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:8px}
+.phases div{text-align:center;font-family:var(--display);font-weight:600;font-size:.82rem;padding:7px 2px;border-radius:4px;background:var(--panel2);color:var(--muted)}
+.phases div.on{background:var(--acc);color:var(--accInk)}
+.vp{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.vp .box{background:var(--panel2);border-radius:6px;padding:8px;text-align:center}
+.vp .n{font-family:var(--display);font-size:2.1rem;font-weight:700;line-height:1}
+.vp .row{justify-content:center;margin-top:6px}
+.banner{border-left:4px solid var(--warn);background:var(--panel2);padding:8px 10px;border-radius:4px;font-size:.93rem;margin-top:8px}
+.banner.good{border-color:var(--ok)}
+.cardchip{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;margin-bottom:6px;background:var(--panel2)}
+.cardchip.ex{opacity:.55;border-style:dashed}
+.cardchip .rs{font-family:var(--display);font-weight:700;font-size:.9rem}
+.urow{padding:9px 0;border-top:1px solid var(--line)}
+.urow:first-child{border-top:0}
+.urow .hd{display:flex;align-items:center;gap:8px}
+.urow .ctrls{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:6px}
+.sup{font-family:var(--display);font-weight:700;background:var(--panel2);border-radius:4px;padding:2px 7px;font-size:.9rem}
+.done{text-decoration:line-through;color:var(--muted)}
+.grp{font-family:var(--display);font-weight:600;font-size:.9rem;color:var(--muted);margin:10px 0 2px}
+.ref{font-size:.92rem}
+.ref ul{margin:4px 0;padding-left:18px}
+/* modal */
+dialog{border:0;padding:0;width:min(680px,100%);max-height:90vh;border-radius:10px 10px 0 0;margin:auto auto 0;background:var(--panel);color:var(--text)}
+dialog::backdrop{background:rgba(5,10,20,.6)}
+dialog .mh{position:sticky;top:0;background:var(--panel);border-bottom:3px solid var(--acc);padding:12px 14px;display:flex;align-items:center;gap:10px;z-index:1}
+dialog .mh h3{flex:1;font-size:1.2rem}
+dialog .mb{padding:12px 14px 24px;overflow:auto}
+.sgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin:4px 0 10px}
+.sgrid div{background:var(--panel2);border-radius:4px;text-align:center;padding:5px 2px}
+.sgrid b{display:block;font-family:var(--display);font-size:1.15rem}
+.sgrid small{font-size:.68rem;color:var(--muted)}
+.wt{overflow-x:auto;margin:4px 0 10px}
+.wt table{border-collapse:collapse;font-size:.85rem;min-width:520px;width:100%}
+.wt th,.wt td{padding:5px 6px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+.wt th{color:var(--muted);font-weight:600}
+.wt td.kw{white-space:normal;min-width:150px}
+.ab{margin:6px 0 8px;font-size:.93rem}
+.ab b{font-family:var(--display);font-weight:600}
+.kind{font-size:.75rem;font-weight:700;border-radius:3px;padding:0 5px;margin:0 4px;vertical-align:1px;background:var(--panel2);border:1px solid var(--line)}
+.phh{font-family:var(--display);font-weight:600;color:var(--acc);margin-top:10px;font-size:.95rem}
+.note{font-size:.85rem;color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--text);color:var(--bg);padding:8px 14px;border-radius:6px;font-weight:600;z-index:20;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.on{opacity:1}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+</style>
+</head>
+<body data-race="T">
+<header class="top"><div class="race-mark" aria-hidden="true"></div><h1 id="title">Army builder</h1><button class="btn sm" id="themeBtn" aria-label="Toggle light or dark theme">◐</button></header>
+<main>
+  <section class="view on" id="v-build"></section>
+  <section class="view" id="v-setup"></section>
+  <section class="view" id="v-play"></section>
+  <section class="view" id="v-cards"></section>
+</main>
+<nav class="tabs" aria-label="Sections">
+  <button data-v="build" aria-current="true">Build</button>
+  <button data-v="setup">Setup</button>
+  <button data-v="play">Play</button>
+  <button data-v="cards">Cards</button>
+</nav>
+<dialog id="modal"><div class="mh"><h3 id="mTitle"></h3><button class="btn sm" id="mClose">Close</button></div><div class="mb" id="mBody"></div></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ===================== DATA ===================== */
+const W=(ph,n,rng,t,roa,hit,su,sd,dmg,kw)=>({ph,n,rng,t,roa,hit,su,sd,dmg,kw:kw||"-"});
+const A=(ph,n,k,tx)=>({ph,n,k,tx});
+const DEV=x=>A("Assault","Devastating Charge","Passive",`Immediately after this Unit completes a successful Charge, resolve the IMPACT (${x}) effect.`);
+const STRUCT=A("Any","Structure","Passive","This Unit cannot be Activated in any Phase and cannot perform actions. Its Current Supply Value is treated as 0, and it can never Control or Contest Mission Markers, ignoring the standard Zero Supply Exception. This Unit cannot be a target of an ability, unless stated otherwise.");
+const CMDR=A("Any","Commander","Passive","Treat this Unit's Supply characteristic as increased by 1 for Controlling and Contesting Mission Markers, completing objectives, and resolving Disengage checks.");
+const SQUAD=A("Any","Squadron","Passive","This Unit's Horizontal Coherency is 4″.");
+const RESTO=k=>A("Any","Restoration","Reaction · 1 "+k,"Use when a Friendly Unit Within 4″ receives a DEBUFF. Remove all DEBUFFS from it.");
+const CHARGE2D6=(n,k)=>A("Assault",n,"Active · 1 "+k,"When determining Charge Distance for this Unit, roll 2D6 instead of D6 and use the higher result to add to the Unit's Speed characteristic.");
+const BURROW_AMB="When this Unit is nominated to deploy from the Reserves, it may resolve the PLACE (18) effect from the controlling player's Entry Edge. No model may be set Within 10″ of any Enemy model. This Unit's Activation ends.";
+const RAPTOR_STRAIN=A("Any","Raptor Strain","Passive","This Unit can move through IMPASSABLE TERRAIN of Size 4 or less and change elevation without using ACCESS POINTS.");
+const ADRENAL_OVER=A("Assault","Adrenal Overload","Active · 1 BM","This Unit gains a +1 Modifier to all IMPACT Hit Rolls.");
+const BURROW=(eng)=>A("Any","Burrow","Active · 2 BM",`If this Unit is ${eng?"not Engaged":"Unengaged"}, it gains or loses the Burrowed Status.`);
+const REGEN=A("Assault","Regeneration","Passive","When this Unit becomes Activated, if it has the Burrowed Status, resolve the HEAL (2) effect.");
+const STIM=(w,p)=>A("Movement","Stimpack","Active · 1 CP",`This Unit suffers NON-LETHAL DAMAGE (2). This Unit gains BUFF Speed (3). Additionally, its ${w} and all Close Combat Weapons gain PRECISION (${p}).`);
+const ROACH_UPS=(glial)=>[
+ {n:"Tunneling Claws",c:[10],ph:"Any",k:"Passive",tx:"While this Unit has the Burrowed Status, it may perform the Move and Run actions without losing that Status. It may also move through other Units' bases."},
+ {n:"Glial Reconstitution",c:[20],ph:"Movement",k:"Active · 1 "+glial,tx:"This Unit gains BUFF SPEED (1), or BUFF SPEED (2) if the Unit is ON CREEP."+(glial==="CP"?" (Printed as 1 CP on this card.)":"")},
+ {n:"Burrow Ambush",c:[20],ph:"Movement",k:"Passive",tx:BURROW_AMB},
+ {n:"Hydriodic Bile",c:[10],ph:"Assault",k:"Passive",tx:"This Unit's Acid Saliva weapon gains Surge Type: Light, and S Dice: D3+1."}];
+const LING_UPS=[
+ {n:"Burrow Ambush",c:[20,30],ph:"Movement",k:"Passive",tx:BURROW_AMB},
+ {n:"Shredding Claws",c:[10,10],ph:"Combat",rep:"Claws",w:W("Combat","Shredding Claws","E","Ground",2,"4+","Light, Armoured","D3",1)},
+ {n:"Adrenal Glands",c:[20,20],ph:"Combat",k:"Passive",tx:"This Unit's Claws and Shredding Claws weapons gain PRECISION (2)."}];
+
+const UNITS=[
+/* ---------- TERRAN ---------- */
+{id:"marine",n:"Marine",r:"T",tags:["Terran"],slot:"Core",role:"Damage Dealer",base:"32mm",st:["-","4/7","5+","5+",2,2],ct:"Biological, Light, Ground",
+ prof:[[1,3,0],[4,6,1],[7,9,2]],comps:[[6,160,1],[9,210,2]],
+ ab:[STIM("C-14 Rifle",3)],
+ wp:[W("Assault","C-14 Rifle",12,"All",2,"3+","Light","D3",1),W("Combat","Strike","E","Ground",1,"5+","-","-",1)],
+ up:[{n:"AGG-12",c:[10,10],ph:"Assault",spec:true,rep:"C-14 Rifle",w:W("Assault","AGG-12",12,"Ground",2,"3+","Armoured","D3",1,"LONG RANGE (18″), SPECIALIST")},
+     {n:"Bayonet",c:[20,30],ph:"Combat",rep:"Strike",w:W("Combat","Bayonet","E","Ground",2,"5+","-","-",1)},
+     {n:"Combat Shield",c:[20,30],ph:"Movement",k:"Active · 1 CP",tx:"This Unit is always eligible to make an Evade Roll against any Close Combat Attack targeting it and any Damage from an Enemy Special Ability."},
+     {n:"Grenades - Frag",c:[10,10],ph:"Assault",k:"Passive",tx:"When this Unit makes a Ranged Attack with a C-14 Rifle and the target is Within 8″, that weapon's S Dice is replaced by D6."},
+     {n:"Rocket Launcher",c:[40,40],ph:"Assault",spec:true,w:W("Assault","Rocket Launcher",12,"Ground",4,"3+","-","-",1,"INDIRECT FIRE, LONG RANGE (18″), SIDEARM, SPECIALIST")},
+     {n:"Slugthrower",c:[10,20],ph:"Assault",k:"Passive",tx:"When this Unit makes a Ranged Attack with a C-14 Rifle and the target is Within 8″, that weapon gains ANTI-EVADE (1)."}]},
+{id:"rrmarine",n:"Raynor's Raider (Marine)",r:"T",tags:["Terran","Raynor's Raiders"],slot:"Core",role:"Damage Dealer",base:"32mm",st:["-","4/7","5+","5+",2,2],ct:"Biological, Light, Ground",
+ prof:[[1,6,1]],comps:[[6,230,1]],
+ ab:[STIM("C-14 Rifle",3),
+     A("Movement","Raiders Roll!","Passive","When this Unit is nominated to deploy from Reserves, it may resolve its Stimpack ability with the CP cost reduced by 1 (to a minimum of 0)."),
+     A("Movement","Rapid Reinforcements","Passive","When this Unit is nominated to deploy from Reserves, it may resolve the PLACE (10) effect from another Friendly Unit. No model may be set Within 8″ of any Enemy model. This Unit's Activation ends."),
+     A("Assault","Slugthrower","Passive","When this Unit makes a Ranged Attack with a C-14 Rifle and the target is Within 8″, that weapon gains ANTI-EVADE (1)."),
+     A("Assault","Grenades - Frag","Passive","When this Unit makes a Ranged Attack with a C-14 Rifle and the target is Within 8″, that weapon's S Dice is replaced by D6.")],
+ wp:[W("Assault","C-14 Rifle",12,"All",2,"3+","Light","D3",1),W("Combat","Bayonet","E","Ground",2,"5+","-","-",1)],up:[]},
+{id:"marauder",n:"Marauder",r:"T",tags:["Terran"],slot:"Core",role:"Tank",base:"50mm",st:["-","4/7","4+","6+",5,2],ct:"Armoured, Biological, Ground",
+ prof:[[1,1,0],[2,2,1],[3,4,2]],comps:[[2,150,1],[4,280,2]],
+ ab:[STIM("Quad K12",2),A("Assault","Concussive Shells","Reaction · 1 CP","When an Enemy declares a Charge against a Friendly Unit Within 8″, that Enemy gains DEBUFF Speed (2).")],
+ wp:[W("Assault","Quad K12",12,"Ground",3,"3+","Armoured","D3",1,"PIERCE Armoured (2)"),W("Combat","Strike","E","Ground",2,"4+","-","-",1)],
+ up:[{n:"Kinetic Foam",c:[20,40],ph:"Any",k:"Passive",tx:"Increase this Unit's Hit Points characteristic by 1."},
+     {n:"Laser Targeting Systems",c:[20,40],ph:"Assault",k:"Passive",tx:"This Unit's Quad K12 weapon gains LONG RANGE (16″)."},
+     {n:"Veteran of Tarsonis",c:[20,30],ph:"Any",k:"Passive",tx:"While this Unit is Within 3″ of a Mission Marker, its Armour characteristic is increased by 1."}]},
+{id:"medic",n:"Medic",r:"T",tags:["Terran"],slot:"Support",role:"Lifesaver",base:"32mm",st:["-","4/7","5+","5+",2,2],ct:"Biological, Light, Ground",
+ prof:[[1,1,0],[2,3,1]],comps:[[3,110,1]],
+ ab:[A("Any","Life Support","Reaction · 1 CP","Use when another Friendly Biological Unit suffers Damage Within 4″. Reduce the Total Damage before allocation by 1 for each model in this Unit that is Within 4″ of the damaged Unit."),RESTO("CP"),
+     A("Movement","Medpack","Active · 1 CP","Select another Friendly Biological Unit Within 4″. Resolve the HEAL (X) effect for the targeted Unit, where X is the number of models in this Unit that are Within 4″ of the target Unit."),
+     A("Movement","Optical Flare","Active · 2 CP","Select one Enemy Unit Within 12″. Until the End of the Round, apply DEBUFF Range (4) to that Unit's Ranged Weapons. That Unit cannot benefit from LONG RANGE.")],
+ wp:[W("Combat","Strike","E","Ground",1,"5+","-","-",1)],
+ up:[{n:"A-13 Flash Grenade Launcher",c:[20],ph:"Any",k:"Passive",tx:"Increase the Optical Flare special ability's Range to 16″."},
+     {n:"Advanced Medic Facilities",c:[60],ph:"Any",k:"Passive",tx:"This Unit's Supply Value counts as 0 when calculating the Supply Pool."},
+     {n:"Stabilizer Medpacks",c:[30],ph:"Any",k:"Passive",tx:"When this Unit resolves a Life Support or Medpack ability, treat it as having 1 additional model Within Range for calculating that ability's effects."}]},
+{id:"raynor",n:"Jim Raynor",r:"T",tags:["Terran"],slot:"Hero",role:"Tactician",base:"40mm",uq:true,st:["-","7","4+","5+",8,2],ct:"Biological, Ground",
+ prof:[[1,1,1]],comps:[[1,250,1]],
+ ab:[CMDR,A("Any","Freedom Fighters","Passive","The Supply Value of all Friendly Units Within 8″ of this Unit cannot be reduced below 1 for Contesting Mission Markers and completing objectives."),
+     A("Movement","Orders","Active · X CP · Repeatable","Select another Friendly Biological Unit Within 8″, spend CP and apply one of: 1 CP: that Unit's first used weapon gains CRITICAL HIT (2). 1 CP: that Unit ignores the Disengage penalty for the remainder of the Round. 2 CP: remove the Activation Marker from that Unit.")],
+ wp:[W("Assault","Commando Rifle",18,"All",3,"3+","Armoured","D3",1,"BULKY, PIERCE Armoured (3)"),W("Assault","“Justice” Revolver",6,"Ground",2,"3+","-","-",2,"ANTI-EVADE (2), SIDEARM, PINPOINT"),W("Combat","Bayonet","E","Ground",2,"4+","Light","D3",1)],
+ up:[{n:"C-14 Rifle",c:[0],ph:"Assault",rep:"Commando Rifle",w:W("Assault","C-14 Rifle",12,"All",6,"3+","Light","D3+1",1,"BURST FIRE 8″ (3)")}]},
+{id:"goliath",n:"Goliath",r:"T",tags:["Terran"],slot:"Elite",role:"Damage Dealer",base:"80mm",st:["-","7","4+","-",10,3],ct:"Armoured, Mechanical, Ground",
+ prof:[[1,1,2]],comps:[[1,190,2]],
+ ab:[A("Movement","Target Lock","Active · 1 CP","Select one Enemy Unit Within 12″. Whenever a Friendly Goliath Unit targets that enemy with an Autocannon, that weapon gains Surge Type: Light, Armoured, and S Dice: D3+1."),
+     A("Assault","Indomitable","Passive","While Engaged, this Unit may target and be targeted by Unengaged Enemy Units. In both cases, the defending Unit gains an Evade Roll against those attacks."),DEV("4) 3+ (")],
+ wp:[W("Assault","Autocannon",12,"Ground",9,"4+","-","-",1,"LONG RANGE (18″)"),W("Assault","Underbelly Machine Gun",8,"Ground",6,"3+","Light","D3",1,"PINPOINT, SIDEARM"),W("Assault","Hellfire Missiles",16,"Flying",6,"3+","Light","D3",1,"ANTI-EVADE (1), SIDEARM"),W("Combat","Stomp","E","Ground",4,"5+","-","-",1)],
+ up:[{n:"Ares-Class Targeting System",c:[20],ph:"Any",k:"Passive",tx:"This Unit's Autocannon and Underbelly Machine Gun weapons gain PRECISION (1)."},
+     {n:"Haywire Missiles",c:[40],ph:"Assault",rep:"Hellfire Missiles",w:W("Assault","Haywire Missiles",12,"Ground",3,"3+","Armoured","D3",1,"PIERCE Armoured (3), SIDEARM")},
+     {n:"Scatter Missiles",c:[30],ph:"Assault",rep:"Hellfire Missiles",w:W("Assault","Scatter Missiles",18,"Ground",6,"5+","Light","D3",1,"INDIRECT FIRE, LOCKED IN (6), LONG RANGE (24″), SIDEARM")}]},
+{id:"siegetank",n:"Siege Tank",r:"T",tags:["Terran"],slot:"Elite",unk:true,comps:[[1,220,2]],
+ up:[{n:"Mode Transformation",c:[20]},{n:"Coordinated Strike",c:[20]},{n:"Shaped Blast",c:[10]},{n:"Smart Shells",c:[10]}]},
+{id:"pdd",n:"Point Defense Drone",r:"T",tags:["Terran","Raynor's Raiders"],slot:"—",role:"Lifesaver",base:"32mm",sum:true,st:["-","-","6+","6+",3,"-"],ct:"Armoured, Flying, Mechanical",
+ prof:[[1,1,0]],comps:[[1,0,0]],
+ ab:[A("Any","Point Defense Laser","Passive","When another Friendly Unit Within 4″ is targeted by a Ranged Attack without the INSTANT keyword, remove up to 2 dice from the Attack Pool. Then remove this Unit from the battlefield."),A("Any","Gliding","Passive","This model has DISPLACEMENT."),STRUCT],wp:[],up:[]},
+/* ---------- ZERG ---------- */
+{id:"zergling",n:"Zergling",r:"Z",tags:["Zerg"],slot:"Core",role:"Damage Dealer",base:"32mm",st:["-","4/8","6+","4+",1,1],ct:"Biological, Light, Ground",
+ prof:[[1,6,0],[7,12,1],[13,18,2]],comps:[[12,180,1],[18,220,2]],
+ ab:[SQUAD,CHARGE2D6("Metabolic Boost","BM"),DEV("1) 5+ (")],
+ wp:[W("Combat","Claws","E","Ground",2,"4+","Light","D3",1)],up:LING_UPS},
+{id:"raptor",n:"Raptor (Zergling)",r:"Z",tags:["Zerg"],slot:"Elite",role:"Damage Dealer",base:"32mm",st:["-","5/9","6+","4+",1,1],ct:"Biological, Light, Ground",
+ prof:[[1,6,0],[7,12,1],[13,18,2]],comps:[[12,240,1],[18,300,2]],
+ ab:[SQUAD,RAPTOR_STRAIN,ADRENAL_OVER,DEV("1) 5+ ("),CHARGE2D6("Metabolic Boost","BM")],
+ wp:[W("Combat","Claws","E","Ground",2,"4+","Light","D3",1)],up:LING_UPS},
+{id:"ksraptor",n:"Kerrigan Swarm Raptor (Zergling)",r:"Z",tags:["Zerg","Kerrigan's Swarm"],slot:"Elite",role:"Damage Dealer",base:"32mm",uq:true,st:["-","5/9","5+","4+",2,1],ct:"Biological, Light, Ground",
+ prof:[[1,3,0],[4,6,1]],comps:[[6,250,1]],
+ ab:[SQUAD,RAPTOR_STRAIN,A("Assault","Leap","Active · 1 BM","When determining Charge Distance for this Unit, add 2 to the Charge Distance."),DEV("2) 5+ ("),ADRENAL_OVER],
+ wp:[W("Combat","Claws","E","Ground",2,"3+","Light, Armoured","D6",1,"INSTANT")],up:[]},
+{id:"swarmling",n:"Swarmling (Zergling)",r:"Z",tags:["Zerg"],slot:"Core",role:"Damage Dealer",base:"32mm",st:["-","4/8","6+","5+",1,1],ct:"Biological, Light, Ground",
+ prof:[[1,6,0],[7,18,1]],comps:[[18,260,1]],
+ ab:[SQUAD,A("Movement","Zergling Reconstitution","Active · 1 BM","Resolve the RESPAWN (2) effect, or RESPAWN (3) if the Unit is ON CREEP."),DEV("1) 5+ ("),CHARGE2D6("Metabolic Boost","BM")],
+ wp:[W("Combat","Claws","E","Ground",2,"5+","-","-",1)],
+ up:[{n:"Burrow Ambush",c:[20],ph:"Movement",k:"Passive",tx:BURROW_AMB}]},
+{id:"roach",n:"Roach",r:"Z",tags:["Zerg"],slot:"Core",role:"Tank",base:"50mm",st:["-","4/7","3+","5+",4,2],ct:"Armoured, Biological, Ground",
+ prof:[[1,1,0],[2,3,1]],comps:[[3,170,1]],
+ ab:[BURROW(false),REGEN,DEV("2) 4+ (")],
+ wp:[W("Assault","Acid Saliva",8,"Ground",3,"3+","-","-",1),W("Combat","Claws","E","Ground",2,"4+","-","-",1)],up:ROACH_UPS("CP")},
+{id:"vile",n:"Vile (Roach)",r:"Z",tags:["Zerg"],slot:"Core",role:"Tank",base:"50mm",st:["-","4/7","3+","5+",4,2],ct:"Armoured, Biological, Ground",
+ prof:[[1,1,0],[2,3,1]],comps:[[3,200,1]],
+ ab:[BURROW(true),A("Any","Debilitating Saliva","Reaction · 1 BM","Use when an Enemy Unit Within 8″ of this Unit declares a Ranged Attack. Apply DEBUFF Hit (1) to each of that Unit's Ranged Weapons."),DEV("1) 4+ ("),REGEN],
+ wp:[W("Assault","Acid Saliva",8,"Ground",4,"3+","-","-",1),W("Combat","Vile Claws","E","Ground",2,"4+","-","-",1)],up:ROACH_UPS("BM")},
+{id:"corpser",n:"Corpser (Roach)",r:"Z",tags:["Zerg"],slot:"Core",role:"Tank",base:"50mm",st:["-","4/7","3+","5+",4,2],ct:"Armoured, Biological, Ground",
+ prof:[[1,1,0],[2,3,1]],comps:[[3,240,1]],
+ ab:[BURROW(false),A("Movement","Roachling Infestation","Active · 2 BM","Once Per Game. Resolve the SUMMON (Roachling) effect."),REGEN,DEV("3) 4+ (")],
+ wp:[W("Assault","Acid Saliva",8,"Ground",2,"3+","-","-",1),W("Combat","Claws","E","Ground",3,"4+","Light","D3+1",1)],up:ROACH_UPS("CP")},
+{id:"hydralisk",n:"Hydralisk",r:"Z",tags:["Zerg"],slot:"Elite",role:"Damage Dealer",base:"40×100mm",st:["-","4/8","5+","5+",4,2],ct:"Biological, Light, Ground",
+ prof:[[1,1,1],[2,2,2],[3,4,3]],comps:[[2,140,2],[4,260,3]],
+ ab:[SQUAD,A("Assault","Lunge","Reaction · 1 BM","When another Friendly Unit Within 10″ is the target of a Ranged Attack, after the attack is fully resolved, this Unit, if Unengaged, may perform a Move action Directly Towards the attacking Unit.")],
+ wp:[W("Assault","Needle Spines",12,"All",3,"3+","Light, Armoured","D3+1",2),W("Combat","Scythe","E","Ground",2,"4+","-","-",1)],
+ up:[{n:"Ancillary Carapace",c:[20,40],ph:"Any",k:"Passive",tx:"This Unit gains TOUGH (1) on the first Armour Roll of each Activation."},
+     {n:"Burrow Ambush",c:[20,40],ph:"Movement",k:"Passive",tx:BURROW_AMB},
+     {n:"Grooved Spines",c:[20,40],ph:"Assault",k:"Passive",tx:"This Unit's Needle Spines ranged weapon gains LONG RANGE (16″)."},
+     {n:"Lurking",c:[10,20],ph:"Any",k:"Passive",tx:"If this Unit has Stationary Status, it is eligible to make an Evade Roll against the first Ranged Attack targeting it this Round. If this Unit is ON CREEP, it gains +1 Modifier to this Evade Roll."}]},
+{id:"queen",n:"Queen",r:"Z",tags:["Zerg"],slot:"Support",role:"Lifesaver",base:"80mm",st:["-","4","4+","-",9,3],ct:"Armoured, Biological, Psionic, Ground",
+ prof:[[1,1,1]],comps:[[1,150,1]],
+ ab:[A("Any","Spawn Creep Tumor","Active · 1 BM","Set a Creep Tumor token in base-to-base contact with this Unit."),
+     A("Any","Transfusion","Reaction · 1 BM","Use when another Friendly Biological Unit (including a Structure) suffers Damage Within 4″. Reduce the Total Damage before allocation by 2."),RESTO("BM"),
+     A("Any","Psionic Link","Passive","Once per Round, if there are at least 7 Friendly models Within 6″ of this Unit, it may resolve its Special Ability with the BM cost reduced by 1."),DEV("4) 3+ (")],
+ wp:[W("Assault","Talons",6,"Ground",4,"4+","Light","D3",2),W("Assault","Acid Spines",12,"Flying",4,"4+","Light, Armoured","D3",2),W("Combat","Talons","E","Ground",3,"4+","-","-",1)],
+ up:[{n:"Creep Speed",c:[10],ph:"Any",k:"Passive",tx:"While this Unit is ON CREEP, increase this Unit's Speed characteristic by 2."},
+     {n:"Domineering Presence",c:[10],ph:"Movement",k:"Active · 1 BM",tx:"Select another Friendly Unit Within 6″ (Line of Sight is not required). That Unit's Supply characteristic is increased by 1 for Controlling and Contesting Mission Markers and completing objectives."}]},
+{id:"kerrigan",n:"Kerrigan",r:"Z",tags:["Zerg"],slot:"Hero",role:"Damage Dealer",base:"40mm",uq:true,st:["-","7","5+","6+",9,2],ct:"Biological, Psionic, Ground",
+ prof:[[1,1,1]],comps:[[1,250,1]],
+ ab:[CMDR,A("Movement","Crushing Grip","Active · 1 BM","Select one Enemy Unit Within 12″. That Unit counts as Activated in this Phase (set an Activation Marker next to it)."),
+     A("Movement","Mutating Carapace","Active · 1 BM","Select one Enemy Unit Within 18″. This Unit is eligible to make an Evade Roll against all attacks made by the selected Enemy Unit, with a +2 Modifier applied to those Evade Rolls."),
+     A("Assault","Leaping Strike","Active · 1 BM","If Unengaged, resolve the PLACE (6) effect."),DEV("4) 4+ (")],
+ wp:[W("Assault","Energy Blast",8,"All",5,"3+","Light, Armoured","D3",1),W("Combat","Blades","E","Ground",6,"4+","-","-",2,"CRITICAL HIT (2)")],up:[]},
+{id:"ravager",n:"Ravager",r:"Z",tags:["Zerg"],slot:"Elite",unk:true,comps:[[1,160,1],[2,270,2]],
+ up:[{n:"Bloated Bile Ducts",c:[20,40]},{n:"Burrow Ambush",c:[20,40]},{n:"Potent Bile",c:[20,40]}]},
+{id:"omegaworm",n:"Omega Worm",r:"Z",tags:["Zerg","Kerrigan's Swarm"],slot:"—",role:"Tactician",base:"80mm",sum:true,st:["-","-","5+","-",10,3],ct:"Armoured, Biological, Ground",
+ prof:[[1,1,0]],comps:[[1,0,0]],
+ ab:[A("Any","Detection","Passive","While Enemy Units are Within 6″ of this Unit, they lose HIDDEN Status."),
+     A("Any","Source of Creep","Passive","A Friendly or Enemy Ground Zerg Unit Within 6″ of this Unit counts as being ON CREEP."),STRUCT,
+     A("Any","Omega Network","Passive","The base of the Omega Worm counts as an Entry Edge. Each Round, Friendly Units with a combined Supply cost of 2 or less may be Deployed via this Entry Edge. If a Friendly Leading model finishes a Move, Disengage, or Run action in base-to-base contact with the Omega Worm, the controlling player may remove that Unit from the battlefield and return it to Reserves.")],wp:[],up:[]},
+{id:"roachling",n:"Roachling",r:"Z",tags:["Zerg"],slot:"—",role:"Tank",base:"32mm",sum:true,st:["-","4/7","6+","6+",1,1],ct:"Biological, Light, Ground",
+ prof:[[1,3,0]],comps:[[3,0,0]],
+ ab:[A("Any","Underdeveloped Claws","Passive","This Unit cannot gain Burrowed Status.")],wp:[W("Combat","Claws","E","Ground",2,"4+","-","-",1)],up:[]},
+/* ---------- PROTOSS ---------- */
+{id:"zealot",n:"Zealot",r:"P",tags:["Protoss"],slot:"Core",role:"Damage Dealer",base:"40mm",st:[3,"4/7","5+","5+",4,2],ct:"Biological, Light, Ground",
+ prof:[[1,1,1],[2,3,2]],comps:[[3,160,2]],
+ ab:[CHARGE2D6("Charge","PE"),DEV("3) 4+ (")],
+ wp:[W("Combat","Psi Blades","E","Ground",4,"3+","Light","D3",1)],
+ up:[{n:"Leg Enhancements",c:[20],ph:"Movement",k:"Active · 1 PE",tx:"This Unit performs a 2″ Move action. This does not count towards its action limit."},
+     {n:"My Life for Aiur",c:[10],ph:"Any",k:"Passive",tx:"When this Unit resolves IMPACT, each eligible model generates 1 additional IMPACT die."},
+     {n:"We Stand as One",c:[20],ph:"Combat",k:"Passive",tx:"When this Unit makes a Close Combat Attack, if the target is Engaged with at least 1 other Friendly Unit, this Unit's Close Combat Weapon gains PRECISION (2)."},
+     {n:"Zealous Round",c:[10],ph:"Assault",k:"Reaction · 0 PE",tx:"When this Unit is not Activated and receives Damage, the controlling player may count this Unit as Activated in this Phase (flip its Activation Marker) to reduce the Total Damage by 2."}]},
+{id:"praetor",n:"Praetor Guard (Zealot)",r:"P",tags:["Protoss","Khalai"],slot:"Elite",role:"Damage Dealer",base:"40mm",uq:true,st:[3,"4/7","5+","5+",4,2],ct:"Biological, Light, Ground",
+ prof:[[1,1,1],[2,3,2]],comps:[[3,280,2]],
+ ab:[A("Any","Shield Overcharge","Passive","This Unit gains TOUGH (2) on the first Armour Roll each Round."),
+     A("Movement","Leg Enhancements","Active · 1 PE","This Unit performs a 2″ Move action. This does not count towards its action limit."),CHARGE2D6("Charge","PE"),DEV("3) 4+ ("),
+     A("Combat","Titan Killers","Passive","When this Unit makes a Close Combat Attack, and the target is Size 3 or larger, the weapon's Damage characteristic is treated as 2."),
+     A("Combat","Precognition","Passive","This Unit is eligible to make an Evade roll against all attacks targeting it.")],
+ wp:[W("Combat","Psi Blades","E","Ground",4,"3+","Light","D3",1)],up:[]},
+{id:"adept",n:"Adept",r:"P",tags:["Protoss"],slot:"Core",role:"Damage Dealer",base:"40mm",st:[2,"5/8","5+","5+",3,2],ct:"Biological, Light, Ground",
+ prof:[[1,2,0],[3,4,1]],comps:[[4,150,1]],
+ ab:[A("Any","Psionic Presence","Passive","All Weapons of Friendly Units targeting an Enemy Unit Within 4″ of this Unit's Shade token gain PRECISION (1)."),
+     A("Movement","Psionic Transfer","Active · 1 PE","Set a Shade token Wholly Within 12″ of any model in this Unit. At the End of the Round, the controlling player may set all models of this Unit in Coherency, treating the Shade token as the Leading Model. The Shade token has DISPLACEMENT.")],
+ wp:[W("Assault","Glaive Cannon",8,"All",2,"3+","Light","D3+1",1,"ANTI-EVADE (1)"),W("Combat","Strike","E","Ground",1,"4+","-","-",1)],
+ up:[{n:"Glaive Strike",c:[20],ph:"Combat",rep:"Strike",w:W("Combat","Glaive Strike","E","Ground",1,"4+","Light","D3",1,"PIERCE Light (2)")},
+     {n:"Guidance",c:[10],ph:"Assault",k:"Passive",tx:"This Unit's Glaive Cannon Ranged weapon gains ANTI-EVADE (2)."},
+     {n:"Resonating Glaives",c:[20],ph:"Assault",k:"Active · 1 PE",tx:"This Unit's Glaive Cannon gains BUFF RoA (1)."}]},
+{id:"nerazim",n:"Nerazim Watchers (Adept)",r:"P",tags:["Protoss"],slot:"Core",unk:true,comps:[[4,210,1]],up:[]},
+{id:"sentry",n:"Sentry",r:"P",tags:["Protoss"],slot:"Support",role:"Lifesaver",base:"50mm",st:[2,"4/7","5+","6+",4,1],ct:"Light, Mechanical, Psionic, Ground",
+ prof:[[1,1,0],[2,2,1]],comps:[[2,130,1]],
+ ab:[RESTO("PE"),
+     A("Movement","Guardian Shield","Active · 1 PE","All Ranged Attacks targeting a Friendly Unit Within 4″ (Line of Sight is not required) are made with 1 fewer die in the Attack Pool."),
+     A("Movement","Force Field","Active · 1 PE","Set a Force Field token Within 8″ in an unoccupied space. Units of Size 2 or lower cannot move across Force Fields. Models of Size 3 or more can move over it, and it's then removed.")],
+ wp:[W("Assault","Disruption Beam",8,"All",2,"2+","-","-",1,"INSTANT"),W("Combat","Beam","E","Ground",2,"3+","-","-",1)],
+ up:[{n:"Hallucination",c:[30],ph:"Assault",k:"Reaction · 0 PE",tx:"When an Enemy Unit declares a Ranged Attack against a Friendly Unit Within 4″, the targeted Friendly Unit is eligible to make an Evade Roll against that attack."},
+     {n:"Solid-Field Projectors",c:[20],ph:"Movement",k:"Active · 1 PE",tx:"Set a Force Field token Within 8″ in an unoccupied space. Units of Size 2 or lower cannot move across Force Fields. Models of Size 3 or more can move over it, and it's then removed."}]},
+{id:"stalker",n:"Stalker",r:"P",tags:["Protoss"],slot:"Elite",role:"Damage Dealer",base:"80mm",st:[3,"4/8","4+","6+",6,3],ct:"Armoured, Mechanical, Ground",
+ prof:[[1,1,1],[2,2,2]],comps:[[1,170,1],[2,270,2]],
+ ab:[SQUAD,A("Movement","Blink","Active · 1 PE","Resolve the PLACE (6) effect. Models set by this effect cannot be set up Within the Engagement Range of any Enemy Unit.")],
+ wp:[W("Assault","Particle Disruptors",12,"All",4,"3+","Armoured","D3",2),W("Combat","Stomp","E","Ground",2,"5+","-","-",1)],
+ up:[{n:"Fury of the Nerazim",c:[20,30],ph:"Assault",k:"Passive",tx:"When this Unit attacks an Enemy Unit that has already been Activated during this Phase, its Particle Disruptors gain INSTANT for that attack."},
+     {n:"Path of Shadows",c:[20,40],ph:"Any",k:"Active · 1 PE",tx:"This Unit gains HIDDEN Status until it performs another action."}]},
+{id:"immortal",n:"Immortal",r:"P",tags:["Protoss"],slot:"Elite",unk:true,comps:[[1,280,2]],
+ up:[{n:"Shield Overcharge",c:[20]},{n:"Left Phase Disruptor",c:[20],rep:"Left Photon Disruptor"},{n:"Right Phase Disruptor",c:[20],rep:"Right Photon Disruptor"},{n:"Fury Unyielding",c:[20]},{n:"For the Ancients",c:[20]}]},
+{id:"artanis",n:"Artanis",r:"P",tags:["Protoss"],slot:"Hero",role:"Tank",base:"40mm",uq:true,st:[4,"7","4+","5+",8,2],ct:"Biological, Psionic, Ground",
+ prof:[[1,1,1]],comps:[[1,250,1]],
+ ab:[CMDR,A("Movement","Phase Prism","Passive","When Artanis is nominated to deploy from Reserves, it may resolve the PLACE (0) effect from another Friendly Unit. That Friendly Unit is removed from the battlefield and returned to Reserves. Artanis' Activation ends."),
+     A("Assault","Lightning Dash","Reaction · 1 PE","After this Unit resolves a successful Charge action, it may declare a second Charge action against a different Enemy Unit, ignoring the restriction on Charging while Engaged. The Devastating Charge ability does not trigger a second time."),
+     A("Assault","Hierarch's Stand","Reaction · 1 PE","When another Friendly Unit Within 8″ is declared as the target of a Ranged Attack and this Unit is a valid target, redirect the attack to this Unit. This Unit is eligible to make an Evade Roll against the redirected attack. This Special Ability remains active until the End of the current Activation."),DEV("6) 4+ (")],
+ wp:[W("Combat","Twilight Blades Strike","E","Ground",2,"2+","Armoured","D3",3),W("Combat","Twilight Blades Sweep","E","Ground",6,"2+","Light","D3+1",1)],up:[]},
+{id:"zeratul",n:"Zeratul",r:"P",tags:["Protoss"],slot:"Hero",uq:true,unk:true,comps:[[1,230,1]],up:[]},
+{id:"pylon",n:"Pylon",r:"P",tags:["Protoss","Khalai"],slot:"—",role:"Tactician",base:"80mm",sum:true,st:[2,"-","5+","-",8,3],ct:"Armored, Ground",
+ prof:[[1,1,0]],comps:[[1,0,0]],
+ ab:[A("Any","Khalai Ingenuity","Passive","Once per Round, when a Friendly Unit Within 4″ of this Pylon uses a Special Ability that costs Psionic Energy, that ability's PE cost is reduced by 1."),STRUCT,
+     A("Movement","Warp Conduit","Passive","Once per Round, the controlling player may deploy a Ground Unit from Reserves using this Pylon base as the Entry Edge. This Unit's Activation ends.")],wp:[],up:[]},
+];
+// DEV helper hack: fix text for "IMPACT (x) y+" form
+UNITS.forEach(u=>(u.ab||[]).forEach(a=>{if(a.n==="Devastating Charge")a.tx=a.tx.replace(/IMPACT \((\d)\) (\d\+) \(\)/,"IMPACT ($1) $2");}));
+
+const S=(o)=>o; // slots
+const TAC=[
+/* Terran */
+{id:"taf",n:"Terran Armed Forces",r:"T",type:"Faction",tags:["Terran"],uq:true,gas:0,slots:{Core:3,Elite:1,Support:1,Air:1},res:["CP",1],
+ ab:[A("Movement","Tactical Retreat","Active","The active Unit ignores the Disengage penalty for the remainder of the Round."),A("Movement","Terran Tenacity","Active","Once per Game. Immediately claim the First Player Marker. No other player may claim the First Player Marker for the remainder of this Phase.")]},
+{id:"rrf",n:"Raynor's Raiders",r:"T",type:"Faction",tags:["Terran","Raynor's Raiders"],uq:true,gas:0,slots:{Core:3,Hero:1,Support:1,Air:1},res:["CP",1],
+ ab:[A("Movement","Rapid Ingress","Active","Set a Friendly Point Defence Drone Unit anywhere on the battlefield, more than 1″ away from any Enemy model. Remove this Unit at the End of the Round."),A("Movement","Ready for Pickup?","Active","Once Per Game. The active Unit resolves the PLACE (12) effect. Models set by this effect cannot be set up Within the Engagement Range of any Enemy Unit. This resolves instead of performing a standard action.")]},
+{id:"barracks",n:"Barracks",r:"T",tags:["Terran"],gas:25,slots:{Core:1},res:["CP",1],ab:[A("Movement","Go! Go! Go!","Active","The active Biological Unit performs a 2″ Move action. This does not count towards its action limit.")]},
+{id:"brxproxy",n:"Barracks (Proxy)",r:"T",tags:["Terran"],uq:true,gas:40,slots:{Core:2},res:["CP",2],ab:[A("Movement","Go! Go! Go!","Active","The active Biological Unit performs a 2″ Move action. This does not count towards its action limit."),A("Movement","Armed and Ready","Active","The active Biological Unit Deploys from any table edge that is not a player's Entry Edge. No model may be placed Within 10″ of any Enemy model. This ability cannot be used if another Friendly Biological Unit has already been Deployed this Round.")]},
+{id:"brxtech",n:"Barracks (Tech Lab)",r:"T",tags:["Terran"],uq:true,gas:45,slots:{Core:1,Elite:1},res:["CP",2],ab:[A("Movement","Go! Go! Go!","Active","The active Biological Unit performs a 2″ Move action. This does not count towards its action limit."),A("Assault","Let's Have a Blast!","Active","The active Biological Unit's first Ranged Weapon used gains ANTI-EVADE (1).")]},
+{id:"supplydepot",n:"Supply Depot",r:"T",tags:["Terran"],uq:true,gas:40,slots:{Core:1,Elite:1,Hero:1},res:["CP",1],ab:[A("Movement","Additional Supply Depots","Active","The active Unit's Supply Value is improved by 1 for Controlling and Contesting Mission Markers and completing objectives.")]},
+{id:"factory",n:"Factory",r:"T",tags:["Terran"],gas:35,slots:{Elite:2},res:["CP",1],ab:[A("Movement","Field Repair","Active","The active Mechanical Unit resolves the HEAL (2) effect.")]},
+{id:"engbay",n:"Engineering Bay",r:"T",tags:["Terran"],gas:25,slots:{Core:1},res:["CP",1],ab:[A("Any","Infantry Armor","Reaction","Use before a Friendly Biological Unit makes an Armour Roll. That Unit gains TOUGH (1) for this roll."),A("Assault","Infantry Weapons","Active","The active Biological Unit's first Ranged Weapon used gains CRITICAL HIT (1).")]},
+{id:"armory",n:"Armory",r:"T",tags:["Terran"],gas:30,slots:{Elite:1},res:["CP",1],ab:[A("Any","Vehicle Plating","Reaction","Use before a Friendly Mechanical Unit makes an Armour Roll. That Unit gains TOUGH (1) for this roll."),A("Assault","Vehicle Weapons","Active","The active Mechanical Unit's first Ranged Weapon used gains CRITICAL HIT (1).")]},
+{id:"academy",n:"Academy",r:"T",tags:["Terran"],uq:true,gas:35,slots:{Support:2},res:["CP",1],ab:[A("Any","Advanced Training","Reaction","Once per Round, when a Friendly Support Unit activates a Special Ability that costs CP, resolve that ability with its CP cost reduced by 1 (to a minimum of 0). Do not Exhaust this card.")]},
+{id:"orbital",n:"Orbital Command",r:"T",tags:["Terran"],uq:true,gas:25,slots:{Core:1},res:["CP",1],ab:[A("Movement","Comsat Station","Active","Select one table edge that is not a player's Entry Edge. Until the End of the Round, Enemy Units cannot Deploy from that edge."),A("Movement","Scanner Sweep","Active","Set a Faction Indicator anywhere on the battlefield. While Enemy Units are Within 6″ of this Faction Indicator, they lose HIDDEN Status.")]},
+{id:"dropship",n:"Dropship",r:"T",tags:["Terran"],uq:true,gas:40,slots:{Core:1,Support:1},res:["CP",1],ab:[A("Movement","Strap In!","Active","The active, Unengaged Ground Unit is returned to Reserves instead of performing an action."),A("Movement","Ready for Dust-Off","Active","Set a Faction Indicator anywhere on the battlefield more than 10″ away from any Enemy model. At the End of the Round, the controlling player may Deploy one Ground Unit from Reserves in base-to-base contact with this Faction Indicator.")]},
+{id:"factorytech",n:"Factory (Tech Lab)",r:"T",tags:["Terran"],gas:40,slots:{},res:["CP",1],unk:true,ab:[]},
+/* Zerg */
+{id:"zswarm",n:"Zerg Swarm",r:"Z",type:"Faction",tags:["Zerg"],uq:true,gas:0,slots:{Core:3,Elite:1,Support:1,Air:1},res:["BM",1],
+ ab:[A("Any","Brood Instinct","Reaction","Use before a Friendly Unit makes an Evade Roll. Apply a +1 Modifier to that roll."),A("Any","Zerg Creep","Passive","During Army Building, select exactly one Creep Card and add it to the Army List, paying its listed cost (if any)."),A("Movement","Rapid Burrowing","Active","Select one Friendly, Unengaged Ground Zerg Unit on the battlefield. That Unit gains the Burrowed Status, even if it has already been Activated this Round.")]},
+{id:"kswarm",n:"Kerrigan's Swarm",r:"Z",type:"Faction",tags:["Zerg","Kerrigan's Swarm"],uq:true,gas:0,slots:{Core:3,Elite:2,Hero:1},res:["BM",1],
+ ab:[A("Any","Wild Mutation","Active","If the active unit is ON CREEP, the unit gains BUFF Speed (1) and its first used Weapon gains PRECISION (1)."),A("Any","Zerg Creep","Passive","During Army Building, you must select exactly one Creep Card and add it to your Army List, paying its listed cost (if any)."),A("Movement","Omega Network","Active","If there is no Friendly Omega Worm on the battlefield, set a Friendly Omega Worm Unit anywhere on GROUND LEVEL of the battlefield, more than 10″ away from any Enemy model. This Round, the Omega Worm is not eligible to use its Special Abilities (excluding Structure).")]},
+{id:"acccreep",n:"Accelerating Creep",r:"Z",type:"Creep",tags:["Zerg"],uq:true,gas:0,slots:{},res:null,
+ ab:[A("Any","Speed on Creep","Passive","If the active Friendly Zerg Unit is ON CREEP, increase its Speed characteristic by 1."),A("Any","Living Glob of Tissue","Passive","Creep Tumor tokens have STAY IN PLAY and DISPLACEMENT."),A("Any","Creep Removal","Passive","If an Enemy Unit ends a Move, Deploy, Run, Charge or Disengage action Within 1″ of a Friendly Creep Tumor token, remove that token from the battlefield.")]},
+{id:"malcreep",n:"Malignant Creep",r:"Z",type:"Creep",tags:["Zerg","Kerrigan's Swarm"],uq:true,gas:10,slots:{},res:null,
+ ab:[A("Any","Creep Removal","Passive","If an Enemy Unit ends a Move, Deploy, Run, Charge or Disengage action Within 1″ of a Friendly Creep Tumor token, remove that token from the battlefield."),A("Any","Living Glob of Tissue","Passive","Creep Tumor tokens have STAY IN PLAY and DISPLACEMENT."),A("Assault","Malevolent Matriarch","Passive","If the active Friendly Zerg Unit declares a Charge action while ON CREEP, it gains +1 Modifier to IMPACT Hit Rolls.")]},
+{id:"pool",n:"Spawning Pool",r:"Z",tags:["Zerg"],gas:25,slots:{Core:1},res:["BM",1],ab:[A("Combat","Feral Rage","Active","The active Unit's first Close Combat Weapon used gains PRECISION (2).")]},
+{id:"sixpool",n:"Spawning Pool (Six Pool)",r:"Z",tags:["Zerg"],uq:true,gas:40,slots:{Core:2},res:["BM",2],ab:[A("Movement","Timing Push","Active","The active Zergling Unit Deploys from any table edge that is not a Player's Entry Edge. This action must end more than 10″ away from any Enemy model."),A("Combat","Feral Rage","Active","The active Unit's first Close Combat Weapon used gains PRECISION (2).")]},
+{id:"warren",n:"Roach Warren",r:"Z",tags:["Zerg"],gas:25,slots:{Core:1},res:["BM",1],ab:[A("Assault","Nasty Surprise","Active","The active Ground Unit loses the Burrowed Status.")]},
+{id:"hyden",n:"Hydralisk Den",r:"Z",tags:["Zerg"],gas:35,slots:{Elite:2},res:["BM",1],ab:[A("Assault","Missile Attacks","Active","The active Unit's first Ranged Weapon used gains PRECISION (1).")]},
+{id:"evo",n:"Evolution Chamber",r:"Z",tags:["Zerg"],gas:30,slots:{Core:1},res:["BM",1],ab:[A("Any","Carapace","Reaction","Use before a Friendly Unit makes an Armour Roll. That Unit gains TOUGH (1) for this roll."),A("Assault","Extended Claws","Active","The active Unit gains a +1 Modifier to all IMPACT Hit Rolls.")]},
+{id:"hatch",n:"Hatchery",r:"Z",tags:["Zerg"],gas:30,slots:{Support:1},res:["BM",1],ab:[A("Movement","Lie in Wait","Active","The active, Unengaged Ground Unit gains the Burrowed Status."),A("Movement","Creep Spread","Active","Set a Creep Tumor token on the battlefield Within 6″ (Line of Sight is not required) of either a Friendly Entry Edge or an existing Friendly Creep Tumor token.")]},
+{id:"lair",n:"Lair",r:"Z",tags:["Zerg"],uq:true,gas:35,slots:{Core:1,Elite:1},res:["BM",1],ab:[A("Any","Predation","Active","The active Unit's Close Combat Weapons gain INSTANT."),A("Movement","Creep Spread","Active","Set a Creep Tumor token on the battlefield Within 6″ (Line of Sight is not required) of either a Friendly Entry Edge or an existing Friendly Creep Tumor token.")]},
+{id:"overseer",n:"Overseer",r:"Z",tags:["Zerg"],uq:true,gas:25,slots:{Support:1},res:["BM",1],ab:[A("Movement","Oversight Mode","Active","Set a Faction Indicator anywhere on the battlefield. While Enemy Units are Within 6″ of this Faction Indicator, they lose HIDDEN Status."),A("Assault","Pneumatized Carapace","Reaction","Use after a Friendly Unit rolls a D6 for Charge Distance. Roll an additional D6 and use the higher result to calculate the total Charge Distance.")]},
+{id:"overlord",n:"Overlord",r:"Z",tags:["Zerg"],uq:true,gas:35,slots:{Core:1,Elite:1,Hero:1},res:["BM",1],ab:[A("Movement","Ventral Sacs","Active","Set a Faction Indicator anywhere on the battlefield more than 10″ away from any Enemy model. At the End of the Round, the controlling player may Deploy one Ground Unit from Reserves in base-to-base contact with this Faction Indicator."),A("Assault","Excrete Creep","Active","Set a Creep Tumor token on the battlefield Within 6″ (Line of Sight is not required) of either a Friendly Entry Edge or an existing Friendly Creep Tumor token.")]},
+{id:"cocoon",n:"Cocoon",r:"Z",tags:["Zerg"],gas:30,slots:{},res:["BM",1],unk:true,ab:[]},
+/* Protoss */
+{id:"khalai",n:"Khalai",r:"P",type:"Faction",tags:["Protoss","Khalai"],uq:true,gas:0,slots:{Core:3,Elite:2,Hero:1},res:["PE",1],
+ ab:[A("Movement","Pylon Warp-In","Active","If there is no Friendly Pylon on the battlefield, set a Friendly Pylon Unit anywhere on the GROUND LEVEL of the battlefield more than 10″ away from any Enemy model. This Round, the Pylon is not eligible to use its Special Abilities (excluding Structure)."),A("Movement","Bound by the Khala","Active","At the end of the active Unit's Activation, select one other Friendly Unit eligible to Activate in the current Phase. Immediately Activate that Unit.")]},
+{id:"daelaam",n:"Daelaam",r:"P",type:"Faction",tags:["Protoss"],uq:true,gas:0,slots:{Core:3,Elite:1,Support:1,Air:1},res:["PE",1],
+ ab:[A("Any","Dae'uhl","Reaction","When a Friendly Unit receives Damage, reduce the Total Damage by 2 (to a minimum of 1)."),A("Movement","Mass Recall","Active","Once per Game. Set a Faction Indicator anywhere on the battlefield. All Friendly Protoss Units Within 6″ of this Faction Indicator are removed from the battlefield and returned to Reserves.")]},
+{id:"gateway",n:"Gateway",r:"P",tags:["Protoss"],gas:25,slots:{Core:1},res:["PE",1],ab:[A("Combat","Quick Strikes","Active","The active Unit's first Close Combat Weapon used gains PRECISION (2).")]},
+{id:"warpgate",n:"Warp Gate",r:"P",tags:["Protoss"],uq:true,gas:40,slots:{Core:2},res:["PE",1],ab:[A("Movement","Warp In","Active","The active GROUND Unit Deploys from any table edge that is not a player's Entry Edge. This deployment must end more than 10″ away from any Enemy model. The controlling player cannot use this ability if another Friendly Ground Unit has already Deployed this Round."),A("Combat","Quick Strikes","Active","The active Unit's first Close Combat Weapon used gains PRECISION (2).")]},
+{id:"chrono",n:"Gate Chronoboosted",r:"P",tags:["Protoss"],uq:true,gas:35,slots:{Core:1,Elite:1},res:["PE",1],ab:[A("Movement","Zealous Charge","Active","The active Unit gains BUFF Speed (2)."),A("Combat","Quick Strikes","Active","The active Unit's first Close Combat Weapon used gains PRECISION (2).")]},
+{id:"observer",n:"Observer",r:"P",tags:["Protoss"],uq:true,gas:25,slots:{Support:1},res:["PE",1],ab:[A("Movement","Surveillance","Active","Set a Faction Indicator anywhere on the battlefield. While Enemy Units are Within 6″ of this Faction Indicator, they lose HIDDEN Status."),A("Assault","Gravitic Boosters","Reaction","Use after a Friendly Unit rolls a D6 for Charge Distance. Add 1 to the Charge Distance for this Unit.")]},
+{id:"nexus",n:"Nexus",r:"P",tags:["Protoss"],uq:true,gas:35,slots:{Core:2},res:["PE",1],ab:[A("Any","Ancient Pride","Active","The active Unit's first Weapon used gains INSTANT."),A("Movement","Strategic Recall","Active","The active, Unengaged Ground Unit is returned to Reserves instead of performing an action.")]},
+{id:"ocnexus",n:"Overcharged Nexus",r:"P",tags:["Protoss"],uq:true,gas:35,slots:{Core:1,Elite:1},res:["PE",1],ab:[A("Any","Photon Overcharge","Reaction","Use when an Enemy Unit enters the battlefield from Reserves via a location other than its own Entry Edge. That Unit immediately suffers HITS 3 (1)."),A("Movement","Strategic Recall","Active","The active, Unengaged Ground Unit is returned to Reserves instead of performing an action.")]},
+{id:"powerfield",n:"Power Field",r:"P",tags:["Protoss"],uq:true,gas:40,slots:{Core:1,Elite:1,Hero:1},res:["PE",1],ab:[A("Any","Guardian Shell","Reaction","Use before a Friendly Ground Unit makes an Armour Roll. That Unit gains DODGE (2) for this roll.")]},
+{id:"forge",n:"Forge",r:"P",tags:["Protoss"],gas:30,slots:{Elite:1},res:["PE",1],ab:[A("Any","Ground Armor","Reaction","Use before a Friendly Ground Unit makes an Armour Roll. That Unit gains TOUGH (1) for this roll."),A("Assault","Ground Weapons","Active","The active Ground Unit's first Ranged Weapon used gains CRITICAL HIT (1).")]},
+{id:"warpprism",n:"Warp Prism",r:"P",tags:["Protoss"],uq:true,gas:35,slots:{Core:2},res:["PE",1],ab:[A("Movement","Phase","Active","The active Unit resolves the PLACE (3) effect."),A("Movement","Warp Conduit","Active","Set a Faction Indicator anywhere on the battlefield more than 10″ away from any Enemy model. At the End of the Round, you may Deploy one Ground unit from Reserves in base-to-base Contact with this Faction Indicator.")]},
+{id:"twilight",n:"Twilight Council",r:"P",tags:["Protoss"],uq:true,gas:45,slots:{Support:1,Elite:1},res:["PE",1],ab:[A("Any","Veil of Shadows","Reaction","Use after a Friendly Unit resolves a PLACE effect. That Unit immediately resolves the HEAL (2) effect."),A("Assault","Weapons of the Firstborn","Active","The active Ground Unit's first Ranged Weapon used gains BUFF Range (4).")]},
+{id:"robo",n:"Robotics Facility",r:"P",tags:["Protoss"],gas:35,slots:{},res:["PE",1],unk:true,ab:[]},
+{id:"voidseeker",n:"Void Seeker",r:"P",tags:["Protoss"],gas:40,slots:{},res:["PE",1],unk:true,ab:[]},
+];
+TAC.forEach(t=>{t.type=t.type||"Tactical"});
+
+const MISSIONS=[
+{id:"supplydrop",n:"Supply Drop",
+ std:{sup:6,esc:2,len:5,lead:12,params:"All Mission Markers are Deactivated. Start of Rounds 1–4: randomly determine one Deactivated Mission Marker (1–4) and flip it to its Activated side. Start of Round 5: Mission Marker 5 is automatically Activated.",score:"Score VPs equal to Enemy Supply destroyed this Round. From the start of the first Round: for each activated Controlled Mission Marker, gain VPs equal to the Game Round number in which that Marker was Activated, and remove it."},
+ sk:{sup:4,esc:1,len:4,lead:8,params:"All Mission Markers are Deactivated. Start of Rounds 2–4: randomly determine one Deactivated Mission Marker (1, 2, 5) and flip it to its Activated side.",score:"Score VPs equal to Enemy Supply destroyed this Round. From the start of the second Round: for each activated Controlled Mission Marker, gain VPs equal to the Game Round number in which that Marker was Activated, and remove it."}},
+{id:"hold",n:"Hold Position",
+ std:{sup:6,esc:2,len:5,lead:10,params:"All Mission Markers are Activated.",score:"Score VPs equal to Enemy Supply destroyed this Round. From the start of the second Round: gain 1 VP for each Controlled Mission Marker that is Neutral or associated with your colour; gain 2 VPs for each Controlled Mission Marker associated with the Opponent colour."},
+ sk:{sup:3,esc:1,len:5,lead:8,params:"All Mission Markers are Activated.",score:"Same as Standard: Enemy Supply destroyed = VPs. From Round 2: 1 VP per Controlled Neutral/own-colour Marker, 2 VPs per Controlled Opponent-colour Marker."}},
+{id:"frontlines",n:"Frontlines",
+ std:{sup:6,esc:2,len:5,lead:10,params:"All Mission Markers are Activated.",score:"Score VPs equal to Enemy Supply destroyed this Round. From the start of the second Round: gain 1 VP for each Controlled Mission Marker; gain an additional 2 VPs for a Marker if you gained Control of it from the Opponent this Round."},
+ sk:{sup:3,esc:1,len:5,lead:8,params:"All Mission Markers are Activated.",score:"Same as Standard: Enemy Supply destroyed = VPs. From Round 2: 1 VP per Controlled Marker, +2 VPs for a Marker taken from the Opponent this Round."}},
+{id:"gather",n:"Gather the Resources",
+ std:{sup:6,esc:2,len:5,lead:10,params:"All Mission Markers are Activated.",score:"Score VPs equal to Enemy Supply destroyed this Round. From the start of the second Round: gain 2 VPs for each Controlled Mission Marker associated with the Opponent colour.",extra:"Assault Phase: if an Unengaged Unit is Within 3″ of a Controlled Neutral Mission Marker or one associated with the Opponent, it may perform the Gather Action instead of a standard action. Gather Action: gain 1 VP."},
+ sk:{sup:3,esc:1,len:5,lead:8,params:"All Mission Markers are Activated.",score:"Same as Standard: Enemy Supply destroyed = VPs. From Round 2: 2 VPs per Controlled Opponent-colour Marker.",extra:"Assault Phase: an Unengaged Unit Within 3″ of a Controlled Neutral or Opponent-colour Marker may perform the Gather Action (gain 1 VP) instead of a standard action."}},
+{id:"divide",n:"Divide and Conquer",
+ std:{sup:8,esc:2,len:4,lead:10,params:"All Mission Markers are Activated. Split the Battlefield into four quarters as shown on the Deployment Card.",score:"Score VPs equal to Enemy Supply destroyed this Round. From the start of the first Round: calculate Total Current Supply in each quarter; gain 1 VP for each quarter where yours is higher than the Opponent's. Only Units Wholly Within a quarter count. A Unit controlling a Mission Marker is worth 1 extra Supply for this. Gain 2 VP for Controlling Mission Marker 5."},
+ sk:{sup:4,esc:1,len:4,lead:8,params:"All Mission Markers are Activated. Split the Battlefield into four quarters as shown on the Deployment Card.",score:"Same as Standard: Enemy Supply destroyed = VPs; from Round 1, 1 VP per quarter where your Wholly Within Supply is higher (+1 for a Unit controlling a Marker); 2 VP for Controlling Marker 5."}},
+];
+const DEPLOYS=[
+{id:"gauntlet",n:"Gauntlet",sc:"std",d:"54×36″. Red and Blue zones run along opposite long edges, 6″ deep. Markers 1–5, with 5 in the centre."},
+{id:"typhoon",n:"Typhoon",sc:"std",d:"54×36″. L-shaped corner zones: Red in one corner (24″ along the long edge, 18″ down the short edge, 6″ deep), Blue mirrored in the opposite corner. Markers 1–5."},
+{id:"acropolis",n:"Acropolis",sc:"std",d:"54×36″. Each player has two 18″×6″ corner zones on opposite diagonals (Red top-left and bottom-right, Blue top-right and bottom-left). Markers 1–5."},
+{id:"proving",n:"Proving Grounds",sc:"std",d:"54×36″. Red holds 6″ strips along both short edges; Blue holds a zone centred on one long edge. Markers 1–5."},
+{id:"breach",n:"Breach",sc:"std",d:"54×36″. Blue along one short edge, Red along the other, each 6″ deep. Markers 1–5."},
+{id:"agria",n:"Agria Valley",sc:"sk",d:"36×36″. L-shaped zones in opposite corners (12″ arms, 6″ deep). Markers 1, 2 and 5."},
+{id:"camp",n:"Abandoned Camp",sc:"sk",d:"36×36″. Red and Blue along opposite edges, 6″ deep. Markers 1, 2 and 5."},
+{id:"dirtside",n:"Dirt Side",sc:"sk",d:"36×36″. Stepped L-shaped zones in opposite corners (12″ arms). Markers 1, 2 and 5."},
+{id:"frontier",n:"Frontier",sc:"sk",d:"36×36″. Red has two zones centred on opposite edges; Blue has two zones centred on the other two edges (12″ wide, 6″ deep). Markers 1, 2 and 5."},
+{id:"charplains",n:"Char Plains",sc:"sk",d:"36×36″. Red and Blue each have an 18″×6″ zone at the same end of opposite edges. Markers 1, 2 and 5."},
+];
+const SCALES={sk:{n:"Skirmish",min:1000},std:{n:"Standard",min:2000},go:{n:"Grand Offensive",min:2500}};
+const SLOT_TYPES=["Core","Elite","Support","Air","Hero"];
+const RACES={T:"Terran",Z:"Zerg",P:"Protoss"};
+const PHASES=["Movement","Assault","Combat","Scoring & Cleanup"];
+const PHASE_REF=[
+ "<ul><li>Actions: Deploy (from Reserves via Entry Edge, needs Available Supply, can't end in enemy Zone of Influence), Move, Disengage, Hold.</li><li>Leading Model moves up to Speed; rest set In Coherency.</li><li>First player to Pass takes the First Player Marker for the Assault Phase.</li></ul>",
+ "<ul><li>Actions: Ranged Attack, Charge, Run, Hold.</li><li>Ranged: declare target → Attack Pool (RoA + mods + Surge die) → Hit rolls → Surge (matching Combat Tag skips Armour) → Armour → Evade (if eligible) → Damage.</li><li>Charge: Ground targets, no LoS needed. Roll D6; Leading Model moves up to Speed + roll to end within 1″ of all targets.</li><li>First to Pass takes the First Player Marker for Combat.</li></ul>",
+ "<ul><li>All Engaged Units must activate; players alternate.</li><li>Close Ranks (optional, up to 3″, must end closer) → declare Fighting and Supporting Ranks → roll attacks → remove casualties by Engaged priority.</li></ul>",
+ "<ul><li>Control: sum Supply within 3″ of each Marker; higher controls, ties are Contested.</li><li>Score VP per Mission Card, then End of Game check.</li><li>Resolve End of the Round effects, clean up tokens, refresh Exhausted cards.</li><li>Initiative: fewer VP takes the First Player Marker; tie is a Roll-Off.</li></ul>"];
+
+/* ===================== STATE ===================== */
+const KEY="sctmg-fieldkit-v1";
+let S0={build:null,rosters:[],game:null,setup:{rosterId:"current",mission:"",deploy:"",oppGas:"",oppMin:""}};
+let st=load();
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s)return Object.assign({},S0,s)}catch(e){}return JSON.parse(JSON.stringify(S0))}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+function newBuild(race){return {id:"r"+Date.now(),name:"New army",scale:"std",goMin:2500,race:race||"T",faction:"",tac:{},tacSlots:{},units:[],missions:[],deps:[]}}
+if(!st.build)st.build=newBuild("T");
+const U=id=>UNITS.find(u=>u.id===id), T=id=>TAC.find(t=>t.id===id), M=id=>MISSIONS.find(m=>m.id===id), D=id=>DEPLOYS.find(d=>d.id===id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let uidc=Date.now();
+
+/* ===================== CALCS ===================== */
+function limits(b){const min=b.scale==="go"?(+b.goMin||2001):SCALES[b.scale].min;return {min,gas:Math.floor(min/10)}}
+function unitCost(bu){const u=U(bu.id);let c=u.comps[bu.ci][1];(bu.ups||[]).forEach(n=>{const up=u.up.find(x=>x.n===n);if(up)c+=up.c[Math.min(bu.ci,up.c.length-1)]});return c}
+function tacSlots(b,id){const t=T(id);return t.unk?(b.tacSlots[id]||{}):t.slots}
+function totals(b){
+  let min=0,gas=0;const avail={},used={};SLOT_TYPES.forEach(s=>{avail[s]=0;used[s]=0});
+  if(b.faction){const f=T(b.faction);SLOT_TYPES.forEach(s=>avail[s]+=f.slots[s]||0)}
+  Object.entries(b.tac).forEach(([id,q])=>{const t=T(id);if(!t||!q)return;gas+=t.gas*q;const sl=tacSlots(b,id);SLOT_TYPES.forEach(s=>avail[s]+=(sl[s]||0)*q)});
+  b.units.forEach(bu=>{const u=U(bu.id);min+=unitCost(bu);const sl=u.unk?(bu.slot||u.slot):u.slot;used[sl]=(used[sl]||0)+u.comps[bu.ci][2]});
+  return {min,gas,avail,used}
+}
+function eligible(b,tags){if(!b.faction)return true;const ft=T(b.faction).tags;return tags.every(t=>ft.includes(t))}
+function issues(b){
+  const out=[],L=limits(b),t=totals(b);
+  if(!b.faction)out.push("Pick a Faction Card.");
+  if(t.min>L.min)out.push(`Minerals over by ${t.min-L.min}.`);
+  if(t.gas>L.gas)out.push(`Vespene Gas over by ${t.gas-L.gas}.`);
+  SLOT_TYPES.forEach(s=>{if(t.used[s]>t.avail[s])out.push(`${s} slots: using ${t.used[s]} of ${t.avail[s]}. Add a Tactical Card that gives ${s} slots.`)});
+  b.units.forEach(bu=>{const u=U(bu.id);if(!eligible(b,u.tags))out.push(`${u.n} needs the ${u.tags.filter(x=>!T(b.faction).tags.includes(x)).join(", ")} tag on your Faction Card.`)});
+  Object.keys(b.tac).forEach(id=>{const tc=T(id);if(b.tac[id]&&!eligible(b,tc.tags))out.push(`${tc.n} isn't allowed with this Faction Card.`)});
+  const cnt={};b.units.forEach(bu=>{cnt[bu.id]=(cnt[bu.id]||0)+1});Object.entries(cnt).forEach(([id,n])=>{if(U(id).uq&&n>1)out.push(`${U(id).n} is Unique: only one allowed.`)});
+  if(b.faction&&b.race==="Z"){const creeps=Object.keys(b.tac).filter(id=>b.tac[id]&&T(id).type==="Creep").length;if(creeps!==1)out.push("Zerg armies must take exactly one Creep Card.")}
+  b.units.forEach(bu=>{const u=U(bu.id);const reps={};(bu.ups||[]).forEach(n=>{const up=u.up.find(x=>x.n===n);if(up&&up.rep&&!up.spec){if(reps[up.rep])out.push(`${u.n}: ${reps[up.rep]} and ${n} both replace ${up.rep}; pick one.`);reps[up.rep]=n}})});
+  if(b.units.some(bu=>U(bu.id).unk))out.push("Some units have no card in your PDFs; check their Army Slot and tags against the real card.");
+  return out;
+}
+function curSupply(gu){const u=U(gu.id);if(gu.models<=0)return 0;if(!u.prof)return gu.startSup;const p=u.prof.find(p=>gu.models>=p[0]&&gu.models<=p[1]);return p?p[2]:gu.startSup}
+function poolSupply(gu){ if(gu.ups&&gu.ups.includes("Advanced Medic Facilities"))return 0; return curSupply(gu)}
+
+/* ===================== UI HELPERS ===================== */
+const $=s=>document.querySelector(s);
+function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove("on"),1600)}
+function setRace(r){document.body.dataset.race=r}
+function kindTag(k){return k?`<span class="kind">${esc(k)}</span>`:""}
+function openModal(title,html){$("#mTitle").textContent=title;$("#mBody").innerHTML=html;const d=$("#modal");if(!d.open)d.showModal();$("#mBody").scrollTop=0}
+$("#mClose").onclick=()=>$("#modal").close();
+$("#modal").addEventListener("click",e=>{if(e.target.id==="modal")$("#modal").close()});
+function weaponTable(ws){if(!ws.length)return"";return `<div class="wt"><table><thead><tr><th>Weapon</th><th>Rng</th><th>Target</th><th>RoA</th><th>Hit</th><th>Surge</th><th>S Dice</th><th>Dmg</th><th>Keywords</th></tr></thead><tbody>${ws.map(w=>`<tr><td><b>${esc(w.n)}</b>${w.rep?`<br><span class="note">replaces ${esc(w.rep)}</span>`:""}</td><td>${w.rng}</td><td>${w.t}</td><td>${w.roa}</td><td>${w.hit}</td><td>${esc(w.su)}</td><td>${w.sd}</td><td>${w.dmg}</td><td class="kw">${esc(w.kw)}</td></tr>`).join("")}</tbody></table></div>`}
+function abilityBlock(abs){const order=["Any","Movement","Assault","Combat"];return order.map(ph=>{const l=abs.filter(a=>a.ph===ph);if(!l.length)return"";return `<div class="phh">${ph==="Any"?"Any phase":ph+" phase"}</div>`+l.map(a=>`<div class="ab"><b>${esc(a.n)}</b>${kindTag(a.k)} ${esc(a.tx)}</div>`).join("")}).join("")}
+function unitCardHTML(u,chosenUps){
+  if(u.unk)return `<p class="note">This unit is in the September 2026 cost table, but its card isn't in the PDFs you uploaded, so stats and abilities aren't available here. Default slot guess: <b>${u.slot}</b>.</p><div class="phh">Compositions</div>${u.comps.map(c=>`<div class="ab">${c[0]} model${c[0]>1?"s":""}: <b>${c[1]}</b> minerals, Supply ${c[2]}</div>`).join("")}<div class="phh">Upgrades</div>${u.up.map(x=>`<div class="ab"><b>${esc(x.n)}</b> ${x.rep?"(replaces "+esc(x.rep)+") ":""}— ${x.c.join(" / ")}</div>`).join("")||"<div class='note'>None</div>"}`;
+  const s=u.st,labels=["Shield","Speed","Armour","Evade","HP","Size"];
+  let h=`<div class="sgrid">${s.map((v,i)=>`<div><b>${v}</b><small>${labels[i]}</small></div>`).join("")}</div>`;
+  h+=`<div class="note">${esc(u.tags.join(" · "))} &nbsp;|&nbsp; ${esc(u.ct)} &nbsp;|&nbsp; ${u.slot==="—"?"Summoned (no cost, no slot)":u.slot+" slot"} &nbsp;|&nbsp; ${esc(u.role)} &nbsp;|&nbsp; ${u.base}${u.uq?" &nbsp;|&nbsp; Unique":""}</div>`;
+  h+=`<div class="note" style="margin-top:4px">Supply by models: ${u.prof.map(p=>`${p[0]===p[1]?p[0]:p[0]+"–"+p[1]}→${p[2]}`).join(", ")}</div>`;
+  if(!u.sum)h+=`<div class="note">Buy at: ${u.comps.map(c=>`${c[0]} models ${c[1]}m`).join(" · ")}</div>`;
+  h+=abilityBlock(u.ab||[]);
+  let ws=(u.wp||[]).slice();
+  if(chosenUps){chosenUps.forEach(n=>{const up=u.up.find(x=>x.n===n);if(up&&up.w){if(up.rep&&!up.spec){ws=ws.filter(w=>w.n!==up.rep)}ws.push(Object.assign({},up.w,{rep:up.spec&&up.rep?up.rep+" (one model)":(up.spec?null:null)}))}})}
+  const byPh=["Assault","Combat"].map(ph=>{const l=ws.filter(w=>w.ph===ph);return l.length?`<div class="phh">${ph} weapons</div>`+weaponTable(l):""}).join("");
+  h+=byPh;
+  if(chosenUps&&chosenUps.length){const ab=chosenUps.map(n=>u.up.find(x=>x.n===n)).filter(x=>x&&x.tx);if(ab.length)h+=`<div class="phh">Taken upgrades</div>`+ab.map(a=>`<div class="ab"><b>${esc(a.n)}</b>${kindTag(a.k)} <span class="note">(${a.ph})</span> ${esc(a.tx)}</div>`).join("")}
+  if(u.up.length){h+=`<div class="phh">All upgrades</div>`+u.up.map(x=>`<div class="ab"><b>${esc(x.n)}</b> <span class="cost">${x.c.join(" / ")}</span>${x.spec?' <span class="tag">Specialist</span>':""}${kindTag(x.k)} <span class="note">(${x.ph})</span> ${x.tx?esc(x.tx):""}${x.w?weaponTable([Object.assign({},x.w,{rep:x.rep})]):""}</div>`).join("")}
+  return h;
+}
+function tacCardHTML(t){
+  let h=`<div class="note">${t.type} card · ${esc(t.tags.join(" · "))}${t.uq?" · Unique":""} · ${t.gas} Vespene Gas${t.res?` · provides ${t.res[1]} ${t.res[0]}`:""}</div>`;
+  const sl=Object.entries(t.slots).filter(e=>e[1]).map(e=>`${e[1]}× ${e[0]}`).join(", ");
+  h+=`<div class="ab"><b>Army slots:</b> ${sl||(t.unk?"not in your PDFs":"none")}</div>`;
+  if(t.unk)h+=`<p class="note">This card is in the cost table but its text isn't in your uploads. Set the slots it gives in the builder from your physical card.</p>`;
+  return h+abilityBlock(t.ab);
+}
+function showUnit(id,ups){const u=U(id);openModal(u.n,unitCardHTML(u,ups))}
+function showTac(id){const t=T(id);openModal(t.n,tacCardHTML(t))}
+function missionHTML(m,scale){const v=m[scale==="sk"?"sk":"std"];return `<div class="note">${scale==="sk"?"Skirmish":"Standard"} · starting Supply ${v.sup}, +${v.esc} per Round · ${v.len} Rounds · ends early on a ${v.lead}+ VP lead</div><div class="phh">Mission parameters</div><div class="ab">${esc(v.params)}</div><div class="phh">Scoring</div><div class="ab">${esc(v.score)}</div>${v.extra?`<div class="phh">Additional</div><div class="ab">${esc(v.extra)}</div>`:""}`}
+
+/* ===================== BUILD VIEW ===================== */
+function renderBuild(){
+  const b=st.build;setRace(b.race);const L=limits(b),t=totals(b);
+  const facs=TAC.filter(x=>x.r===b.race&&x.type==="Faction");
+  const tacs=TAC.filter(x=>x.r===b.race&&x.type!=="Faction");
+  const units=UNITS.filter(u=>u.r===b.race&&!u.sum);
+  const pct=(a,m)=>Math.min(100,m?a/m*100:0);
+  let h=`<div class="panel"><div class="row"><div class="grow"><label class="f" for="bName">Roster name</label><input type="text" id="bName" value="${esc(b.name)}"></div></div>
+  <div style="margin-top:10px"><label class="f">Race</label><div class="seg" role="group">${Object.entries(RACES).map(([k,v])=>`<button data-race="${k}" aria-pressed="${b.race===k}">${v}</button>`).join("")}</div></div>
+  <div class="row" style="margin-top:10px"><div class="grow"><label class="f" for="bScale">Engagement scale</label><select id="bScale">${Object.entries(SCALES).map(([k,v])=>`<option value="${k}" ${b.scale===k?"selected":""}>${v.n}${k!=="go"?` (${v.min} / ${v.min/10})`:""}</option>`).join("")}</select></div>
+  ${b.scale==="go"?`<div style="width:120px"><label class="f" for="bGo">Minerals</label><input type="number" id="bGo" min="2001" step="50" value="${b.goMin}"></div>`:""}</div>
+  <div style="margin-top:10px"><label class="f" for="bFac">Faction Card</label><select id="bFac"><option value="">Choose…</option>${facs.map(f=>`<option value="${f.id}" ${b.faction===f.id?"selected":""}>${f.n} — ${Object.entries(f.slots).map(e=>e[1]+" "+e[0]).join(", ")}</option>`).join("")}</select>
+  ${b.faction?`<button class="link" style="margin-top:6px" data-tac="${b.faction}">Read ${esc(T(b.faction).n)} card</button>`:""}</div></div>`;
+  h+=`<div class="resbar"><div class="meters">
+   <div class="meter ${t.min>L.min?"over":""}"><div class="n">${t.min} <span>/ ${L.min}</span></div><div class="k">Minerals · ${L.min-t.min>=0?(L.min-t.min)+" left":"over"}</div><div class="bar"><i style="width:${pct(t.min,L.min)}%"></i></div></div>
+   <div class="meter ${t.gas>L.gas?"over":""}"><div class="n">${t.gas} <span>/ ${L.gas}</span></div><div class="k">Vespene Gas · ${L.gas-t.gas>=0?(L.gas-t.gas)+" left":"over"}</div><div class="bar"><i style="width:${pct(t.gas,L.gas)}%"></i></div></div></div>
+   <div class="slots">${SLOT_TYPES.map(s=>`<span class="slot ${t.used[s]>t.avail[s]?"over":(t.avail[s]&&t.used[s]===t.avail[s]?"full":"")}">${s} <b>${t.used[s]}/${t.avail[s]}</b></span>`).join("")}</div></div>`;
+  // tactical
+  h+=`<div class="panel"><h2>Tactical cards <small>${t.gas} gas spent</small></h2>`;
+  tacs.forEach(tc=>{const q=b.tac[tc.id]||0;const el=eligible(b,tc.tags);const sl=Object.entries(tc.slots).filter(e=>e[1]).map(e=>`+${e[1]} ${e[0]}`).join(" ");
+    h+=`<div class="item"><div class="hd"><div class="grow"><button class="link" data-tac="${tc.id}">${esc(tc.n)}</button><div class="meta">${tc.type==="Creep"?"Creep card":sl||(tc.unk?"slots: set below":"")}${tc.uq?' <span class="tag">Unique</span>':""}${tc.unk?' <span class="tag warn">No card text</span>':""}${!el?' <span class="tag warn">Not allowed with this faction</span>':""}</div></div>
+    <span class="cost">${tc.gas}</span><span class="step"><button data-tq="${tc.id}" data-d="-1" aria-label="Remove ${esc(tc.n)}">−</button><output>${q}</output><button data-tq="${tc.id}" data-d="1" aria-label="Add ${esc(tc.n)}" ${(tc.uq&&q>=1)?"disabled":""}>+</button></span></div>
+    ${tc.unk&&q?`<div class="row" style="margin-top:6px">${SLOT_TYPES.map(s=>`<label style="font-size:.8rem;width:58px">${s}<input type="number" min="0" max="4" data-ts="${tc.id}" data-s="${s}" value="${(b.tacSlots[tc.id]||{})[s]||0}"></label>`).join("")}</div>`:""}</div>`});
+  h+=`</div>`;
+  // units
+  h+=`<div class="panel"><h2>Units <small>${b.units.length} unit${b.units.length===1?"":"s"}</small></h2>`;
+  if(!b.units.length)h+=`<p class="note">Add units from the list below. Each unit fills slots equal to its starting Supply.</p>`;
+  b.units.forEach((bu,i)=>{const u=U(bu.id);const ci=bu.ci;
+    h+=`<div class="item"><div class="hd"><div class="grow"><button class="link" data-unit="${u.id}" data-bi="${i}">${esc(u.n)}</button><div class="meta">${u.unk?`<select data-uslot="${i}" style="min-height:32px;padding:3px 6px;width:auto">${SLOT_TYPES.map(s=>`<option ${ (bu.slot||u.slot)===s?"selected":""}>${s}</option>`).join("")}</select> slot`:u.slot+" slot"} · Supply ${u.comps[ci][2]}${u.unk?' <span class="tag warn">No card</span>':""}</div></div><span class="cost">${unitCost(bu)}</span><button class="btn sm danger" data-urm="${i}" aria-label="Remove ${esc(u.n)}">✕</button></div>
+    ${u.comps.length>1?`<div class="row" style="margin-top:6px"><select data-uci="${i}">${u.comps.map((c,j)=>`<option value="${j}" ${j===ci?"selected":""}>${c[0]} models — ${c[1]} minerals, Supply ${c[2]}</option>`).join("")}</select></div>`:`<div class="meta" style="margin-top:4px">${u.comps[0][0]} model${u.comps[0][0]>1?"s":""} — ${u.comps[0][1]} minerals</div>`}
+    ${u.up.length?`<div class="ups">${u.up.map(x=>`<label><input type="checkbox" data-uup="${i}" value="${esc(x.n)}" ${(bu.ups||[]).includes(x.n)?"checked":""}><span class="grow">${esc(x.n)}${x.spec?' <span class="tag">Specialist</span>':""}${x.rep?` <span class="note">replaces ${esc(x.rep)}</span>`:""}</span><span class="cost">+${x.c[Math.min(ci,x.c.length-1)]}</span></label>`).join("")}</div>`:""}</div>`});
+  h+=`<details style="margin-top:8px"><summary>Add a unit</summary><div class="picker" style="margin-top:6px">${units.map(u=>{const el=eligible(b,u.tags);return `<button class="pick" data-uadd="${u.id}" ${!el?"disabled":""}><span><b>${esc(u.n)}</b><br><span class="note">${u.unk?"slot unconfirmed":u.slot}${u.uq?" · Unique":""}${!el?" · needs "+u.tags.slice(1).join(", "):""}</span></span><span class="cost">${u.comps.map(c=>c[1]).join(" / ")}</span></button>`}).join("")}</div></details></div>`;
+  // missions
+  const deps=DEPLOYS.filter(d=>(b.scale==="sk")===(d.sc==="sk"));
+  h+=`<div class="panel"><h2>Draft cards <small>2 Missions, 2 Deployments</small></h2>
+   <div class="ups">${MISSIONS.map(m=>`<label><input type="checkbox" data-mis="${m.id}" ${b.missions.includes(m.id)?"checked":""}><span class="grow">${m.n}</span></label>`).join("")}</div>
+   <div class="grp">Deployments (${b.scale==="sk"?"Skirmish 36×36″":"Standard 54×36″"})</div>
+   <div class="ups">${deps.map(d=>`<label><input type="checkbox" data-dep="${d.id}" ${b.deps.includes(d.id)?"checked":""}><span class="grow">${d.n}</span></label>`).join("")}</div></div>`;
+  // issues
+  const is=issues(b);
+  h+=`<div class="panel"><h2>Roster check</h2><ul class="issues">${is.length?is.map(x=>`<li>${esc(x)}</li>`).join(""):'<li class="ok">Roster is legal.</li>'}</ul></div>`;
+  h+=`<div class="panel"><div class="row"><button class="btn pri" id="bSave">Save roster</button><button class="btn" id="bCopy">Copy as text</button><button class="btn" id="bNew">New roster</button></div>
+  ${st.rosters.length?`<div class="grp">Saved rosters</div>`+st.rosters.map(r=>`<div class="item"><div class="hd"><div class="grow"><b>${esc(r.name)}</b><div class="meta">${RACES[r.race]} · ${SCALES[r.scale].n} · ${totals(r).min} minerals</div></div><button class="btn sm" data-rload="${r.id}">Load</button><button class="btn sm danger" data-rdel="${r.id}" aria-label="Delete ${esc(r.name)}">✕</button></div></div>`).join(""):""}</div>`;
+  $("#v-build").innerHTML=h;
+}
+function rosterText(b){const t=totals(b),L=limits(b);let s=`${b.name}\n${RACES[b.race]} — ${b.faction?T(b.faction).n:"(no faction)"} — ${SCALES[b.scale].n}\nMinerals ${t.min}/${L.min} · Vespene ${t.gas}/${L.gas} · Supply ${b.units.reduce((a,bu)=>a+U(bu.id).comps[bu.ci][2],0)}\n\nUNITS\n`;
+  b.units.forEach(bu=>{const u=U(bu.id);s+=`- ${u.n} ×${u.comps[bu.ci][0]} (Supply ${u.comps[bu.ci][2]}, ${unitCost(bu)} min)${bu.ups&&bu.ups.length?" — "+bu.ups.join(", "):""}\n`});
+  s+=`\nTACTICAL CARDS\n`;Object.entries(b.tac).forEach(([id,q])=>{if(q)s+=`- ${T(id).n}${q>1?" ×"+q:""} (${T(id).gas*q} gas)\n`});
+  s+=`\nMISSIONS: ${b.missions.map(id=>M(id).n).join(", ")||"—"}\nDEPLOYMENTS: ${b.deps.map(id=>D(id).n).join(", ")||"—"}\n`;return s}
+function onBuildClick(e){
+  const b=st.build,el=e.target.closest("button,input,select");if(!el)return;const ds=el.dataset;
+  if(ds.race&&el.tagName==="BUTTON"){if(b.race!==ds.race){if(b.units.length||Object.keys(b.tac).length){if(!confirm("Switching race clears this roster's units and cards. Continue?"))return}Object.assign(b,{race:ds.race,faction:"",tac:{},tacSlots:{},units:[]})}}
+  else if(ds.tac){showTac(ds.tac);return}
+  else if(ds.unit){const bu=b.units[+ds.bi];showUnit(ds.unit,bu?bu.ups:null);return}
+  else if(ds.tq){const id=ds.tq,d=+ds.d;const q=Math.max(0,(b.tac[id]||0)+d);if(T(id).uq&&q>1)return;if(q)b.tac[id]=q;else delete b.tac[id]}
+  else if(ds.urm!==undefined){b.units.splice(+ds.urm,1)}
+  else if(ds.uadd){const u=U(ds.uadd);b.units.push({uid:++uidc,id:u.id,ci:0,ups:[],slot:u.slot});toast(u.n+" added")}
+  else if(el.id==="bSave"){const copy=JSON.parse(JSON.stringify(b));const i=st.rosters.findIndex(r=>r.id===b.id);if(i>=0)st.rosters[i]=copy;else st.rosters.push(copy);toast("Roster saved")}
+  else if(el.id==="bCopy"){const txt=rosterText(b);(navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>toast("Roster copied")).catch(()=>openModal("Roster text",`<pre style="white-space:pre-wrap;font:14px/1.4 var(--body)">${esc(txt)}</pre>`));return}
+  else if(el.id==="bNew"){st.build=newBuild(b.race);toast("New roster started")}
+  else if(ds.rload){st.build=JSON.parse(JSON.stringify(st.rosters.find(r=>r.id===ds.rload)));toast("Roster loaded")}
+  else if(ds.rdel){if(!confirm("Delete this saved roster?"))return;st.rosters=st.rosters.filter(r=>r.id!==ds.rdel)}
+  else return;
+  save();renderBuild();
+}
+function onBuildChange(e){
+  const b=st.build,el=e.target,ds=el.dataset;
+  if(el.id==="bName"){b.name=el.value;save();return}
+  if(el.id==="bScale"){b.scale=el.value;b.deps=[]}
+  else if(el.id==="bGo"){b.goMin=Math.max(2001,+el.value||2001)}
+  else if(el.id==="bFac"){b.faction=el.value}
+  else if(ds.uci!==undefined){const bu=b.units[+ds.uci];bu.ci=+el.value}
+  else if(ds.uslot!==undefined){b.units[+ds.uslot].slot=el.value}
+  else if(ds.uup!==undefined){const bu=b.units[+ds.uup];bu.ups=bu.ups||[];if(el.checked){if(!bu.ups.includes(el.value))bu.ups.push(el.value)}else bu.ups=bu.ups.filter(x=>x!==el.value)}
+  else if(ds.ts){b.tacSlots[ds.ts]=b.tacSlots[ds.ts]||{};b.tacSlots[ds.ts][ds.s]=Math.max(0,+el.value||0)}
+  else if(ds.mis){if(el.checked){if(b.missions.length>=2){el.checked=false;toast("Pick 2 Missions");return}b.missions.push(ds.mis)}else b.missions=b.missions.filter(x=>x!==ds.mis)}
+  else if(ds.dep){if(el.checked){if(b.deps.length>=2){el.checked=false;toast("Pick 2 Deployments");return}b.deps.push(ds.dep)}else b.deps=b.deps.filter(x=>x!==ds.dep)}
+  else return;
+  save();renderBuild();
+}
+$("#v-build").addEventListener("click",onBuildClick);
+$("#v-build").addEventListener("change",onBuildChange);
+
+/* ===================== SETUP VIEW ===================== */
+function setupRoster(){return st.setup.rosterId==="current"?st.build:(st.rosters.find(r=>r.id===st.setup.rosterId)||st.build)}
+function renderSetup(){
+  const su=st.setup,r=setupRoster();setRace(r.race);const t=totals(r);const scale=r.scale==="sk"?"sk":"std";
+  const deps=DEPLOYS.filter(d=>(scale==="sk")===(d.sc==="sk"));
+  const mis=su.mission?M(su.mission):null,dep=su.deploy?D(su.deploy):null;
+  let pr="";if(su.oppGas!==""&&su.oppMin!==""){const og=+su.oppGas,om=+su.oppMin;pr=t.gas<og?"You take priority (less Vespene Gas).":t.gas>og?"Opponent takes priority (less Vespene Gas).":t.min<om?"Gas tied: you take priority (fewer Minerals).":t.min>om?"Gas tied: opponent takes priority (fewer Minerals).":"Both tied: Roll-Off for priority."}
+  let h=`<div class="panel"><h2>Your army</h2><label class="f" for="sRos">Roster</label><select id="sRos"><option value="current" ${su.rosterId==="current"?"selected":""}>Current build: ${esc(st.build.name)}</option>${st.rosters.map(x=>`<option value="${x.id}" ${su.rosterId===x.id?"selected":""}>${esc(x.name)}</option>`).join("")}</select>
+  <p class="note">${RACES[r.race]} · ${SCALES[r.scale].n} · ${t.min} minerals · ${t.gas} gas · ${issues(r).length?"roster has open issues on the Build tab":"legal"}</p></div>`;
+  h+=`<div class="panel"><h2>Priority</h2><p class="note" style="margin-top:0">Less Vespene spent takes priority, then fewer Minerals, then Roll-Off. The other player picks the table side the Deployment is read from. Priority picks colour (Red/Blue), then Mission Draft or Deployment Draft control.</p>
+  <div class="row"><div class="grow"><label class="f" for="sOG">Opponent gas</label><input type="number" id="sOG" inputmode="numeric" value="${esc(su.oppGas)}"></div><div class="grow"><label class="f" for="sOM">Opponent minerals</label><input type="number" id="sOM" inputmode="numeric" value="${esc(su.oppMin)}"></div></div>
+  ${pr?`<div class="banner good">${pr}</div>`:""}
+  <details style="margin-top:8px"><summary>Draft steps</summary><div class="ref"><ul><li>Lay out all 4 Mission Cards and all 4 Deployment Cards face-up.</li><li>Mission Draft: the player without control removes 2; the player with control picks 1 of the 2 left.</li><li>Deployment Draft: same, with the other player in control.</li><li>If the draft isn't done 15 minutes into the round, a judge finishes it at random.</li></ul></div></details></div>`;
+  h+=`<div class="panel"><h2>Mission and deployment</h2><label class="f" for="sMis">Mission</label><select id="sMis"><option value="">Choose…</option>${MISSIONS.map(m=>`<option value="${m.id}" ${su.mission===m.id?"selected":""}>${m.n}${r.missions.includes(m.id)?" (yours)":""}</option>`).join("")}</select>
+  ${mis?`<div style="margin-top:8px">${missionHTML(mis,scale)}</div>`:""}
+  <label class="f" for="sDep" style="margin-top:10px">Deployment</label><select id="sDep"><option value="">Choose…</option>${deps.map(d=>`<option value="${d.id}" ${su.deploy===d.id?"selected":""}>${d.n}${r.deps.includes(d.id)?" (yours)":""}</option>`).join("")}</select>
+  ${dep?`<p class="ab">${esc(dep.d)}</p><p class="note">Check the printed card for exact Marker positions.</p>`:""}</div>`;
+  h+=`<div class="panel"><button class="btn pri" id="sStart" ${(!mis||!r.units.length)?"disabled":""}>Start game</button>${st.game?` <button class="btn" data-go-play>Resume current game</button>`:""}${!mis?`<p class="note">Choose a Mission to start.</p>`:""}</div>`;
+  $("#v-setup").innerHTML=h;
+}
+$("#v-setup").addEventListener("change",e=>{const el=e.target,su=st.setup;
+  if(el.id==="sRos"){su.rosterId=el.value;su.deploy=""}else if(el.id==="sMis")su.mission=el.value;else if(el.id==="sDep")su.deploy=el.value;else if(el.id==="sOG")su.oppGas=el.value;else if(el.id==="sOM")su.oppMin=el.value;else return;save();renderSetup()});
+$("#v-setup").addEventListener("click",e=>{const el=e.target.closest("button");if(!el)return;
+  if(el.id==="sStart"){if(st.game&&!confirm("Replace the game in progress?"))return;startGame();show("play")}
+  else if("goPlay" in el.dataset)show("play")});
+function startGame(){
+  const r=JSON.parse(JSON.stringify(setupRoster()));const scale=r.scale==="sk"?"sk":"std";
+  const cards=[];if(r.faction)cards.push({id:r.faction,ready:true});Object.entries(r.tac).forEach(([id,q])=>{for(let i=0;i<q;i++)cards.push({id,ready:true})});
+  st.game={roster:r,mission:st.setup.mission,deploy:st.setup.deploy,scale,round:1,phase:0,vp:[0,0],over:false,
+    units:r.units.map(bu=>{const u=U(bu.id);const c=u.comps[bu.ci];return {uid:++uidc,id:u.id,ups:bu.ups||[],models:c[0],max:c[0],startSup:c[2],status:"res",act:false,snap:0}}),cards,log:[]};
+  save();
+}
+
+/* ===================== PLAY VIEW ===================== */
+function pool(g){const v=M(g.mission)[g.scale];return g.round>=v.len?Infinity:v.sup+v.esc*(g.round-1)}
+function renderPlay(){
+  const g=st.game;const el=$("#v-play");
+  if(!g){el.innerHTML=`<div class="panel"><h2>No game running</h2><p>Pick a roster and Mission on the Setup tab, then start a game.</p><button class="btn pri" data-go="setup">Go to Setup</button></div>`;return}
+  setRace(g.roster.race);const mv=M(g.mission)[g.scale];const P=pool(g);
+  const field=g.units.filter(u=>u.status==="field"),res=g.units.filter(u=>u.status==="res"),dead=g.units.filter(u=>u.status==="dead");
+  const onField=field.reduce((a,u)=>a+poolSupply(u),0);const avail=P===Infinity?Infinity:P-onField;
+  const lost=g.units.reduce((a,u)=>a+Math.max(0,(u.snap||0)-curSupply(u)),0);
+  const lead=g.vp[0]-g.vp[1];
+  const rsType=g.cards.find(c=>T(c.id).res)?T(g.cards.find(c=>T(c.id).res).id).res[0]:"";
+  const ready=g.cards.filter(c=>c.ready&&T(c.id).res).reduce((a,c)=>a+T(c.id).res[1],0);
+  let h=`<div class="bigrow"><div class="stat"><div class="n">${g.round}<span style="font-size:1rem;color:var(--muted)">/${mv.len}</span></div><div class="k">Round</div></div>
+  <div class="stat hl"><div class="n">${avail===Infinity?"∞":avail}</div><div class="k">Available Supply</div></div>
+  <div class="stat"><div class="n">${P===Infinity?"∞":P}</div><div class="k">Supply Pool</div></div></div>`;
+  h+=`<div class="panel"><h2>${esc(M(g.mission).n)} <small>${g.deploy?esc(D(g.deploy).n):""}</small></h2>
+  <div class="phases">${PHASES.map((p,i)=>`<div class="${i===g.phase?"on":""}">${p.replace(" & Cleanup","")}</div>`).join("")}</div>
+  <div class="ref">${PHASE_REF[g.phase]}</div>
+  <div class="row" style="margin-top:8px"><button class="btn" id="pPrev" ${g.round===1&&g.phase===0?"disabled":""}>Back</button><button class="btn pri grow" id="pNext" ${g.over?"disabled":""}>${g.phase===3?(g.round>=mv.len?"Finish game":"End Round "+g.round):"Next: "+PHASES[g.phase+1]}</button><button class="link" id="pMis" style="margin-left:6px">Mission card</button></div>
+  ${g.round>=mv.len?`<div class="banner">Final Round: Supply Pool is unlimited. All remaining Reserves may deploy.</div>`:""}</div>`;
+  h+=`<div class="panel"><h2>Victory Points <small>game ends on a ${mv.lead}+ lead</small></h2><div class="vp">
+   <div class="box"><div class="note">You</div><div class="n">${g.vp[0]}</div><div class="row"><button class="btn sm" data-vp="0" data-d="-1" aria-label="Your VP minus 1">−1</button><button class="btn sm" data-vp="0" data-d="1" aria-label="Your VP plus 1">+1</button></div></div>
+   <div class="box"><div class="note">Opponent</div><div class="n">${g.vp[1]}</div><div class="row"><button class="btn sm" data-vp="1" data-d="-1" aria-label="Opponent VP minus 1">−1</button><button class="btn sm" data-vp="1" data-d="1" aria-label="Opponent VP plus 1">+1</button></div></div></div>
+   ${Math.abs(lead)>=mv.lead?`<div class="banner">${lead>0?"You lead":"Opponent leads"} by ${Math.abs(lead)}: that meets the special winning condition. The game ends.</div>`:""}
+   ${lost?`<div class="banner">You've lost ${lost} Supply this Round, so your opponent scores ${lost} VP for destroyed Supply.</div>`:""}
+   ${g.over?`<div class="banner good">Game over. ${lead>0?"You win":lead<0?"Opponent wins":"Draw"} ${g.vp[0]}–${g.vp[1]} (VP difference ${Math.abs(lead)}).</div>`:""}</div>`;
+  h+=`<div class="panel"><h2>Cards <small>${rsType?ready+" "+rsType+" ready":""}</small></h2>${g.cards.map((c,i)=>{const t=T(c.id);return `<div class="cardchip ${c.ready?"":"ex"}"><button class="link grow" data-tac="${t.id}">${esc(t.n)}</button><span class="rs">${t.res?t.res[1]+" "+t.res[0]:"Passive"}</span>${t.res?`<button class="btn sm" data-card="${i}">${c.ready?"Exhaust":"Ready"}</button>`:""}</div>`}).join("")}<p class="note">Exhausted cards refresh automatically when you end the Round.</p></div>`;
+  const urow=u=>{const ud=U(u.id);const cs=curSupply(u);return `<div class="urow"><div class="hd"><button class="link grow ${u.act?"done":""}" data-show="${u.uid}">${esc(ud.n)}</button><span class="sup" title="Current Supply">S ${cs}${poolSupply(u)!==cs?" (0 pool)":""}</span></div>
+   <div class="ctrls"><span class="step"><button data-mod="${u.uid}" data-d="-1" aria-label="Remove a model">−</button><output>${u.models}/${u.max}</output><button data-mod="${u.uid}" data-d="1" aria-label="Add a model back">+</button></span>
+   ${u.status==="res"?`<button class="btn sm pri" data-dep="${u.uid}" ${(avail!==Infinity&&poolSupply(u)>avail)?"disabled":""}>Deploy</button>`:""}
+   ${u.status==="field"?`<button class="btn sm" data-act="${u.uid}">${u.act?"Activated ✓":"Mark activated"}</button><button class="btn sm" data-toRes="${u.uid}">To Reserves</button>`:""}
+   ${u.status==="dead"?`<span class="note">Destroyed</span>`:""}</div></div>`};
+  h+=`<div class="panel"><h2>Units <small>${onField} Supply on the battlefield</small></h2>
+   <div class="grp">On the battlefield</div>${field.map(urow).join("")||'<p class="note">Nothing deployed yet. Deploy from Reserves in the Movement Phase.</p>'}
+   <div class="grp">Reserves</div>${res.map(urow).join("")||'<p class="note">Reserves are empty.</p>'}
+   ${dead.length?`<div class="grp">Destroyed</div>`+dead.map(urow).join(""):""}
+   <details style="margin-top:8px"><summary>Add a summoned unit</summary><div class="picker" style="margin-top:6px">${UNITS.filter(u=>u.sum&&u.r===g.roster.race).map(u=>`<button class="pick" data-sum="${u.id}"><b>${esc(u.n)}</b><span class="note">Supply 0</span></button>`).join("")}</div></details></div>`;
+  h+=`<div class="panel"><button class="btn danger" id="pEnd">End and clear game</button></div>`;
+  el.innerHTML=h;
+}
+$("#v-play").addEventListener("click",e=>{
+  const el=e.target.closest("button");if(!el)return;const g=st.game,ds=el.dataset;
+  if(ds.go){show(ds.go);return}
+  if(!g)return;const find=id=>g.units.find(u=>u.uid===+id);
+  if(el.id==="pNext"){if(g.phase<3){g.phase++;g.units.forEach(u=>u.act=false)}else{const mv=M(g.mission)[g.scale];if(g.round>=mv.len){g.over=true}else{g.round++;g.phase=0;g.cards.forEach(c=>c.ready=true);g.units.forEach(u=>{u.act=false;u.snap=u.status==="field"?curSupply(u):0});toast("Round "+g.round+": cards refreshed")}}}
+  else if(el.id==="pPrev"){if(g.phase>0)g.phase--;else if(g.round>1){g.round--;g.phase=3}g.over=false}
+  else if(el.id==="pMis"){openModal(M(g.mission).n,missionHTML(M(g.mission),g.scale)+(g.deploy?`<div class="phh">Deployment: ${esc(D(g.deploy).n)}</div><div class="ab">${esc(D(g.deploy).d)}</div>`:""));return}
+  else if(el.id==="pEnd"){if(!confirm("Clear this game?"))return;st.game=null}
+  else if(ds.vp!==undefined){g.vp[+ds.vp]=Math.max(0,g.vp[+ds.vp]+(+ds.d))}
+  else if(ds.card!==undefined){const c=g.cards[+ds.card];c.ready=!c.ready}
+  else if(ds.tac){showTac(ds.tac);return}
+  else if(ds.show){const u=find(ds.show);showUnit(u.id,u.ups);return}
+  else if(ds.mod){const u=find(ds.mod);u.models=Math.max(0,Math.min(u.max,u.models+(+ds.d)));if(u.models===0)u.status="dead";else if(u.status==="dead")u.status="field"}
+  else if(ds.dep){const u=find(ds.dep);u.status="field";u.snap=curSupply(u)}
+  else if(ds.act){const u=find(ds.act);u.act=!u.act}
+  else if(ds.tores!==undefined||ds.toRes){const u=find(ds.tores||ds.toRes);u.status="res";u.snap=0}
+  else if(ds.sum){const ud=U(ds.sum);g.units.push({uid:++uidc,id:ud.id,ups:[],models:ud.comps[0][0],max:ud.comps[0][0],startSup:0,status:"field",act:false,snap:0});toast(ud.n+" summoned")}
+  else return;
+  save();renderPlay();
+});
+
+/* ===================== CARDS VIEW ===================== */
+let cardFilter={q:"",race:null};
+function renderCards(){
+  const race=cardFilter.race||st.build.race;setRace(race);const q=cardFilter.q.toLowerCase();
+  const m=x=>!q||x.n.toLowerCase().includes(q);
+  const us=UNITS.filter(u=>u.r===race&&m(u)),ts=TAC.filter(t=>t.r===race&&m(t));
+  let h=`<div class="panel"><div class="seg" role="group">${Object.entries(RACES).map(([k,v])=>`<button data-cr="${k}" aria-pressed="${race===k}">${v}</button>`).join("")}</div>
+  <label class="f" for="cQ" style="margin-top:10px">Search cards</label><input type="text" id="cQ" value="${esc(cardFilter.q)}" placeholder="e.g. Stimpack, Queen, Nexus"></div>`;
+  h+=`<div class="panel"><h2>Unit cards</h2><div class="picker">${us.map(u=>`<button class="pick" data-unit="${u.id}"><span><b>${esc(u.n)}</b><br><span class="note">${u.sum?"Summoned":u.slot}${u.unk?" · no card text":""}</span></span><span class="cost">${u.sum?"—":u.comps.map(c=>c[1]).join(" / ")}</span></button>`).join("")||'<p class="note">No matches.</p>'}</div></div>`;
+  h+=`<div class="panel"><h2>Faction, tactical and creep cards</h2><div class="picker">${ts.map(t=>`<button class="pick" data-tac="${t.id}"><span><b>${esc(t.n)}</b><br><span class="note">${t.type}${t.uq?" · Unique":""}</span></span><span class="cost">${t.gas} gas</span></button>`).join("")||'<p class="note">No matches.</p>'}</div></div>`;
+  h+=`<div class="panel"><h2>Missions</h2><div class="picker">${MISSIONS.filter(m).map(x=>`<button class="pick" data-mis="${x.id}"><b>${x.n}</b><span class="note">Std ${x.std.sup}+${x.std.esc} · Skirm ${x.sk.sup}+${x.sk.esc}</span></button>`).join("")}</div></div>`;
+  $("#v-cards").innerHTML=h;
+}
+$("#v-cards").addEventListener("click",e=>{const el=e.target.closest("button");if(!el)return;const ds=el.dataset;
+  if(ds.cr){cardFilter.race=ds.cr;renderCards()}else if(ds.unit)showUnit(ds.unit);else if(ds.tac)showTac(ds.tac);
+  else if(ds.mis){const x=M(ds.mis);openModal(x.n,missionHTML(x,"std")+"<hr style='border:0;border-top:1px solid var(--line);margin:12px 0'>"+missionHTML(x,"sk"))}});
+$("#v-cards").addEventListener("input",e=>{if(e.target.id==="cQ"){cardFilter.q=e.target.value;const pos=e.target.selectionStart;renderCards();const i=$("#cQ");i.focus();i.setSelectionRange(pos,pos)}});
+
+/* ===================== NAV ===================== */
+const TITLES={build:"Army builder",setup:"Game setup",play:"Battle tracker",cards:"Card reference"};
+function show(v){document.querySelectorAll("nav.tabs button").forEach(b=>b.setAttribute("aria-current",b.dataset.v===v?"true":"false"));document.querySelectorAll("section.view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));$("#title").textContent=TITLES[v];
+  ({build:renderBuild,setup:renderSetup,play:renderPlay,cards:renderCards})[v]();window.scrollTo(0,0)}
+document.querySelectorAll("nav.tabs button").forEach(b=>b.onclick=()=>show(b.dataset.v));
+$("#themeBtn").onclick=()=>{const r=document.documentElement;const dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme: dark)").matches;r.dataset.theme=dark?"light":"dark";try{localStorage.setItem(KEY+"-theme",r.dataset.theme)}catch(e){}};
+try{const th=localStorage.getItem(KEY+"-theme");if(th)document.documentElement.dataset.theme=th}catch(e){}
+show(st.game?"play":"build");
+</script>
+</body>
+</html>
