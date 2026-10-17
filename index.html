@@ -3,7 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>StarCraft TMG Field Kit</title>
+<title>SCTMG Data Disc</title>
+<meta name="description" content="Unofficial companion for StarCraft: Tabletop Miniatures Game: army builder, game setup, battle tracker and card reference.">
+<meta name="apple-mobile-web-app-title" content="Data Disc">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -31,7 +33,9 @@ body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font:16px/1
 button,select,input{font:inherit;color:inherit}
 h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;letter-spacing:.01em}
 header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:3px solid var(--acc);padding:10px 14px 8px;display:flex;align-items:center;gap:10px}
-header.top h1{font-size:1.15rem;flex:1}
+header.top h1{font-size:1.15rem;flex:1;display:flex;align-items:baseline;gap:8px;min-width:0;white-space:nowrap}
+header.top .brand{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--acc)}
+header.top #title{overflow:hidden;text-overflow:ellipsis}
 header.top .race-mark{width:14px;height:22px;background:var(--acc);clip-path:polygon(0 0,100% 18%,100% 82%,0 100%)}
 main{padding:12px 12px 96px;max-width:720px;margin:0 auto}
 nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;display:grid;grid-template-columns:repeat(4,1fr);background:var(--panel);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -150,7 +154,7 @@ dialog .mb{padding:12px 14px 24px;overflow:auto}
 </style>
 </head>
 <body data-race="T">
-<header class="top"><div class="race-mark" aria-hidden="true"></div><h1 id="title">Army builder</h1><button class="btn sm" id="themeBtn" aria-label="Toggle light or dark theme">◐</button></header>
+<header class="top"><div class="race-mark" aria-hidden="true"></div><h1><span class="brand">SCTMG Data Disc</span><span id="title">Army builder</span></h1><button class="btn sm" id="themeBtn" aria-label="Toggle light or dark theme">◐</button></header>
 <main>
   <section class="view on" id="v-build"></section>
   <section class="view" id="v-setup"></section>
@@ -184,7 +188,7 @@ const REGEN=A("Assault","Regeneration","Passive","When this Unit becomes Activat
 const STIM=(w,p)=>A("Movement","Stimpack","Active · 1 CP",`This Unit suffers NON-LETHAL DAMAGE (2). This Unit gains BUFF Speed (3). Additionally, its ${w} and all Close Combat Weapons gain PRECISION (${p}).`);
 const ROACH_UPS=(glial)=>[
  {n:"Tunneling Claws",c:[10],ph:"Any",k:"Passive",tx:"While this Unit has the Burrowed Status, it may perform the Move and Run actions without losing that Status. It may also move through other Units' bases."},
- {n:"Glial Reconstitution",c:[20],ph:"Movement",k:"Active · 1 "+glial,tx:"This Unit gains BUFF SPEED (1), or BUFF SPEED (2) if the Unit is ON CREEP."+(glial==="CP"?" (Printed as 1 CP on this card.)":"")},
+ {n:"Glial Reconstitution",c:[10],ph:"Movement",k:"Active · 1 "+glial,tx:"This Unit gains BUFF SPEED (1), or BUFF SPEED (2) if the Unit is ON CREEP."+(glial==="CP"?" (Printed as 1 CP on this card.)":"")},
  {n:"Burrow Ambush",c:[20],ph:"Movement",k:"Passive",tx:BURROW_AMB},
  {n:"Hydriodic Bile",c:[10],ph:"Assault",k:"Passive",tx:"This Unit's Acid Saliva weapon gains Surge Type: Light, and S Dice: D3+1."}];
 const LING_UPS=[
@@ -195,7 +199,7 @@ const LING_UPS=[
 const UNITS=[
 /* ---------- TERRAN ---------- */
 {id:"marine",n:"Marine",r:"T",tags:["Terran"],slot:"Core",role:"Damage Dealer",base:"32mm",st:["-","4/7","5+","5+",2,2],ct:"Biological, Light, Ground",
- prof:[[1,3,0],[4,6,1],[7,9,2]],comps:[[6,160,1],[9,210,2]],
+ prof:[[1,3,0],[4,6,1],[7,9,2]],comps:[[6,170,1],[9,220,2]],
  ab:[STIM("C-14 Rifle",3)],
  wp:[W("Assault","C-14 Rifle",12,"All",2,"3+","Light","D3",1),W("Combat","Strike","E","Ground",1,"5+","-","-",1)],
  up:[{n:"AGG-12",c:[10,10],ph:"Assault",spec:true,rep:"C-14 Rifle",w:W("Assault","AGG-12",12,"Ground",2,"3+","Armoured","D3",1,"LONG RANGE (18″), SPECIALIST")},
@@ -213,55 +217,62 @@ const UNITS=[
      A("Assault","Grenades - Frag","Passive","When this Unit makes a Ranged Attack with a C-14 Rifle and the target is Within 8″, that weapon's S Dice is replaced by D6.")],
  wp:[W("Assault","C-14 Rifle",12,"All",2,"3+","Light","D3",1),W("Combat","Bayonet","E","Ground",2,"5+","-","-",1)],up:[]},
 {id:"marauder",n:"Marauder",r:"T",tags:["Terran"],slot:"Core",role:"Tank",base:"50mm",st:["-","4/7","4+","6+",5,2],ct:"Armoured, Biological, Ground",
- prof:[[1,1,0],[2,2,1],[3,4,2]],comps:[[2,150,1],[4,280,2]],
+ prof:[[1,1,0],[2,2,1],[3,4,2]],comps:[[2,160,1],[4,290,2]],
  ab:[STIM("Quad K12",2),A("Assault","Concussive Shells","Reaction · 1 CP","When an Enemy declares a Charge against a Friendly Unit Within 8″, that Enemy gains DEBUFF Speed (2).")],
  wp:[W("Assault","Quad K12",12,"Ground",3,"3+","Armoured","D3",1,"PIERCE Armoured (2)"),W("Combat","Strike","E","Ground",2,"4+","-","-",1)],
  up:[{n:"Kinetic Foam",c:[20,40],ph:"Any",k:"Passive",tx:"Increase this Unit's Hit Points characteristic by 1."},
      {n:"Laser Targeting Systems",c:[20,40],ph:"Assault",k:"Passive",tx:"This Unit's Quad K12 weapon gains LONG RANGE (16″)."},
-     {n:"Veteran of Tarsonis",c:[20,30],ph:"Any",k:"Passive",tx:"While this Unit is Within 3″ of a Mission Marker, its Armour characteristic is increased by 1."}]},
+     {n:"Veteran of Tarsonis",c:[20,40],ph:"Any",k:"Passive",tx:"While this Unit is Within 3″ of a Mission Marker, its Armour characteristic is increased by 1."}]},
 {id:"medic",n:"Medic",r:"T",tags:["Terran"],slot:"Support",role:"Lifesaver",base:"32mm",st:["-","4/7","5+","5+",2,2],ct:"Biological, Light, Ground",
- prof:[[1,1,0],[2,3,1]],comps:[[3,110,1]],
+ prof:[[1,1,0],[2,3,1]],comps:[[3,120,1]],
  ab:[A("Any","Life Support","Reaction · 1 CP","Use when another Friendly Biological Unit suffers Damage Within 4″. Reduce the Total Damage before allocation by 1 for each model in this Unit that is Within 4″ of the damaged Unit."),RESTO("CP"),
      A("Movement","Medpack","Active · 1 CP","Select another Friendly Biological Unit Within 4″. Resolve the HEAL (X) effect for the targeted Unit, where X is the number of models in this Unit that are Within 4″ of the target Unit."),
      A("Movement","Optical Flare","Active · 2 CP","Select one Enemy Unit Within 12″. Until the End of the Round, apply DEBUFF Range (4) to that Unit's Ranged Weapons. That Unit cannot benefit from LONG RANGE.")],
  wp:[W("Combat","Strike","E","Ground",1,"5+","-","-",1)],
  up:[{n:"A-13 Flash Grenade Launcher",c:[20],ph:"Any",k:"Passive",tx:"Increase the Optical Flare special ability's Range to 16″."},
      {n:"Advanced Medic Facilities",c:[60],ph:"Any",k:"Passive",tx:"This Unit's Supply Value counts as 0 when calculating the Supply Pool."},
-     {n:"Stabilizer Medpacks",c:[30],ph:"Any",k:"Passive",tx:"When this Unit resolves a Life Support or Medpack ability, treat it as having 1 additional model Within Range for calculating that ability's effects."}]},
+     {n:"Stabilizer Medpacks",c:[20],ph:"Any",k:"Passive",tx:"When this Unit resolves a Life Support or Medpack ability, treat it as having 1 additional model Within Range for calculating that ability's effects."}]},
 {id:"raynor",n:"Jim Raynor",r:"T",tags:["Terran"],slot:"Hero",role:"Tactician",base:"40mm",uq:true,st:["-","7","4+","5+",8,2],ct:"Biological, Ground",
- prof:[[1,1,1]],comps:[[1,250,1]],
+ prof:[[1,1,1]],comps:[[1,280,1]],
  ab:[CMDR,A("Any","Freedom Fighters","Passive","The Supply Value of all Friendly Units Within 8″ of this Unit cannot be reduced below 1 for Contesting Mission Markers and completing objectives."),
      A("Movement","Orders","Active · X CP · Repeatable","Select another Friendly Biological Unit Within 8″, spend CP and apply one of: 1 CP: that Unit's first used weapon gains CRITICAL HIT (2). 1 CP: that Unit ignores the Disengage penalty for the remainder of the Round. 2 CP: remove the Activation Marker from that Unit.")],
  wp:[W("Assault","Commando Rifle",18,"All",3,"3+","Armoured","D3",1,"BULKY, PIERCE Armoured (3)"),W("Assault","“Justice” Revolver",6,"Ground",2,"3+","-","-",2,"ANTI-EVADE (2), SIDEARM, PINPOINT"),W("Combat","Bayonet","E","Ground",2,"4+","Light","D3",1)],
  up:[{n:"C-14 Rifle",c:[0],ph:"Assault",rep:"Commando Rifle",w:W("Assault","C-14 Rifle",12,"All",6,"3+","Light","D3+1",1,"BURST FIRE 8″ (3)")}]},
 {id:"goliath",n:"Goliath",r:"T",tags:["Terran"],slot:"Elite",role:"Damage Dealer",base:"80mm",st:["-","7","4+","-",10,3],ct:"Armoured, Mechanical, Ground",
- prof:[[1,1,2]],comps:[[1,190,2]],
+ prof:[[1,1,2]],comps:[[1,180,2]],
  ab:[A("Movement","Target Lock","Active · 1 CP","Select one Enemy Unit Within 12″. Whenever a Friendly Goliath Unit targets that enemy with an Autocannon, that weapon gains Surge Type: Light, Armoured, and S Dice: D3+1."),
      A("Assault","Indomitable","Passive","While Engaged, this Unit may target and be targeted by Unengaged Enemy Units. In both cases, the defending Unit gains an Evade Roll against those attacks."),DEV("4) 3+ (")],
  wp:[W("Assault","Autocannon",12,"Ground",9,"4+","-","-",1,"LONG RANGE (18″)"),W("Assault","Underbelly Machine Gun",8,"Ground",6,"3+","Light","D3",1,"PINPOINT, SIDEARM"),W("Assault","Hellfire Missiles",16,"Flying",6,"3+","Light","D3",1,"ANTI-EVADE (1), SIDEARM"),W("Combat","Stomp","E","Ground",4,"5+","-","-",1)],
  up:[{n:"Ares-Class Targeting System",c:[20],ph:"Any",k:"Passive",tx:"This Unit's Autocannon and Underbelly Machine Gun weapons gain PRECISION (1)."},
      {n:"Haywire Missiles",c:[40],ph:"Assault",rep:"Hellfire Missiles",w:W("Assault","Haywire Missiles",12,"Ground",3,"3+","Armoured","D3",1,"PIERCE Armoured (3), SIDEARM")},
      {n:"Scatter Missiles",c:[30],ph:"Assault",rep:"Hellfire Missiles",w:W("Assault","Scatter Missiles",18,"Ground",6,"5+","Light","D3",1,"INDIRECT FIRE, LOCKED IN (6), LONG RANGE (24″), SIDEARM")}]},
-{id:"siegetank",n:"Siege Tank",r:"T",tags:["Terran"],slot:"Elite",unk:true,comps:[[1,220,2]],
- up:[{n:"Mode Transformation",c:[20]},{n:"Coordinated Strike",c:[20]},{n:"Shaped Blast",c:[10]},{n:"Smart Shells",c:[10]}]},
+{id:"siegetank",n:"Siege Tank",r:"T",tags:["Terran"],slot:"Elite",role:"Damage Dealer",base:"150mm",note:"BT = Blast Template (Core Rules 8.7.6). A weapon with the SIEGE MODE Status keyword can only be used while this Unit has the SIEGE MODE Status.",st:["-", "7", "5+", "-", 14, 2],ct:"Armoured, Mechanical, Ground",
+ prof:[[1, 1, 2]],comps:[[1, 220, 2]],
+ ab:[A("Any","Large","Passive","When this Unit's Leading Model moves, it cannot pass through physical gaps smaller than 3″ wide, regardless of its size. If the Leading Model's path of travel passes through, or any model in this Unit ends its movement on a Size 0 or Size 1 Impassible Terrain piece (excluding Tokens) during any movement action, that terrain piece is immediately removed from the game."),A("Any","Heavy Plating","Passive","When this Unit resolves an Armour Roll, it gains TOUGH (1), provided it does not currently have the SIEGE MODE Status."),A("Assault","Indomitable","Passive","While Engaged, this Unit may target and be targeted by Unengaged Enemy Units. In both cases, the defending Unit gains an Evade Roll against those attacks."),A("Assault","Point Blank","Passive","While this Unit has the SIEGE MODE Status, it cannot target Enemy Units it is Engaged with."),A("Assault","Aftershock Rounds","Passive","When this Unit has the SIEGE MODE Status, its Damage characteristic is treated as equal to the Size characteristic of the current target Unit (to a minimum of 1)."),A("Assault","Devastating Charge","Passive","Immediately after this Unit completes a successful Charge, resolve the IMPACT (4) 3+ effect.")],
+ wp:[W("Assault","Twin Cannon",12,"Ground",8,"3+","Armoured","D6",1,"PIERCE Armoured (2)"),W("Assault","Shock Cannon",18,"Ground","BT+4","4+","Light, Armoured","BT",1,"SIEGE MODE Status"),W("Combat","Rolling Over","E","Ground",2,"2+","-","-",1,"-")],
+ up:[{n:"Mode Transformation",c:[20],ph:"Movement",k:"Active · 1 CP",tx:"The active Unit gains or loses the SIEGE MODE Status.\nWhile this Unit has the SIEGE MODE Status, its Size characteristic is treated as if it was 3."},{n:"Coordinated Strike",c:[20],ph:"Movement",k:"Active · 0 CP",tx:"Target a Friendly Non-Engaged Unit on the battlefield (Line of Sight is not required). When this Unit resolves a Ranged Attack using the Shock Cannon weapon profile this Round, it may choose to ignore the weapon's standard Range characteristic. If it does, it may target an Enemy Unit that is Within 8″ of, and Visible to, a model of the selected Friendly Unit, treating that model as the acting model."},{n:"Shaped Blast",c:[10],ph:"Assault",k:"Reaction · 0 CP",tx:"Once per Game. When this Unit declares a Ranged Attack action. If this Unit has SIEGE MODE Status, its weapon gains PINPOINT and LOCKED IN (4)."},{n:"Smart Shells",c:[10],ph:"Assault",k:"Reaction · 0 CP",tx:"Once per Game. When this Unit declares a Ranged Attack action. If this Unit has SIEGE MODE Status, its weapon gains INDIRECT FIRE and LONG RANGE (24)."}]},
+{id:"raven",n:"Raven",r:"T",tags:["Terran"],slot:"Support",unk:true,comps:[[1,170,1]],up:[{n:"Corvid Reactor",c:[30]},{n:"Internal Tech Module",c:[20]},{n:"Seeker Missile",c:[20]},{n:"Explosive Shrapnel Shells",c:[10]}]},
+{id:"novastealth",n:"Nova (Stealth Mode)",r:"T",tags:["Terran"],slot:"Hero",unk:true,comps:[[1,240,1]],up:[]},
+{id:"novaassault",n:"Nova (Assault Mode)",r:"T",tags:["Terran"],slot:"Hero",unk:true,comps:[[1,260,1]],up:[]},
+{id:"specops",n:"Spec Ops Marauder (Marauder)",r:"T",tags:["Terran"],slot:"Core",unk:true,comps:[[2,240,1]],up:[]},
 {id:"pdd",n:"Point Defense Drone",r:"T",tags:["Terran","Raynor's Raiders"],slot:"—",role:"Lifesaver",base:"32mm",sum:true,st:["-","-","6+","6+",3,"-"],ct:"Armoured, Flying, Mechanical",
  prof:[[1,1,0]],comps:[[1,0,0]],
  ab:[A("Any","Point Defense Laser","Passive","When another Friendly Unit Within 4″ is targeted by a Ranged Attack without the INSTANT keyword, remove up to 2 dice from the Attack Pool. Then remove this Unit from the battlefield."),A("Any","Gliding","Passive","This model has DISPLACEMENT."),STRUCT],wp:[],up:[]},
 /* ---------- ZERG ---------- */
 {id:"zergling",n:"Zergling",r:"Z",tags:["Zerg"],slot:"Core",role:"Damage Dealer",base:"32mm",st:["-","4/8","6+","4+",1,1],ct:"Biological, Light, Ground",
- prof:[[1,6,0],[7,12,1],[13,18,2]],comps:[[12,180,1],[18,220,2]],
+ prof:[[1,6,0],[7,12,1],[13,18,2]],comps:[[12,150,1],[18,210,2]],
  ab:[SQUAD,CHARGE2D6("Metabolic Boost","BM"),DEV("1) 5+ (")],
  wp:[W("Combat","Claws","E","Ground",2,"4+","Light","D3",1)],up:LING_UPS},
 {id:"raptor",n:"Raptor (Zergling)",r:"Z",tags:["Zerg"],slot:"Elite",role:"Damage Dealer",base:"32mm",st:["-","5/9","6+","4+",1,1],ct:"Biological, Light, Ground",
- prof:[[1,6,0],[7,12,1],[13,18,2]],comps:[[12,240,1],[18,300,2]],
+ prof:[[1,6,0],[7,12,1],[13,18,2]],comps:[[12,210,1],[18,260,2]],
  ab:[SQUAD,RAPTOR_STRAIN,ADRENAL_OVER,DEV("1) 5+ ("),CHARGE2D6("Metabolic Boost","BM")],
  wp:[W("Combat","Claws","E","Ground",2,"4+","Light","D3",1)],up:LING_UPS},
 {id:"ksraptor",n:"Kerrigan Swarm Raptor (Zergling)",r:"Z",tags:["Zerg","Kerrigan's Swarm"],slot:"Elite",role:"Damage Dealer",base:"32mm",uq:true,st:["-","5/9","5+","4+",2,1],ct:"Biological, Light, Ground",
- prof:[[1,3,0],[4,6,1]],comps:[[6,250,1]],
+ prof:[[1,3,0],[4,6,1]],comps:[[6,230,1]],
  ab:[SQUAD,RAPTOR_STRAIN,A("Assault","Leap","Active · 1 BM","When determining Charge Distance for this Unit, add 2 to the Charge Distance."),DEV("2) 5+ ("),ADRENAL_OVER],
  wp:[W("Combat","Claws","E","Ground",2,"3+","Light, Armoured","D6",1,"INSTANT")],up:[]},
 {id:"swarmling",n:"Swarmling (Zergling)",r:"Z",tags:["Zerg"],slot:"Core",role:"Damage Dealer",base:"32mm",st:["-","4/8","6+","5+",1,1],ct:"Biological, Light, Ground",
- prof:[[1,6,0],[7,18,1]],comps:[[18,260,1]],
+ prof:[[1,6,0],[7,18,1]],comps:[[18,210,1]],
  ab:[SQUAD,A("Movement","Zergling Reconstitution","Active · 1 BM","Resolve the RESPAWN (2) effect, or RESPAWN (3) if the Unit is ON CREEP."),DEV("1) 5+ ("),CHARGE2D6("Metabolic Boost","BM")],
  wp:[W("Combat","Claws","E","Ground",2,"5+","-","-",1)],
  up:[{n:"Burrow Ambush",c:[20],ph:"Movement",k:"Passive",tx:BURROW_AMB}]},
@@ -270,23 +281,23 @@ const UNITS=[
  ab:[BURROW(false),REGEN,DEV("2) 4+ (")],
  wp:[W("Assault","Acid Saliva",8,"Ground",3,"3+","-","-",1),W("Combat","Claws","E","Ground",2,"4+","-","-",1)],up:ROACH_UPS("CP")},
 {id:"vile",n:"Vile (Roach)",r:"Z",tags:["Zerg"],slot:"Core",role:"Tank",base:"50mm",st:["-","4/7","3+","5+",4,2],ct:"Armoured, Biological, Ground",
- prof:[[1,1,0],[2,3,1]],comps:[[3,200,1]],
+ prof:[[1,1,0],[2,3,1]],comps:[[3,190,1]],
  ab:[BURROW(true),A("Any","Debilitating Saliva","Reaction · 1 BM","Use when an Enemy Unit Within 8″ of this Unit declares a Ranged Attack. Apply DEBUFF Hit (1) to each of that Unit's Ranged Weapons."),DEV("1) 4+ ("),REGEN],
  wp:[W("Assault","Acid Saliva",8,"Ground",4,"3+","-","-",1),W("Combat","Vile Claws","E","Ground",2,"4+","-","-",1)],up:ROACH_UPS("BM")},
 {id:"corpser",n:"Corpser (Roach)",r:"Z",tags:["Zerg"],slot:"Core",role:"Tank",base:"50mm",st:["-","4/7","3+","5+",4,2],ct:"Armoured, Biological, Ground",
- prof:[[1,1,0],[2,3,1]],comps:[[3,240,1]],
+ prof:[[1,1,0],[2,3,1]],comps:[[3,220,1]],
  ab:[BURROW(false),A("Movement","Roachling Infestation","Active · 2 BM","Once Per Game. Resolve the SUMMON (Roachling) effect."),REGEN,DEV("3) 4+ (")],
  wp:[W("Assault","Acid Saliva",8,"Ground",2,"3+","-","-",1),W("Combat","Claws","E","Ground",3,"4+","Light","D3+1",1)],up:ROACH_UPS("CP")},
 {id:"hydralisk",n:"Hydralisk",r:"Z",tags:["Zerg"],slot:"Elite",role:"Damage Dealer",base:"40×100mm",st:["-","4/8","5+","5+",4,2],ct:"Biological, Light, Ground",
  prof:[[1,1,1],[2,2,2],[3,4,3]],comps:[[2,140,2],[4,260,3]],
  ab:[SQUAD,A("Assault","Lunge","Reaction · 1 BM","When another Friendly Unit Within 10″ is the target of a Ranged Attack, after the attack is fully resolved, this Unit, if Unengaged, may perform a Move action Directly Towards the attacking Unit.")],
  wp:[W("Assault","Needle Spines",12,"All",3,"3+","Light, Armoured","D3+1",2),W("Combat","Scythe","E","Ground",2,"4+","-","-",1)],
- up:[{n:"Ancillary Carapace",c:[20,40],ph:"Any",k:"Passive",tx:"This Unit gains TOUGH (1) on the first Armour Roll of each Activation."},
+ up:[{n:"Ancillary Carapace",c:[20,30],ph:"Any",k:"Passive",tx:"This Unit gains TOUGH (1) on the first Armour Roll of each Activation."},
      {n:"Burrow Ambush",c:[20,40],ph:"Movement",k:"Passive",tx:BURROW_AMB},
-     {n:"Grooved Spines",c:[20,40],ph:"Assault",k:"Passive",tx:"This Unit's Needle Spines ranged weapon gains LONG RANGE (16″)."},
-     {n:"Lurking",c:[10,20],ph:"Any",k:"Passive",tx:"If this Unit has Stationary Status, it is eligible to make an Evade Roll against the first Ranged Attack targeting it this Round. If this Unit is ON CREEP, it gains +1 Modifier to this Evade Roll."}]},
+     {n:"Grooved Spines",c:[20,30],ph:"Assault",k:"Passive",tx:"This Unit's Needle Spines ranged weapon gains LONG RANGE (16″)."},
+     {n:"Lurking",c:[10,10],ph:"Any",k:"Passive",tx:"If this Unit has Stationary Status, it is eligible to make an Evade Roll against the first Ranged Attack targeting it this Round. If this Unit is ON CREEP, it gains +1 Modifier to this Evade Roll."}]},
 {id:"queen",n:"Queen",r:"Z",tags:["Zerg"],slot:"Support",role:"Lifesaver",base:"80mm",st:["-","4","4+","-",9,3],ct:"Armoured, Biological, Psionic, Ground",
- prof:[[1,1,1]],comps:[[1,150,1]],
+ prof:[[1,1,1]],comps:[[1,140,1]],
  ab:[A("Any","Spawn Creep Tumor","Active · 1 BM","Set a Creep Tumor token in base-to-base contact with this Unit."),
      A("Any","Transfusion","Reaction · 1 BM","Use when another Friendly Biological Unit (including a Structure) suffers Damage Within 4″. Reduce the Total Damage before allocation by 2."),RESTO("BM"),
      A("Any","Psionic Link","Passive","Once per Round, if there are at least 7 Friendly models Within 6″ of this Unit, it may resolve its Special Ability with the BM cost reduced by 1."),DEV("4) 3+ (")],
@@ -299,8 +310,14 @@ const UNITS=[
      A("Movement","Mutating Carapace","Active · 1 BM","Select one Enemy Unit Within 18″. This Unit is eligible to make an Evade Roll against all attacks made by the selected Enemy Unit, with a +2 Modifier applied to those Evade Rolls."),
      A("Assault","Leaping Strike","Active · 1 BM","If Unengaged, resolve the PLACE (6) effect."),DEV("4) 4+ (")],
  wp:[W("Assault","Energy Blast",8,"All",5,"3+","Light, Armoured","D3",1),W("Combat","Blades","E","Ground",6,"4+","-","-",2,"CRITICAL HIT (2)")],up:[]},
-{id:"ravager",n:"Ravager",r:"Z",tags:["Zerg"],slot:"Elite",unk:true,comps:[[1,160,1],[2,270,2]],
- up:[{n:"Bloated Bile Ducts",c:[20,40]},{n:"Burrow Ambush",c:[20,40]},{n:"Potent Bile",c:[20,40]}]},
+{id:"ravager",n:"Ravager",r:"Z",tags:["Zerg"],slot:"Core",role:"Tactician",base:"80mm",st:["-", "4/8", "5+", "5+", 9, 3],ct:"Armoured, Biological, Ground",
+ prof:[[1, 1, 1], [2, 2, 2]],comps:[[1, 160, 1], [2, 270, 2]],
+ ab:[A("Any","Squadron","Passive","This Unit’s Horizontal Coherency is 4″."),A("Movement","Corrosive Bile","Active · 1 BM","For each model in this Unit, set one Corrosive Bile token on the battlefield Within 14″ of that model. These tokens are not removed if this Unit is Destroyed. At the End of the Assault Phase, each Unit suffers HITS 5 (1) effect for each of this Unit's Corrosive Bile tokens it is Within 1″ of. Then, remove all of this Unit's Corrosive Bile tokens from the battlefield. If multiple effects trigger at the End of the Assault Phase, resolve them in the order specified in Part 8.9.4."),A("Movement","Deep Tunnel","Active · 1 BM","Set a Ravager Burrow token Wholly Within 12″ of any model in this Unit. At the End of the Round, the controlling player may set all models of this Unit in Coherency, treating the Ravager Burrow token as the Leading Model. The Ravager Burrow token has DISPLACEMENT."),A("Assault","Devastating Charge","Passive","Immediately after this Unit completes a successful Charge, resolve the IMPACT (2) 4+ effect.")],
+ wp:[W("Assault","Plasma Discharge",12,"Ground",4,"3+","Light","D3+1",1,"-"),W("Combat","Claws","E","Ground",2,"4+","-","-",1,"-")],
+ up:[{n:"Bloated Bile Ducts",c:[20, 40],ph:"Any",k:"Passive",tx:"Increase the area of effect of this Unit's Corrosive Bile ability to 2″."},{n:"Burrow Ambush",c:[20, 40],ph:"Movement",k:"Passive",tx:"When this Unit is nominated to deploy from the Reserves, it may resolve the PLACE (18) effect from the controlling player's Entry Edge. No model may be set Within 10″ of any Enemy model. This Unit's Activation ends."},{n:"Potent Bile",c:[20, 40],ph:"Assault",k:"Passive",tx:"Before an Enemy Unit resolves an Armour Roll against the HITS effect generated by this Unit's Corrosive Bile ability, that Unit suffers DEBUFF Armour (1)."}]},
+{id:"zagara",n:"Zagara",r:"Z",tags:["Zerg"],slot:"Hero",unk:true,comps:[[1,250,1]],up:[]},
+{id:"vileling",n:"Vileling (Zergling)",r:"Z",tags:["Zerg"],slot:"Core",unk:true,comps:[[18,180,2]],up:[]},
+{id:"defiler",n:"Defiler",r:"Z",tags:["Zerg"],slot:"Support",unk:true,comps:[[1,160,1]],up:[{n:"Burrow Ambush",c:[20]},{n:"Plague",c:[20]},{n:"Cancerous Bite",c:[20]}]},
 {id:"omegaworm",n:"Omega Worm",r:"Z",tags:["Zerg","Kerrigan's Swarm"],slot:"—",role:"Tactician",base:"80mm",sum:true,st:["-","-","5+","-",10,3],ct:"Armoured, Biological, Ground",
  prof:[[1,1,0]],comps:[[1,0,0]],
  ab:[A("Any","Detection","Passive","While Enemy Units are Within 6″ of this Unit, they lose HIDDEN Status."),
@@ -311,7 +328,7 @@ const UNITS=[
  ab:[A("Any","Underdeveloped Claws","Passive","This Unit cannot gain Burrowed Status.")],wp:[W("Combat","Claws","E","Ground",2,"4+","-","-",1)],up:[]},
 /* ---------- PROTOSS ---------- */
 {id:"zealot",n:"Zealot",r:"P",tags:["Protoss"],slot:"Core",role:"Damage Dealer",base:"40mm",st:[3,"4/7","5+","5+",4,2],ct:"Biological, Light, Ground",
- prof:[[1,1,1],[2,3,2]],comps:[[3,160,2]],
+ prof:[[1,1,1],[2,3,2]],comps:[[3,170,2]],
  ab:[CHARGE2D6("Charge","PE"),DEV("3) 4+ (")],
  wp:[W("Combat","Psi Blades","E","Ground",4,"3+","Light","D3",1)],
  up:[{n:"Leg Enhancements",c:[20],ph:"Movement",k:"Active · 1 PE",tx:"This Unit performs a 2″ Move action. This does not count towards its action limit."},
@@ -319,44 +336,58 @@ const UNITS=[
      {n:"We Stand as One",c:[20],ph:"Combat",k:"Passive",tx:"When this Unit makes a Close Combat Attack, if the target is Engaged with at least 1 other Friendly Unit, this Unit's Close Combat Weapon gains PRECISION (2)."},
      {n:"Zealous Round",c:[10],ph:"Assault",k:"Reaction · 0 PE",tx:"When this Unit is not Activated and receives Damage, the controlling player may count this Unit as Activated in this Phase (flip its Activation Marker) to reduce the Total Damage by 2."}]},
 {id:"praetor",n:"Praetor Guard (Zealot)",r:"P",tags:["Protoss","Khalai"],slot:"Elite",role:"Damage Dealer",base:"40mm",uq:true,st:[3,"4/7","5+","5+",4,2],ct:"Biological, Light, Ground",
- prof:[[1,1,1],[2,3,2]],comps:[[3,280,2]],
+ prof:[[1,1,1],[2,3,2]],comps:[[3,260,2]],
  ab:[A("Any","Shield Overcharge","Passive","This Unit gains TOUGH (2) on the first Armour Roll each Round."),
      A("Movement","Leg Enhancements","Active · 1 PE","This Unit performs a 2″ Move action. This does not count towards its action limit."),CHARGE2D6("Charge","PE"),DEV("3) 4+ ("),
      A("Combat","Titan Killers","Passive","When this Unit makes a Close Combat Attack, and the target is Size 3 or larger, the weapon's Damage characteristic is treated as 2."),
      A("Combat","Precognition","Passive","This Unit is eligible to make an Evade roll against all attacks targeting it.")],
  wp:[W("Combat","Psi Blades","E","Ground",4,"3+","Light","D3",1)],up:[]},
 {id:"adept",n:"Adept",r:"P",tags:["Protoss"],slot:"Core",role:"Damage Dealer",base:"40mm",st:[2,"5/8","5+","5+",3,2],ct:"Biological, Light, Ground",
- prof:[[1,2,0],[3,4,1]],comps:[[4,150,1]],
+ prof:[[1,2,0],[3,4,1]],comps:[[4,160,1]],
  ab:[A("Any","Psionic Presence","Passive","All Weapons of Friendly Units targeting an Enemy Unit Within 4″ of this Unit's Shade token gain PRECISION (1)."),
      A("Movement","Psionic Transfer","Active · 1 PE","Set a Shade token Wholly Within 12″ of any model in this Unit. At the End of the Round, the controlling player may set all models of this Unit in Coherency, treating the Shade token as the Leading Model. The Shade token has DISPLACEMENT.")],
  wp:[W("Assault","Glaive Cannon",8,"All",2,"3+","Light","D3+1",1,"ANTI-EVADE (1)"),W("Combat","Strike","E","Ground",1,"4+","-","-",1)],
  up:[{n:"Glaive Strike",c:[20],ph:"Combat",rep:"Strike",w:W("Combat","Glaive Strike","E","Ground",1,"4+","Light","D3",1,"PIERCE Light (2)")},
      {n:"Guidance",c:[10],ph:"Assault",k:"Passive",tx:"This Unit's Glaive Cannon Ranged weapon gains ANTI-EVADE (2)."},
      {n:"Resonating Glaives",c:[20],ph:"Assault",k:"Active · 1 PE",tx:"This Unit's Glaive Cannon gains BUFF RoA (1)."}]},
-{id:"nerazim",n:"Nerazim Watchers (Adept)",r:"P",tags:["Protoss"],slot:"Core",unk:true,comps:[[4,210,1]],up:[]},
+{id:"nerazim",n:"Nerazim Watchers (Adept)",r:"P",tags:["Protoss", "Nerazim"],slot:"Core",role:"Damage Dealer",base:"40mm",st:[2, "5/8", "5+", "5+", 3, 2],ct:"Biological, Light, Ground",
+ prof:[[1, 2, 0], [3, 4, 1]],comps:[[4, 210, 1]],
+ ab:[A("Any","Path of Shadows","Active · 1 PE","This Unit gains HIDDEN Status until it performs another action."),A("Any","Nerazim Farsight","Passive","While Enemy Units are Within 6″ of this Unit's Shade token, they lose HIDDEN Status."),A("Movement","Psionic Transfer","Active · 1 PE","Set a Shade token Wholly Within 12″ of any model in this Unit. At the End of the Round, the controlling player may set all models of this Unit in Coherency, treating the Shade token as the Leading Model. The Shade token has DISPLACEMENT.")],
+ wp:[W("Assault","Glaive Cannon",8,"All",3,"3+","Light","D3+1",1,"ANTI-EVADE (1), PINPOINT"),W("Combat","Strike","E","Ground",1,"5+","-","-",1,"-")],
+ up:[]},
 {id:"sentry",n:"Sentry",r:"P",tags:["Protoss"],slot:"Support",role:"Lifesaver",base:"50mm",st:[2,"4/7","5+","6+",4,1],ct:"Light, Mechanical, Psionic, Ground",
  prof:[[1,1,0],[2,2,1]],comps:[[2,130,1]],
  ab:[RESTO("PE"),
      A("Movement","Guardian Shield","Active · 1 PE","All Ranged Attacks targeting a Friendly Unit Within 4″ (Line of Sight is not required) are made with 1 fewer die in the Attack Pool."),
      A("Movement","Force Field","Active · 1 PE","Set a Force Field token Within 8″ in an unoccupied space. Units of Size 2 or lower cannot move across Force Fields. Models of Size 3 or more can move over it, and it's then removed.")],
  wp:[W("Assault","Disruption Beam",8,"All",2,"2+","-","-",1,"INSTANT"),W("Combat","Beam","E","Ground",2,"3+","-","-",1)],
- up:[{n:"Hallucination",c:[30],ph:"Assault",k:"Reaction · 0 PE",tx:"When an Enemy Unit declares a Ranged Attack against a Friendly Unit Within 4″, the targeted Friendly Unit is eligible to make an Evade Roll against that attack."},
-     {n:"Solid-Field Projectors",c:[20],ph:"Movement",k:"Active · 1 PE",tx:"Set a Force Field token Within 8″ in an unoccupied space. Units of Size 2 or lower cannot move across Force Fields. Models of Size 3 or more can move over it, and it's then removed."}]},
+ up:[{n:"Hallucination",c:[20],ph:"Assault",k:"Reaction · 0 PE",tx:"When an Enemy Unit declares a Ranged Attack against a Friendly Unit Within 4″, the targeted Friendly Unit is eligible to make an Evade Roll against that attack."},
+     {n:"Solid-Field Projectors",c:[10],ph:"Movement",k:"Active · 1 PE",tx:"Set a Force Field token Within 8″ in an unoccupied space. Units of Size 2 or lower cannot move across Force Fields. Models of Size 3 or more can move over it, and it's then removed."}]},
 {id:"stalker",n:"Stalker",r:"P",tags:["Protoss"],slot:"Elite",role:"Damage Dealer",base:"80mm",st:[3,"4/8","4+","6+",6,3],ct:"Armoured, Mechanical, Ground",
- prof:[[1,1,1],[2,2,2]],comps:[[1,170,1],[2,270,2]],
+ prof:[[1,1,1],[2,2,2]],comps:[[1,160,1],[2,270,2]],
  ab:[SQUAD,A("Movement","Blink","Active · 1 PE","Resolve the PLACE (6) effect. Models set by this effect cannot be set up Within the Engagement Range of any Enemy Unit.")],
  wp:[W("Assault","Particle Disruptors",12,"All",4,"3+","Armoured","D3",2),W("Combat","Stomp","E","Ground",2,"5+","-","-",1)],
  up:[{n:"Fury of the Nerazim",c:[20,30],ph:"Assault",k:"Passive",tx:"When this Unit attacks an Enemy Unit that has already been Activated during this Phase, its Particle Disruptors gain INSTANT for that attack."},
      {n:"Path of Shadows",c:[20,40],ph:"Any",k:"Active · 1 PE",tx:"This Unit gains HIDDEN Status until it performs another action."}]},
-{id:"immortal",n:"Immortal",r:"P",tags:["Protoss"],slot:"Elite",unk:true,comps:[[1,280,2]],
- up:[{n:"Shield Overcharge",c:[20]},{n:"Left Phase Disruptor",c:[20],rep:"Left Photon Disruptor"},{n:"Right Phase Disruptor",c:[20],rep:"Right Photon Disruptor"},{n:"Fury Unyielding",c:[20]},{n:"For the Ancients",c:[20]}]},
+{id:"immortal",n:"Immortal",r:"P",tags:["Protoss"],slot:"Elite",role:"Tank",base:"100mm",st:[6, "7", "4+", "-", 8, 3],ct:"Armoured, Mechanical, Ground",
+ prof:[[1, 1, 2]],comps:[[1, 280, 2]],
+ ab:[A("Any","Improved Barrier","Reaction · 0 PE","Use when this Unit is selected as the target of an attack. If this Unit has the Shielded Status, the Damage characteristic of the attacking weapon is treated as a maximum of 1 for this attack."),A("Assault","Indomitable","Passive","While Engaged, this Unit may target and be targeted by Unengaged Enemy Units. In both cases, the defending Unit gains an Evade Roll against those attacks."),A("Assault","Devastating Charge","Passive","Immediately after this Unit completes a successful Charge, resolve the IMPACT (4) 3+ effect.")],
+ wp:[W("Assault","Left Photon Disruptor",12,"Ground",4,"3+","Armoured","D3",2,"CONCENTRATED FIRE (1), LONG RANGE (16″)"),W("Assault","Right Photon Disruptor",12,"Ground",4,"3+","Armoured","D3",2,"CONCENTRATED FIRE (1), LONG RANGE (16″), SIDEARM"),W("Combat","Stomp","E","Ground",3,"3+","-","-",1,"-")],
+ up:[{n:"Shield Overcharge",c:[20],ph:"Any",k:"Reaction · 1 PE",tx:"Use before this Unit makes an Armour Roll. If this Unit has the Shielded Status, It gains TOUGH (2) for this roll."},{n:"Fury Unyielding",c:[20],ph:"Assault",k:"Passive",tx:"While this Unit is Within 3″ of a Mission Marker, its Ranged Weapons gain CRITICAL HIT (1) when targeting an Enemy Unit that is also Within 3″ of that same Mission Marker."},{n:"For the Ancients",c:[20],ph:"Assault",k:"Passive",tx:"When this Unit makes a Ranged Attack, if the target Unit is more than 8″ away, the attacking weapons gain PRECISION (1)."},{n:"Left Phase Disruptor",c:[20],ph:"Assault",rep:"Left Photon Disruptor",w:W("Assault","Left Phase Disruptor",12,"Ground",4,"3+","Armoured","D3",1,"PIERCE Armoured (3)")},{n:"Right Phase Disruptor",c:[20],ph:"Assault",rep:"Right Photon Disruptor",w:W("Assault","Right Phase Disruptor",12,"Ground",4,"3+","Armoured","D3",1,"PIERCE Armoured (3), SIDEARM")}]},
 {id:"artanis",n:"Artanis",r:"P",tags:["Protoss"],slot:"Hero",role:"Tank",base:"40mm",uq:true,st:[4,"7","4+","5+",8,2],ct:"Biological, Psionic, Ground",
- prof:[[1,1,1]],comps:[[1,250,1]],
+ prof:[[1,1,1]],comps:[[1,270,1]],
  ab:[CMDR,A("Movement","Phase Prism","Passive","When Artanis is nominated to deploy from Reserves, it may resolve the PLACE (0) effect from another Friendly Unit. That Friendly Unit is removed from the battlefield and returned to Reserves. Artanis' Activation ends."),
      A("Assault","Lightning Dash","Reaction · 1 PE","After this Unit resolves a successful Charge action, it may declare a second Charge action against a different Enemy Unit, ignoring the restriction on Charging while Engaged. The Devastating Charge ability does not trigger a second time."),
      A("Assault","Hierarch's Stand","Reaction · 1 PE","When another Friendly Unit Within 8″ is declared as the target of a Ranged Attack and this Unit is a valid target, redirect the attack to this Unit. This Unit is eligible to make an Evade Roll against the redirected attack. This Special Ability remains active until the End of the current Activation."),DEV("6) 4+ (")],
  wp:[W("Combat","Twilight Blades Strike","E","Ground",2,"2+","Armoured","D3",3),W("Combat","Twilight Blades Sweep","E","Ground",6,"2+","Light","D3+1",1)],up:[]},
-{id:"zeratul",n:"Zeratul",r:"P",tags:["Protoss"],slot:"Hero",uq:true,unk:true,comps:[[1,230,1]],up:[]},
+{id:"zeratul",n:"Zeratul",r:"P",tags:["Protoss"],slot:"Hero",role:"Damage Dealer",base:"40mm",uq:true,st:[3, "7", "5+", "5+", 5, 2],ct:"Biological, Psionic, Ground",
+ prof:[[1, 1, 1]],comps:[[1, 230, 1]],
+ ab:[A("Any","One With the Shadows","Passive","After this Unit fully resolves an Action, it gains the HIDDEN Status."),A("Any","Prophetic Vision","Reaction · 1 PE","REPEATABLE. Use when this Unit is selected as the target of an attack. This Unit's Evade characteristic is treated as 4+ against this attack and cannot be modified."),A("Movement","Sentenced to Death","Active · 1 PE","Target Enemy Unit on the battlefield. Whenever Zeratul makes a Close Combat Attack targeting the selected Unit, its weapon gains CRITICAL HIT (2)."),A("Movement","Void Prison","Active · 1 PE","Set a Faction Indicator on the battlefield Within 8″ of this Unit. While Enemy Units are Within 2″ of this Faction Indicator they suffer DEBUFF Speed (2)."),A("Assault","Void Blink","Active · 1 PE","If Unengaged, resolve the PLACE (6) effect."),A("Assault","Devastating Charge","Passive","Immediately after this Unit completes a successful Charge, resolve the IMPACT (4) 4+ effect."),A("Combat","Shadow Strike","Active · 1 PE","All Enemy Units Engaged with this Unit suffer HITS 4 (1).")],
+ wp:[W("Combat","Master Warp Blade","E","Ground",4,"3+","Light, Armoured","D3",2,"INSTANT")],
+ up:[]},
+{id:"tassadar",n:"Tassadar",r:"P",tags:["Protoss"],slot:"Hero",unk:true,comps:[[1,230,1]],up:[]},
+{id:"twtemplar",n:"Twilight Templar (High Templar)",r:"P",tags:["Protoss"],slot:"Support",unk:true,comps:[[2,230,1]],up:[]},
+{id:"hightemplar",n:"High Templar",r:"P",tags:["Protoss"],slot:"Support",unk:true,comps:[[2,120,1],[4,200,2]],up:[{n:"Psionic Storm",c:[20,30]},{n:"Farsight",c:[20,20]}]},
 {id:"pylon",n:"Pylon",r:"P",tags:["Protoss","Khalai"],slot:"—",role:"Tactician",base:"80mm",sum:true,st:[2,"-","5+","-",8,3],ct:"Armored, Ground",
  prof:[[1,1,0]],comps:[[1,0,0]],
  ab:[A("Any","Khalai Ingenuity","Passive","Once per Round, when a Friendly Unit Within 4″ of this Pylon uses a Special Ability that costs Psionic Energy, that ability's PE cost is reduced by 1."),STRUCT,
@@ -372,17 +403,18 @@ const TAC=[
  ab:[A("Movement","Tactical Retreat","Active","The active Unit ignores the Disengage penalty for the remainder of the Round."),A("Movement","Terran Tenacity","Active","Once per Game. Immediately claim the First Player Marker. No other player may claim the First Player Marker for the remainder of this Phase.")]},
 {id:"rrf",n:"Raynor's Raiders",r:"T",type:"Faction",tags:["Terran","Raynor's Raiders"],uq:true,gas:0,slots:{Core:3,Hero:1,Support:1,Air:1},res:["CP",1],
  ab:[A("Movement","Rapid Ingress","Active","Set a Friendly Point Defence Drone Unit anywhere on the battlefield, more than 1″ away from any Enemy model. Remove this Unit at the End of the Round."),A("Movement","Ready for Pickup?","Active","Once Per Game. The active Unit resolves the PLACE (12) effect. Models set by this effect cannot be set up Within the Engagement Range of any Enemy Unit. This resolves instead of performing a standard action.")]},
-{id:"barracks",n:"Barracks",r:"T",tags:["Terran"],gas:25,slots:{Core:1},res:["CP",1],ab:[A("Movement","Go! Go! Go!","Active","The active Biological Unit performs a 2″ Move action. This does not count towards its action limit.")]},
+{id:"barracks",n:"Barracks",r:"T",tags:["Terran"],gas:30,slots:{Core:1},res:["CP",1],ab:[A("Movement","Go! Go! Go!","Active","The active Biological Unit performs a 2″ Move action. This does not count towards its action limit.")]},
 {id:"brxproxy",n:"Barracks (Proxy)",r:"T",tags:["Terran"],uq:true,gas:40,slots:{Core:2},res:["CP",2],ab:[A("Movement","Go! Go! Go!","Active","The active Biological Unit performs a 2″ Move action. This does not count towards its action limit."),A("Movement","Armed and Ready","Active","The active Biological Unit Deploys from any table edge that is not a player's Entry Edge. No model may be placed Within 10″ of any Enemy model. This ability cannot be used if another Friendly Biological Unit has already been Deployed this Round.")]},
-{id:"brxtech",n:"Barracks (Tech Lab)",r:"T",tags:["Terran"],uq:true,gas:45,slots:{Core:1,Elite:1},res:["CP",2],ab:[A("Movement","Go! Go! Go!","Active","The active Biological Unit performs a 2″ Move action. This does not count towards its action limit."),A("Assault","Let's Have a Blast!","Active","The active Biological Unit's first Ranged Weapon used gains ANTI-EVADE (1).")]},
+{id:"brxtech",n:"Barracks (Tech Lab)",r:"T",tags:["Terran"],uq:true,gas:40,slots:{Core:1,Elite:1},res:["CP",2],ab:[A("Movement","Go! Go! Go!","Active","The active Biological Unit performs a 2″ Move action. This does not count towards its action limit."),A("Assault","Let's Have a Blast!","Active","The active Biological Unit's first Ranged Weapon used gains ANTI-EVADE (1).")]},
 {id:"supplydepot",n:"Supply Depot",r:"T",tags:["Terran"],uq:true,gas:40,slots:{Core:1,Elite:1,Hero:1},res:["CP",1],ab:[A("Movement","Additional Supply Depots","Active","The active Unit's Supply Value is improved by 1 for Controlling and Contesting Mission Markers and completing objectives.")]},
 {id:"factory",n:"Factory",r:"T",tags:["Terran"],gas:35,slots:{Elite:2},res:["CP",1],ab:[A("Movement","Field Repair","Active","The active Mechanical Unit resolves the HEAL (2) effect.")]},
 {id:"engbay",n:"Engineering Bay",r:"T",tags:["Terran"],gas:25,slots:{Core:1},res:["CP",1],ab:[A("Any","Infantry Armor","Reaction","Use before a Friendly Biological Unit makes an Armour Roll. That Unit gains TOUGH (1) for this roll."),A("Assault","Infantry Weapons","Active","The active Biological Unit's first Ranged Weapon used gains CRITICAL HIT (1).")]},
 {id:"armory",n:"Armory",r:"T",tags:["Terran"],gas:30,slots:{Elite:1},res:["CP",1],ab:[A("Any","Vehicle Plating","Reaction","Use before a Friendly Mechanical Unit makes an Armour Roll. That Unit gains TOUGH (1) for this roll."),A("Assault","Vehicle Weapons","Active","The active Mechanical Unit's first Ranged Weapon used gains CRITICAL HIT (1).")]},
-{id:"academy",n:"Academy",r:"T",tags:["Terran"],uq:true,gas:35,slots:{Support:2},res:["CP",1],ab:[A("Any","Advanced Training","Reaction","Once per Round, when a Friendly Support Unit activates a Special Ability that costs CP, resolve that ability with its CP cost reduced by 1 (to a minimum of 0). Do not Exhaust this card.")]},
+{id:"academy",n:"Academy",r:"T",tags:["Terran"],uq:true,gas:40,slots:{Support:2},res:["CP",1],ab:[A("Any","Advanced Training","Reaction","Once per Round, when a Friendly Support Unit activates a Special Ability that costs CP, resolve that ability with its CP cost reduced by 1 (to a minimum of 0). Do not Exhaust this card.")]},
 {id:"orbital",n:"Orbital Command",r:"T",tags:["Terran"],uq:true,gas:25,slots:{Core:1},res:["CP",1],ab:[A("Movement","Comsat Station","Active","Select one table edge that is not a player's Entry Edge. Until the End of the Round, Enemy Units cannot Deploy from that edge."),A("Movement","Scanner Sweep","Active","Set a Faction Indicator anywhere on the battlefield. While Enemy Units are Within 6″ of this Faction Indicator, they lose HIDDEN Status.")]},
-{id:"dropship",n:"Dropship",r:"T",tags:["Terran"],uq:true,gas:40,slots:{Core:1,Support:1},res:["CP",1],ab:[A("Movement","Strap In!","Active","The active, Unengaged Ground Unit is returned to Reserves instead of performing an action."),A("Movement","Ready for Dust-Off","Active","Set a Faction Indicator anywhere on the battlefield more than 10″ away from any Enemy model. At the End of the Round, the controlling player may Deploy one Ground Unit from Reserves in base-to-base contact with this Faction Indicator.")]},
-{id:"factorytech",n:"Factory (Tech Lab)",r:"T",tags:["Terran"],gas:40,slots:{},res:["CP",1],unk:true,ab:[]},
+{id:"dropship",n:"Dropship",r:"T",tags:["Terran"],uq:true,gas:35,slots:{Core:1,Support:1},res:["CP",1],ab:[A("Movement","Strap In!","Active","The active, Unengaged Ground Unit is returned to Reserves instead of performing an action."),A("Movement","Ready for Dust-Off","Active","Set a Faction Indicator anywhere on the battlefield more than 10″ away from any Enemy model. At the End of the Round, the controlling player may Deploy one Ground Unit from Reserves in base-to-base contact with this Faction Indicator.")]},
+{id:"factorytech",n:"Factory (Tech Lab)",r:"T",tags:["Terran"],uq:true,gas:40,slots:{"Elite": 2},res:["CP",1],ab:[A("Movement","Field Repair","Active","The active Mechanical Unit resolves the HEAL (2) effect."),A("Assault","Pound 'em Flat!","Active","If the active Mechanical Unit has the Stationary Status, its first Ranged Weapon used gains PRECISION (2).")]},
+{id:"vanadium",n:"Vanadium Plating",r:"T",tags:["Terran"],gas:25,slots:{},res:["CP",1],unk:true,ab:[]},
 /* Zerg */
 {id:"zswarm",n:"Zerg Swarm",r:"Z",type:"Faction",tags:["Zerg"],uq:true,gas:0,slots:{Core:3,Elite:1,Support:1,Air:1},res:["BM",1],
  ab:[A("Any","Brood Instinct","Reaction","Use before a Friendly Unit makes an Evade Roll. Apply a +1 Modifier to that roll."),A("Any","Zerg Creep","Passive","During Army Building, select exactly one Creep Card and add it to the Army List, paying its listed cost (if any)."),A("Movement","Rapid Burrowing","Active","Select one Friendly, Unengaged Ground Zerg Unit on the battlefield. That Unit gains the Burrowed Status, even if it has already been Activated this Round.")]},
@@ -393,32 +425,36 @@ const TAC=[
 {id:"malcreep",n:"Malignant Creep",r:"Z",type:"Creep",tags:["Zerg","Kerrigan's Swarm"],uq:true,gas:10,slots:{},res:null,
  ab:[A("Any","Creep Removal","Passive","If an Enemy Unit ends a Move, Deploy, Run, Charge or Disengage action Within 1″ of a Friendly Creep Tumor token, remove that token from the battlefield."),A("Any","Living Glob of Tissue","Passive","Creep Tumor tokens have STAY IN PLAY and DISPLACEMENT."),A("Assault","Malevolent Matriarch","Passive","If the active Friendly Zerg Unit declares a Charge action while ON CREEP, it gains +1 Modifier to IMPACT Hit Rolls.")]},
 {id:"pool",n:"Spawning Pool",r:"Z",tags:["Zerg"],gas:25,slots:{Core:1},res:["BM",1],ab:[A("Combat","Feral Rage","Active","The active Unit's first Close Combat Weapon used gains PRECISION (2).")]},
-{id:"sixpool",n:"Spawning Pool (Six Pool)",r:"Z",tags:["Zerg"],uq:true,gas:40,slots:{Core:2},res:["BM",2],ab:[A("Movement","Timing Push","Active","The active Zergling Unit Deploys from any table edge that is not a Player's Entry Edge. This action must end more than 10″ away from any Enemy model."),A("Combat","Feral Rage","Active","The active Unit's first Close Combat Weapon used gains PRECISION (2).")]},
+{id:"sixpool",n:"Spawning Pool (Six Pool)",r:"Z",tags:["Zerg"],uq:true,gas:35,slots:{Core:2},res:["BM",2],ab:[A("Movement","Timing Push","Active","The active Zergling Unit Deploys from any table edge that is not a Player's Entry Edge. This action must end more than 10″ away from any Enemy model."),A("Combat","Feral Rage","Active","The active Unit's first Close Combat Weapon used gains PRECISION (2).")]},
 {id:"warren",n:"Roach Warren",r:"Z",tags:["Zerg"],gas:25,slots:{Core:1},res:["BM",1],ab:[A("Assault","Nasty Surprise","Active","The active Ground Unit loses the Burrowed Status.")]},
-{id:"hyden",n:"Hydralisk Den",r:"Z",tags:["Zerg"],gas:35,slots:{Elite:2},res:["BM",1],ab:[A("Assault","Missile Attacks","Active","The active Unit's first Ranged Weapon used gains PRECISION (1).")]},
-{id:"evo",n:"Evolution Chamber",r:"Z",tags:["Zerg"],gas:30,slots:{Core:1},res:["BM",1],ab:[A("Any","Carapace","Reaction","Use before a Friendly Unit makes an Armour Roll. That Unit gains TOUGH (1) for this roll."),A("Assault","Extended Claws","Active","The active Unit gains a +1 Modifier to all IMPACT Hit Rolls.")]},
+{id:"hyden",n:"Hydralisk Den",r:"Z",tags:["Zerg"],gas:30,slots:{Elite:2},res:["BM",1],ab:[A("Assault","Missile Attacks","Active","The active Unit's first Ranged Weapon used gains PRECISION (1).")]},
+{id:"evo",n:"Evolution Chamber",r:"Z",tags:["Zerg"],gas:25,slots:{Core:1},res:["BM",1],ab:[A("Any","Carapace","Reaction","Use before a Friendly Unit makes an Armour Roll. That Unit gains TOUGH (1) for this roll."),A("Assault","Extended Claws","Active","The active Unit gains a +1 Modifier to all IMPACT Hit Rolls.")]},
 {id:"hatch",n:"Hatchery",r:"Z",tags:["Zerg"],gas:30,slots:{Support:1},res:["BM",1],ab:[A("Movement","Lie in Wait","Active","The active, Unengaged Ground Unit gains the Burrowed Status."),A("Movement","Creep Spread","Active","Set a Creep Tumor token on the battlefield Within 6″ (Line of Sight is not required) of either a Friendly Entry Edge or an existing Friendly Creep Tumor token.")]},
 {id:"lair",n:"Lair",r:"Z",tags:["Zerg"],uq:true,gas:35,slots:{Core:1,Elite:1},res:["BM",1],ab:[A("Any","Predation","Active","The active Unit's Close Combat Weapons gain INSTANT."),A("Movement","Creep Spread","Active","Set a Creep Tumor token on the battlefield Within 6″ (Line of Sight is not required) of either a Friendly Entry Edge or an existing Friendly Creep Tumor token.")]},
 {id:"overseer",n:"Overseer",r:"Z",tags:["Zerg"],uq:true,gas:25,slots:{Support:1},res:["BM",1],ab:[A("Movement","Oversight Mode","Active","Set a Faction Indicator anywhere on the battlefield. While Enemy Units are Within 6″ of this Faction Indicator, they lose HIDDEN Status."),A("Assault","Pneumatized Carapace","Reaction","Use after a Friendly Unit rolls a D6 for Charge Distance. Roll an additional D6 and use the higher result to calculate the total Charge Distance.")]},
 {id:"overlord",n:"Overlord",r:"Z",tags:["Zerg"],uq:true,gas:35,slots:{Core:1,Elite:1,Hero:1},res:["BM",1],ab:[A("Movement","Ventral Sacs","Active","Set a Faction Indicator anywhere on the battlefield more than 10″ away from any Enemy model. At the End of the Round, the controlling player may Deploy one Ground Unit from Reserves in base-to-base contact with this Faction Indicator."),A("Assault","Excrete Creep","Active","Set a Creep Tumor token on the battlefield Within 6″ (Line of Sight is not required) of either a Friendly Entry Edge or an existing Friendly Creep Tumor token.")]},
-{id:"cocoon",n:"Cocoon",r:"Z",tags:["Zerg"],gas:30,slots:{},res:["BM",1],unk:true,ab:[]},
+{id:"cocoon",n:"Cocoon",r:"Z",tags:["Zerg"],uq:true,gas:30,slots:{Elite:1},res:null,ab:[A("Movement","Spawn Larva","Active","The active Friendly non-Unique Biological Unit with a Size Characteristic of 1 resolves the RESPAWN (2) effect."),A("Movement","Ravager Morph","Active","Once per Game. The active Friendly Roach Unit performs MORPH (Ravager) 1.")]},
+{id:"defmound",n:"Defiler Mound",r:"Z",tags:["Zerg"],gas:35,slots:{},res:["BM",1],unk:true,ab:[]},
+{id:"reactcreep",n:"Reactive Creep",r:"Z",type:"Creep",tags:["Zerg"],gas:10,slots:{},res:null,unk:true,ab:[]},
 /* Protoss */
 {id:"khalai",n:"Khalai",r:"P",type:"Faction",tags:["Protoss","Khalai"],uq:true,gas:0,slots:{Core:3,Elite:2,Hero:1},res:["PE",1],
  ab:[A("Movement","Pylon Warp-In","Active","If there is no Friendly Pylon on the battlefield, set a Friendly Pylon Unit anywhere on the GROUND LEVEL of the battlefield more than 10″ away from any Enemy model. This Round, the Pylon is not eligible to use its Special Abilities (excluding Structure)."),A("Movement","Bound by the Khala","Active","At the end of the active Unit's Activation, select one other Friendly Unit eligible to Activate in the current Phase. Immediately Activate that Unit.")]},
 {id:"daelaam",n:"Daelaam",r:"P",type:"Faction",tags:["Protoss"],uq:true,gas:0,slots:{Core:3,Elite:1,Support:1,Air:1},res:["PE",1],
  ab:[A("Any","Dae'uhl","Reaction","When a Friendly Unit receives Damage, reduce the Total Damage by 2 (to a minimum of 1)."),A("Movement","Mass Recall","Active","Once per Game. Set a Faction Indicator anywhere on the battlefield. All Friendly Protoss Units Within 6″ of this Faction Indicator are removed from the battlefield and returned to Reserves.")]},
+{id:"nerazimfac",n:"Nerazim",r:"P",type:"Faction",tags:["Protoss", "Nerazim"],uq:true,gas:0,slots:{"Hero": 1, "Elite": 3, "Core": 2},res:["PE",1],ab:[A("Any","Might Of The Nerazim","Reaction","If a Friendly Unit loses the HIDDEN Status, it gains Buff Speed (2) and its first Weapon used CRITICAL HIT (2)."),A("Movement","Darkness Descends","Active","The active Biological Unit gains the HIDDEN Status until the End of the Round.")]},
 {id:"gateway",n:"Gateway",r:"P",tags:["Protoss"],gas:25,slots:{Core:1},res:["PE",1],ab:[A("Combat","Quick Strikes","Active","The active Unit's first Close Combat Weapon used gains PRECISION (2).")]},
 {id:"warpgate",n:"Warp Gate",r:"P",tags:["Protoss"],uq:true,gas:40,slots:{Core:2},res:["PE",1],ab:[A("Movement","Warp In","Active","The active GROUND Unit Deploys from any table edge that is not a player's Entry Edge. This deployment must end more than 10″ away from any Enemy model. The controlling player cannot use this ability if another Friendly Ground Unit has already Deployed this Round."),A("Combat","Quick Strikes","Active","The active Unit's first Close Combat Weapon used gains PRECISION (2).")]},
 {id:"chrono",n:"Gate Chronoboosted",r:"P",tags:["Protoss"],uq:true,gas:35,slots:{Core:1,Elite:1},res:["PE",1],ab:[A("Movement","Zealous Charge","Active","The active Unit gains BUFF Speed (2)."),A("Combat","Quick Strikes","Active","The active Unit's first Close Combat Weapon used gains PRECISION (2).")]},
 {id:"observer",n:"Observer",r:"P",tags:["Protoss"],uq:true,gas:25,slots:{Support:1},res:["PE",1],ab:[A("Movement","Surveillance","Active","Set a Faction Indicator anywhere on the battlefield. While Enemy Units are Within 6″ of this Faction Indicator, they lose HIDDEN Status."),A("Assault","Gravitic Boosters","Reaction","Use after a Friendly Unit rolls a D6 for Charge Distance. Add 1 to the Charge Distance for this Unit.")]},
-{id:"nexus",n:"Nexus",r:"P",tags:["Protoss"],uq:true,gas:35,slots:{Core:2},res:["PE",1],ab:[A("Any","Ancient Pride","Active","The active Unit's first Weapon used gains INSTANT."),A("Movement","Strategic Recall","Active","The active, Unengaged Ground Unit is returned to Reserves instead of performing an action.")]},
+{id:"nexus",n:"Nexus",r:"P",tags:["Protoss"],uq:true,gas:40,slots:{Core:2},res:["PE",1],ab:[A("Any","Ancient Pride","Active","The active Unit's first Weapon used gains INSTANT."),A("Movement","Strategic Recall","Active","The active, Unengaged Ground Unit is returned to Reserves instead of performing an action.")]},
 {id:"ocnexus",n:"Overcharged Nexus",r:"P",tags:["Protoss"],uq:true,gas:35,slots:{Core:1,Elite:1},res:["PE",1],ab:[A("Any","Photon Overcharge","Reaction","Use when an Enemy Unit enters the battlefield from Reserves via a location other than its own Entry Edge. That Unit immediately suffers HITS 3 (1)."),A("Movement","Strategic Recall","Active","The active, Unengaged Ground Unit is returned to Reserves instead of performing an action.")]},
 {id:"powerfield",n:"Power Field",r:"P",tags:["Protoss"],uq:true,gas:40,slots:{Core:1,Elite:1,Hero:1},res:["PE",1],ab:[A("Any","Guardian Shell","Reaction","Use before a Friendly Ground Unit makes an Armour Roll. That Unit gains DODGE (2) for this roll.")]},
 {id:"forge",n:"Forge",r:"P",tags:["Protoss"],gas:30,slots:{Elite:1},res:["PE",1],ab:[A("Any","Ground Armor","Reaction","Use before a Friendly Ground Unit makes an Armour Roll. That Unit gains TOUGH (1) for this roll."),A("Assault","Ground Weapons","Active","The active Ground Unit's first Ranged Weapon used gains CRITICAL HIT (1).")]},
 {id:"warpprism",n:"Warp Prism",r:"P",tags:["Protoss"],uq:true,gas:35,slots:{Core:2},res:["PE",1],ab:[A("Movement","Phase","Active","The active Unit resolves the PLACE (3) effect."),A("Movement","Warp Conduit","Active","Set a Faction Indicator anywhere on the battlefield more than 10″ away from any Enemy model. At the End of the Round, you may Deploy one Ground unit from Reserves in base-to-base Contact with this Faction Indicator.")]},
-{id:"twilight",n:"Twilight Council",r:"P",tags:["Protoss"],uq:true,gas:45,slots:{Support:1,Elite:1},res:["PE",1],ab:[A("Any","Veil of Shadows","Reaction","Use after a Friendly Unit resolves a PLACE effect. That Unit immediately resolves the HEAL (2) effect."),A("Assault","Weapons of the Firstborn","Active","The active Ground Unit's first Ranged Weapon used gains BUFF Range (4).")]},
-{id:"robo",n:"Robotics Facility",r:"P",tags:["Protoss"],gas:35,slots:{},res:["PE",1],unk:true,ab:[]},
-{id:"voidseeker",n:"Void Seeker",r:"P",tags:["Protoss"],gas:40,slots:{},res:["PE",1],unk:true,ab:[]},
+{id:"twilight",n:"Twilight Council",r:"P",tags:["Protoss"],uq:true,gas:40,slots:{Support:1,Elite:1},res:["PE",1],ab:[A("Any","Veil of Shadows","Reaction","Use after a Friendly Unit resolves a PLACE effect. That Unit immediately resolves the HEAL (2) effect."),A("Assault","Weapons of the Firstborn","Active","The active Ground Unit's first Ranged Weapon used gains BUFF Range (4).")]},
+{id:"robo",n:"Robotics Facility",r:"P",tags:["Protoss"],gas:35,slots:{"Elite": 2},res:["PE",1],ab:[A("Any","Plasma Shields","Reaction","Use before a Friendly Mechanical Ground Unit makes an Armour Roll. If this Unit has the Shielded Status, it gains TOUGH (1) and DODGE (1) for this roll.")]},
+{id:"voidseeker",n:"Void Seeker",r:"P",tags:["Protoss", "Nerazim"],uq:true,gas:40,slots:{"Core": 1},res:["PE",1],ab:[A("Movement","Personal Transport","Active","Instead of performing an action, the active, Unengaged Ground Unit is returned to Reserves. Then, it performs a Deploy action."),A("Movement","Anakh Su'n","Active","This Unit gains the HIDDEN Status until it performs another action.")]},
+{id:"templararch",n:"Templar Archives",r:"P",tags:["Protoss"],gas:40,slots:{},res:["PE",1],unk:true,ab:[]},
 ];
 TAC.forEach(t=>{t.type=t.type||"Tactical"});
 
@@ -438,6 +474,9 @@ const MISSIONS=[
 {id:"divide",n:"Divide and Conquer",
  std:{sup:8,esc:2,len:4,lead:10,params:"All Mission Markers are Activated. Split the Battlefield into four quarters as shown on the Deployment Card.",score:"Score VPs equal to Enemy Supply destroyed this Round. From the start of the first Round: calculate Total Current Supply in each quarter; gain 1 VP for each quarter where yours is higher than the Opponent's. Only Units Wholly Within a quarter count. A Unit controlling a Mission Marker is worth 1 extra Supply for this. Gain 2 VP for Controlling Mission Marker 5."},
  sk:{sup:4,esc:1,len:4,lead:8,params:"All Mission Markers are Activated. Split the Battlefield into four quarters as shown on the Deployment Card.",score:"Same as Standard: Enemy Supply destroyed = VPs; from Round 1, 1 VP per quarter where your Wholly Within Supply is higher (+1 for a Unit controlling a Marker); 2 VP for Controlling Marker 5."}},
+{id:"artefact",n:"Artefact Hunt",
+ std:{sup:6,esc:2,len:5,lead:null,params:"All Mission Markers are Activated.",score:"Score VPs equal to Enemy Supply destroyed this Round. End of Round 5: gain 4 VP for each Friendly Unit that CLAIMS a Mission Marker and is Wholly Within Friendly Zone of Influence. Gain 2 VP for each Mission Marker associated with your colour that is not currently CLAIMED by an Enemy Unit.",extra:"Scoring Phase: from the Start of the second Round, if a Unit is Within 3″ of a Controlled Mission Marker that is Neutral or associated with the Opponent colour, that Unit may CLAIM it. CLAIM: place the Mission Marker on the Unit Card. A Unit carrying a Mission Marker must DROP it if: it has its Current Supply Value reduced; before it resolves a PLACE effect; it is Engaged with Enemies having a greater combined Current Supply Value; it is Destroyed, removed from the battlefield, or returned to Reserves. When a Unit DROPS a Mission Marker, the Opponent places it Within 2″ of the Unit or its last model removed. A Unit may CLAIM only one Mission Marker at a time."},
+ sk:{sup:3,esc:1,len:5,lead:null,params:"All Mission Markers are Activated.",score:"Score VPs equal to Enemy Supply destroyed this Round. End of Round 5: gain 3 VP for each Friendly Unit that CLAIMS a Mission Marker and is Wholly Within Friendly Zone of Influence. Gain 1 VP for each Mission Marker associated with your colour that is not currently CLAIMED by an Enemy Unit.",extra:"Same CLAIM and DROP rules as Standard: from Round 2, a Unit Within 3″ of a Controlled Neutral or Opponent-colour Marker may CLAIM it (place it on the Unit Card). DROP it if its Current Supply Value is reduced, before it resolves a PLACE effect, if Engaged with Enemies of greater combined Current Supply, or if Destroyed, removed or returned to Reserves. The Opponent places a DROPPED Marker Within 2″. One CLAIM per Unit."}},
 ];
 const DEPLOYS=[
 {id:"gauntlet",n:"Gauntlet",sc:"std",d:"54×36″. Red and Blue zones run along opposite long edges, 6″ deep. Markers 1–5, with 5 in the centre."},
@@ -450,6 +489,8 @@ const DEPLOYS=[
 {id:"dirtside",n:"Dirt Side",sc:"sk",d:"36×36″. Stepped L-shaped zones in opposite corners (12″ arms). Markers 1, 2 and 5."},
 {id:"frontier",n:"Frontier",sc:"sk",d:"36×36″. Red has two zones centred on opposite edges; Blue has two zones centred on the other two edges (12″ wide, 6″ deep). Markers 1, 2 and 5."},
 {id:"charplains",n:"Char Plains",sc:"sk",d:"36×36″. Red and Blue each have an 18″×6″ zone at the same end of opposite edges. Markers 1, 2 and 5."},
+{id:"meeting",n:"Meeting Engagement",sc:"std",d:"54×36″. Each player has two zones: an 18″×6″ zone centred on one long edge (Blue on one, Red on the other) and a 12″×6″ zone centred on a short edge (Blue on the left, Red on the right). Markers 1–4 sit 12″ in from each side and 12″ from the long edges (1 and 3 Red, nearest Blue's long edge; 2 and 4 Blue, nearest Red's long edge). 5 is the neutral centre Marker."},
+{id:"greenvalleys",n:"Green Valleys",sc:"sk",d:"36×36″. Each player has a 12″×6″ zone centred on one side edge (Blue left, Red right) plus a small 6″-deep corner zone (Red top-left, Blue bottom-right). Marker 1 (Red) is 12″ from the left and 6″ from the bottom, Marker 2 (Blue) is 12″ from the right and 6″ from the top, and 5 is the neutral centre Marker."},
 ];
 const SCALES={sk:{n:"Skirmish",min:1000},std:{n:"Standard",min:2000},go:{n:"Grand Offensive",min:2500}};
 const SLOT_TYPES=["Core","Elite","Support","Air","Hero"];
@@ -513,12 +554,14 @@ $("#modal").addEventListener("click",e=>{if(e.target.id==="modal")$("#modal").cl
 function weaponTable(ws){if(!ws.length)return"";return `<div class="wt"><table><thead><tr><th>Weapon</th><th>Rng</th><th>Target</th><th>RoA</th><th>Hit</th><th>Surge</th><th>S Dice</th><th>Dmg</th><th>Keywords</th></tr></thead><tbody>${ws.map(w=>`<tr><td><b>${esc(w.n)}</b>${w.rep?`<br><span class="note">replaces ${esc(w.rep)}</span>`:""}</td><td>${w.rng}</td><td>${w.t}</td><td>${w.roa}</td><td>${w.hit}</td><td>${esc(w.su)}</td><td>${w.sd}</td><td>${w.dmg}</td><td class="kw">${esc(w.kw)}</td></tr>`).join("")}</tbody></table></div>`}
 function abilityBlock(abs){const order=["Any","Movement","Assault","Combat"];return order.map(ph=>{const l=abs.filter(a=>a.ph===ph);if(!l.length)return"";return `<div class="phh">${ph==="Any"?"Any phase":ph+" phase"}</div>`+l.map(a=>`<div class="ab"><b>${esc(a.n)}</b>${kindTag(a.k)} ${esc(a.tx)}</div>`).join("")}).join("")}
 function unitCardHTML(u,chosenUps){
-  if(u.unk)return `<p class="note">This unit is in the September 2026 cost table, but its card isn't in the PDFs you uploaded, so stats and abilities aren't available here. Default slot guess: <b>${u.slot}</b>.</p><div class="phh">Compositions</div>${u.comps.map(c=>`<div class="ab">${c[0]} model${c[0]>1?"s":""}: <b>${c[1]}</b> minerals, Supply ${c[2]}</div>`).join("")}<div class="phh">Upgrades</div>${u.up.map(x=>`<div class="ab"><b>${esc(x.n)}</b> ${x.rep?"(replaces "+esc(x.rep)+") ":""}— ${x.c.join(" / ")}</div>`).join("")||"<div class='note'>None</div>"}`;
+  if(u.unk)return `<p class="note">This unit is in the 09.10.2026 cost table, but its card hasn't been released in the files you have, so stats and abilities aren't available here. Slot is a guess (<b>${u.slot}</b>) and any sub-faction tag is unknown; set the slot in the builder once you see the card.</p><div class="phh">Compositions</div>${u.comps.map(c=>`<div class="ab">${c[0]} model${c[0]>1?"s":""}: <b>${c[1]}</b> minerals, Supply ${c[2]}</div>`).join("")}<div class="phh">Upgrades</div>${u.up.map(x=>`<div class="ab"><b>${esc(x.n)}</b> ${x.rep?"(replaces "+esc(x.rep)+") ":""}— ${x.c.join(" / ")}</div>`).join("")||"<div class='note'>None</div>"}`;
   const s=u.st,labels=["Shield","Speed","Armour","Evade","HP","Size"];
   let h=`<div class="sgrid">${s.map((v,i)=>`<div><b>${v}</b><small>${labels[i]}</small></div>`).join("")}</div>`;
-  h+=`<div class="note">${esc(u.tags.join(" · "))} &nbsp;|&nbsp; ${esc(u.ct)} &nbsp;|&nbsp; ${u.slot==="—"?"Summoned (no cost, no slot)":u.slot+" slot"} &nbsp;|&nbsp; ${esc(u.role)} &nbsp;|&nbsp; ${u.base}${u.uq?" &nbsp;|&nbsp; Unique":""}</div>`;
+  h+=`<div class="note">${esc(u.tags.join(" · "))} &nbsp;|&nbsp; ${esc(u.ct)} &nbsp;|&nbsp; ${u.slot==="—"?"Summoned (no cost, no slot)":u.slot+" slot"} ${u.role&&u.role!=="—"?" &nbsp;|&nbsp; "+esc(u.role):""} &nbsp;|&nbsp; ${u.base}${u.uq?" &nbsp;|&nbsp; Unique":""}</div>`;
   h+=`<div class="note" style="margin-top:4px">Supply by models: ${u.prof.map(p=>`${p[0]===p[1]?p[0]:p[0]+"–"+p[1]}→${p[2]}`).join(", ")}</div>`;
   if(!u.sum)h+=`<div class="note">Buy at: ${u.comps.map(c=>`${c[0]} models ${c[1]}m`).join(" · ")}</div>`;
+  if(u.src==="cc")h+=`<div class="note" style="margin-top:4px">Data imported from Co-op Command's Command Center snapshot (16 Sep 2026), not from your printed card. Base size approximate.</div>`;
+  if(u.note)h+=`<div class="note" style="margin-top:4px">${esc(u.note)}</div>`;
   h+=abilityBlock(u.ab||[]);
   let ws=(u.wp||[]).slice();
   if(chosenUps){chosenUps.forEach(n=>{const up=u.up.find(x=>x.n===n);if(up&&up.w){if(up.rep&&!up.spec){ws=ws.filter(w=>w.n!==up.rep)}ws.push(Object.assign({},up.w,{rep:up.spec&&up.rep?up.rep+" (one model)":(up.spec?null:null)}))}})}
@@ -532,12 +575,13 @@ function tacCardHTML(t){
   let h=`<div class="note">${t.type} card · ${esc(t.tags.join(" · "))}${t.uq?" · Unique":""} · ${t.gas} Vespene Gas${t.res?` · provides ${t.res[1]} ${t.res[0]}`:""}</div>`;
   const sl=Object.entries(t.slots).filter(e=>e[1]).map(e=>`${e[1]}× ${e[0]}`).join(", ");
   h+=`<div class="ab"><b>Army slots:</b> ${sl||(t.unk?"not in your PDFs":"none")}</div>`;
+  if(t.src==="cc")h+=`<p class="note">Imported from Co-op Command's Command Center snapshot (16 Sep 2026).</p>`;
   if(t.unk)h+=`<p class="note">This card is in the cost table but its text isn't in your uploads. Set the slots it gives in the builder from your physical card.</p>`;
   return h+abilityBlock(t.ab);
 }
 function showUnit(id,ups){const u=U(id);openModal(u.n,unitCardHTML(u,ups))}
 function showTac(id){const t=T(id);openModal(t.n,tacCardHTML(t))}
-function missionHTML(m,scale){const v=m[scale==="sk"?"sk":"std"];return `<div class="note">${scale==="sk"?"Skirmish":"Standard"} · starting Supply ${v.sup}, +${v.esc} per Round · ${v.len} Rounds · ends early on a ${v.lead}+ VP lead</div><div class="phh">Mission parameters</div><div class="ab">${esc(v.params)}</div><div class="phh">Scoring</div><div class="ab">${esc(v.score)}</div>${v.extra?`<div class="phh">Additional</div><div class="ab">${esc(v.extra)}</div>`:""}`}
+function missionHTML(m,scale){const v=m[scale==="sk"?"sk":"std"];return `<div class="note">${scale==="sk"?"Skirmish":"Standard"} · starting Supply ${v.sup}, +${v.esc} per Round · ${v.len} Rounds · ${v.lead?`ends early on a ${v.lead}+ VP lead`:"no early-win VP lead"}</div><div class="phh">Mission parameters</div><div class="ab">${esc(v.params)}</div><div class="phh">Scoring</div><div class="ab">${esc(v.score)}</div>${v.extra?`<div class="phh">Additional</div><div class="ab">${esc(v.extra)}</div>`:""}`}
 
 /* ===================== BUILD VIEW ===================== */
 function renderBuild(){
@@ -587,7 +631,7 @@ function renderBuild(){
 function rosterText(b){const t=totals(b),L=limits(b);let s=`${b.name}\n${RACES[b.race]} — ${b.faction?T(b.faction).n:"(no faction)"} — ${SCALES[b.scale].n}\nMinerals ${t.min}/${L.min} · Vespene ${t.gas}/${L.gas} · Supply ${b.units.reduce((a,bu)=>a+U(bu.id).comps[bu.ci][2],0)}\n\nUNITS\n`;
   b.units.forEach(bu=>{const u=U(bu.id);s+=`- ${u.n} ×${u.comps[bu.ci][0]} (Supply ${u.comps[bu.ci][2]}, ${unitCost(bu)} min)${bu.ups&&bu.ups.length?" — "+bu.ups.join(", "):""}\n`});
   s+=`\nTACTICAL CARDS\n`;Object.entries(b.tac).forEach(([id,q])=>{if(q)s+=`- ${T(id).n}${q>1?" ×"+q:""} (${T(id).gas*q} gas)\n`});
-  s+=`\nMISSIONS: ${b.missions.map(id=>M(id).n).join(", ")||"—"}\nDEPLOYMENTS: ${b.deps.map(id=>D(id).n).join(", ")||"—"}\n`;return s}
+  s+=`\nMISSIONS: ${b.missions.map(id=>M(id).n).join(", ")||"—"}\nDEPLOYMENTS: ${b.deps.map(id=>D(id).n).join(", ")||"—"}\n\nBuilt with SCTMG Data Disc\n`;return s}
 function onBuildClick(e){
   const b=st.build,el=e.target.closest("button,input,select");if(!el)return;const ds=el.dataset;
   if(ds.race&&el.tagName==="BUTTON"){if(b.race!==ds.race){if(b.units.length||Object.keys(b.tac).length){if(!confirm("Switching race clears this roster's units and cards. Continue?"))return}Object.assign(b,{race:ds.race,faction:"",tac:{},tacSlots:{},units:[]})}}
@@ -675,10 +719,10 @@ function renderPlay(){
   <div class="ref">${PHASE_REF[g.phase]}</div>
   <div class="row" style="margin-top:8px"><button class="btn" id="pPrev" ${g.round===1&&g.phase===0?"disabled":""}>Back</button><button class="btn pri grow" id="pNext" ${g.over?"disabled":""}>${g.phase===3?(g.round>=mv.len?"Finish game":"End Round "+g.round):"Next: "+PHASES[g.phase+1]}</button><button class="link" id="pMis" style="margin-left:6px">Mission card</button></div>
   ${g.round>=mv.len?`<div class="banner">Final Round: Supply Pool is unlimited. All remaining Reserves may deploy.</div>`:""}</div>`;
-  h+=`<div class="panel"><h2>Victory Points <small>game ends on a ${mv.lead}+ lead</small></h2><div class="vp">
+  h+=`<div class="panel"><h2>Victory Points <small>${mv.lead?`game ends on a ${mv.lead}+ lead`:"no early-win lead"}</small></h2><div class="vp">
    <div class="box"><div class="note">You</div><div class="n">${g.vp[0]}</div><div class="row"><button class="btn sm" data-vp="0" data-d="-1" aria-label="Your VP minus 1">−1</button><button class="btn sm" data-vp="0" data-d="1" aria-label="Your VP plus 1">+1</button></div></div>
    <div class="box"><div class="note">Opponent</div><div class="n">${g.vp[1]}</div><div class="row"><button class="btn sm" data-vp="1" data-d="-1" aria-label="Opponent VP minus 1">−1</button><button class="btn sm" data-vp="1" data-d="1" aria-label="Opponent VP plus 1">+1</button></div></div></div>
-   ${Math.abs(lead)>=mv.lead?`<div class="banner">${lead>0?"You lead":"Opponent leads"} by ${Math.abs(lead)}: that meets the special winning condition. The game ends.</div>`:""}
+   ${mv.lead&&Math.abs(lead)>=mv.lead?`<div class="banner">${lead>0?"You lead":"Opponent leads"} by ${Math.abs(lead)}: that meets the special winning condition. The game ends.</div>`:""}
    ${lost?`<div class="banner">You've lost ${lost} Supply this Round, so your opponent scores ${lost} VP for destroyed Supply.</div>`:""}
    ${g.over?`<div class="banner good">Game over. ${lead>0?"You win":lead<0?"Opponent wins":"Draw"} ${g.vp[0]}–${g.vp[1]} (VP difference ${Math.abs(lead)}).</div>`:""}</div>`;
   h+=`<div class="panel"><h2>Cards <small>${rsType?ready+" "+rsType+" ready":""}</small></h2>${g.cards.map((c,i)=>{const t=T(c.id);return `<div class="cardchip ${c.ready?"":"ex"}"><button class="link grow" data-tac="${t.id}">${esc(t.n)}</button><span class="rs">${t.res?t.res[1]+" "+t.res[0]:"Passive"}</span>${t.res?`<button class="btn sm" data-card="${i}">${c.ready?"Exhaust":"Ready"}</button>`:""}</div>`}).join("")}<p class="note">Exhausted cards refresh automatically when you end the Round.</p></div>`;
@@ -723,7 +767,7 @@ function renderCards(){
   const m=x=>!q||x.n.toLowerCase().includes(q);
   const us=UNITS.filter(u=>u.r===race&&m(u)),ts=TAC.filter(t=>t.r===race&&m(t));
   let h=`<div class="panel"><div class="seg" role="group">${Object.entries(RACES).map(([k,v])=>`<button data-cr="${k}" aria-pressed="${race===k}">${v}</button>`).join("")}</div>
-  <label class="f" for="cQ" style="margin-top:10px">Search cards</label><input type="text" id="cQ" value="${esc(cardFilter.q)}" placeholder="e.g. Stimpack, Queen, Nexus"></div>`;
+  <p class="note" style="margin:8px 0 0">Costs: 09.10.2026 cost table.</p><label class="f" for="cQ" style="margin-top:10px">Search cards</label><input type="text" id="cQ" value="${esc(cardFilter.q)}" placeholder="e.g. Stimpack, Queen, Nexus"></div>`;
   h+=`<div class="panel"><h2>Unit cards</h2><div class="picker">${us.map(u=>`<button class="pick" data-unit="${u.id}"><span><b>${esc(u.n)}</b><br><span class="note">${u.sum?"Summoned":u.slot}${u.unk?" · no card text":""}</span></span><span class="cost">${u.sum?"—":u.comps.map(c=>c[1]).join(" / ")}</span></button>`).join("")||'<p class="note">No matches.</p>'}</div></div>`;
   h+=`<div class="panel"><h2>Faction, tactical and creep cards</h2><div class="picker">${ts.map(t=>`<button class="pick" data-tac="${t.id}"><span><b>${esc(t.n)}</b><br><span class="note">${t.type}${t.uq?" · Unique":""}</span></span><span class="cost">${t.gas} gas</span></button>`).join("")||'<p class="note">No matches.</p>'}</div></div>`;
   h+=`<div class="panel"><h2>Missions</h2><div class="picker">${MISSIONS.filter(m).map(x=>`<button class="pick" data-mis="${x.id}"><b>${x.n}</b><span class="note">Std ${x.std.sup}+${x.std.esc} · Skirm ${x.sk.sup}+${x.sk.esc}</span></button>`).join("")}</div></div>`;

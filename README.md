@@ -18,12 +18,9 @@ A mobile-friendly field kit for **StarCraft: Tabletop Miniatures Game** — buil
 
 ## Data notes
 
-Card data comes from the official rulebooks and cards, with Wave 2 units cross-checked against the community [Co-op Command / Command Center](https://github.com/phyersherman/sc-tmg-coop-tabletop) dataset.
+Card data comes from the official rulebooks and card sheets, including Wave 2 (Siege Tank, Ravager, Immortal, Zeratul, Nerazim and friends). Thanks to the community [Co-op Command / Command Center](https://github.com/phyersherman/sc-tmg-coop-tabletop) dataset, which filled the gap before the official Wave 2 sheets were out.
 
-Some entries are flagged in the app:
-
-- **Imported** — sourced from the community dataset snapshot (Sep 16, 2026).
-- **No card text** — unreleased units added as cost-only stubs until full cards are available.
+Units in the cost table that don't have released cards yet show a **No card text** tag. They're cost-only stubs until the full cards are available.
 
 If you spot an error, please [open an issue](../../issues).
 
