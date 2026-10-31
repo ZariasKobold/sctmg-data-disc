@@ -113,7 +113,8 @@ const rel = p => relative(OUT, p).split("\\").join("/");
 if (CHECK) {
   const have = new Set(walk(OUT).map(rel)), stale = [];
   for (const [p, v] of Object.entries(files)) {
-    if (!have.has(p) || readFileSync(join(OUT, p), "utf8") !== text(v)) stale.push(p);
+    // Git's autocrlf may check these out with CRLF on Windows; that isn't staleness.
+    if (!have.has(p) || readFileSync(join(OUT, p), "utf8").replace(/\r\n/g, "\n") !== text(v)) stale.push(p);
     have.delete(p);
   }
   stale.push(...[...have].map(p => p + " (no longer generated)"));
