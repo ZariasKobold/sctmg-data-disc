@@ -1,0 +1,136 @@
+{
+ "data": {
+  "id": "medic",
+  "name": "Medic",
+  "race": "terran",
+  "factionTags": [
+   "Terran"
+  ],
+  "status": "official",
+  "summoned": false,
+  "unique": false,
+  "armySlot": "Support",
+  "combatRole": "Lifesaver",
+  "base": "32mm",
+  "stats": {
+   "shield": null,
+   "speed": "4/7",
+   "armour": "5+",
+   "evade": "5+",
+   "hitPoints": 2,
+   "size": 2
+  },
+  "combatTags": [
+   "Biological",
+   "Light",
+   "Ground"
+  ],
+  "supplyByModels": [
+   {
+    "min": 1,
+    "max": 1,
+    "supply": 0
+   },
+   {
+    "min": 2,
+    "max": 3,
+    "supply": 1
+   }
+  ],
+  "compositions": [
+   {
+    "models": 3,
+    "minerals": 120,
+    "supply": 1
+   }
+  ],
+  "abilities": [
+   {
+    "phase": "Any",
+    "name": "Life Support",
+    "kind": "Reaction · 1 CP",
+    "text": "Use when another Friendly Biological Unit suffers Damage Within 4″. Reduce the Total Damage before allocation by 1 for each model in this Unit that is Within 4″ of the damaged Unit."
+   },
+   {
+    "phase": "Any",
+    "name": "Restoration",
+    "kind": "Reaction · 1 CP",
+    "text": "Use when a Friendly Unit Within 4″ receives a DEBUFF. Remove all DEBUFFS from it."
+   },
+   {
+    "phase": "Movement",
+    "name": "Medpack",
+    "kind": "Active · 1 CP",
+    "text": "Select another Friendly Biological Unit Within 4″. Resolve the HEAL (X) effect for the targeted Unit, where X is the number of models in this Unit that are Within 4″ of the target Unit."
+   },
+   {
+    "phase": "Movement",
+    "name": "Optical Flare",
+    "kind": "Active · 2 CP",
+    "text": "Select one Enemy Unit Within 12″. Until the End of the Round, apply DEBUFF Range (4) to that Unit's Ranged Weapons. That Unit cannot benefit from LONG RANGE."
+   }
+  ],
+  "weapons": [
+   {
+    "phase": "Combat",
+    "name": "Strike",
+    "range": "Engagement",
+    "target": "Ground",
+    "rateOfAttack": 1,
+    "hit": "5+",
+    "surgeType": [],
+    "surgeDice": null,
+    "damage": 1,
+    "keywords": []
+   }
+  ],
+  "upgrades": [
+   {
+    "name": "A-13 Flash Grenade Launcher",
+    "cost": [
+     20
+    ],
+    "phase": "Any",
+    "kind": "Passive",
+    "text": "Increase the Optical Flare special ability's Range to 16″.",
+    "specialist": false,
+    "replaces": null,
+    "weapon": null
+   },
+   {
+    "name": "Advanced Medic Facilities",
+    "cost": [
+     60
+    ],
+    "phase": "Any",
+    "kind": "Passive",
+    "text": "This Unit's Supply Value counts as 0 when calculating the Supply Pool.",
+    "specialist": false,
+    "replaces": null,
+    "weapon": null
+   },
+   {
+    "name": "Stabilizer Medpacks",
+    "cost": [
+     20
+    ],
+    "phase": "Any",
+    "kind": "Passive",
+    "text": "When this Unit resolves a Life Support or Medpack ability, treat it as having 1 additional model Within Range for calculating that ability's effects.",
+    "specialist": false,
+    "replaces": null,
+    "weapon": null
+   }
+  ],
+  "cannotBeTakenWith": [],
+  "note": null
+ },
+ "meta": {
+  "api": "v1",
+  "dataVersion": "23df0c6e7fe3",
+  "costs": "Cost table 09.10.2026",
+  "cards": "Official card sheets, waves 1–3 (v1.09.26)",
+  "docs": "https://github.com/zariaskobold/sctmg-data-disc/blob/main/API.md",
+  "legal": "Unofficial, free fan tool. Not affiliated with, endorsed by, or sponsored by Blizzard Entertainment or Archon Studio. StarCraft® is a trademark or registered trademark of Blizzard Entertainment, Inc. in the U.S. and/or other countries. Card text and game data © Blizzard Entertainment, Inc. and © Archon Sp. z o.o., used for non-commercial reference."
+ }
+}

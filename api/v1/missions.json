@@ -1,0 +1,167 @@
+{
+ "data": [
+  {
+   "id": "supplydrop",
+   "name": "Supply Drop",
+   "standard": {
+    "supply": 6,
+    "supplyPerRound": 2,
+    "gameLength": 5,
+    "earlyWinLead": 12,
+    "parameters": "All Mission Markers are Deactivated. Start of Rounds 1–4: randomly determine one Deactivated Mission Marker (1–4) and flip it to its Activated side. Start of Round 5: Mission Marker 5 is automatically Activated.",
+    "scoring": "Score VPs equal to Enemy Supply destroyed this Round. From the start of the first Round: for each activated Controlled Mission Marker, gain VPs equal to the Game Round number in which that Marker was Activated, and remove it.",
+    "additional": null
+   },
+   "skirmish": {
+    "supply": 4,
+    "supplyPerRound": 1,
+    "gameLength": 4,
+    "earlyWinLead": 8,
+    "parameters": "All Mission Markers are Deactivated. Start of Rounds 2–4: randomly determine one Deactivated Mission Marker (1, 2, 5) and flip it to its Activated side.",
+    "scoring": "Score VPs equal to Enemy Supply destroyed this Round. From the start of the second Round: for each activated Controlled Mission Marker, gain VPs equal to the Game Round number in which that Marker was Activated, and remove it.",
+    "additional": null
+   }
+  },
+  {
+   "id": "hold",
+   "name": "Hold Position",
+   "standard": {
+    "supply": 6,
+    "supplyPerRound": 2,
+    "gameLength": 5,
+    "earlyWinLead": 10,
+    "parameters": "All Mission Markers are Activated.",
+    "scoring": "Score VPs equal to Enemy Supply destroyed this Round. From the start of the second Round: gain 1 VP for each Controlled Mission Marker that is Neutral or associated with your colour; gain 2 VPs for each Controlled Mission Marker associated with the Opponent colour.",
+    "additional": null
+   },
+   "skirmish": {
+    "supply": 3,
+    "supplyPerRound": 1,
+    "gameLength": 5,
+    "earlyWinLead": 8,
+    "parameters": "All Mission Markers are Activated.",
+    "scoring": "Same as Standard: Enemy Supply destroyed = VPs. From Round 2: 1 VP per Controlled Neutral/own-colour Marker, 2 VPs per Controlled Opponent-colour Marker.",
+    "additional": null
+   }
+  },
+  {
+   "id": "frontlines",
+   "name": "Frontlines",
+   "standard": {
+    "supply": 6,
+    "supplyPerRound": 2,
+    "gameLength": 5,
+    "earlyWinLead": 10,
+    "parameters": "All Mission Markers are Activated.",
+    "scoring": "Score VPs equal to Enemy Supply destroyed this Round. From the start of the second Round: gain 1 VP for each Controlled Mission Marker; gain an additional 2 VPs for a Marker if you gained Control of it from the Opponent this Round.",
+    "additional": null
+   },
+   "skirmish": {
+    "supply": 3,
+    "supplyPerRound": 1,
+    "gameLength": 5,
+    "earlyWinLead": 8,
+    "parameters": "All Mission Markers are Activated.",
+    "scoring": "Same as Standard: Enemy Supply destroyed = VPs. From Round 2: 1 VP per Controlled Marker, +2 VPs for a Marker taken from the Opponent this Round.",
+    "additional": null
+   }
+  },
+  {
+   "id": "gather",
+   "name": "Gather the Resources",
+   "standard": {
+    "supply": 6,
+    "supplyPerRound": 2,
+    "gameLength": 5,
+    "earlyWinLead": 10,
+    "parameters": "All Mission Markers are Activated.",
+    "scoring": "Score VPs equal to Enemy Supply destroyed this Round. From the start of the second Round: gain 2 VPs for each Controlled Mission Marker associated with the Opponent colour.",
+    "additional": "Assault Phase: if an Unengaged Unit is Within 3″ of a Controlled Neutral Mission Marker or one associated with the Opponent, it may perform the Gather Action instead of a standard action. Gather Action: gain 1 VP."
+   },
+   "skirmish": {
+    "supply": 3,
+    "supplyPerRound": 1,
+    "gameLength": 5,
+    "earlyWinLead": 8,
+    "parameters": "All Mission Markers are Activated.",
+    "scoring": "Same as Standard: Enemy Supply destroyed = VPs. From Round 2: 2 VPs per Controlled Opponent-colour Marker.",
+    "additional": "Assault Phase: an Unengaged Unit Within 3″ of a Controlled Neutral or Opponent-colour Marker may perform the Gather Action (gain 1 VP) instead of a standard action."
+   }
+  },
+  {
+   "id": "divide",
+   "name": "Divide and Conquer",
+   "standard": {
+    "supply": 8,
+    "supplyPerRound": 2,
+    "gameLength": 4,
+    "earlyWinLead": 10,
+    "parameters": "All Mission Markers are Activated. Split the Battlefield into four quarters as shown on the Deployment Card.",
+    "scoring": "Score VPs equal to Enemy Supply destroyed this Round. From the start of the first Round: calculate Total Current Supply in each quarter; gain 1 VP for each quarter where yours is higher than the Opponent's. Only Units Wholly Within a quarter count. A Unit controlling a Mission Marker is worth 1 extra Supply for this. Gain 2 VP for Controlling Mission Marker 5.",
+    "additional": null
+   },
+   "skirmish": {
+    "supply": 4,
+    "supplyPerRound": 1,
+    "gameLength": 4,
+    "earlyWinLead": 8,
+    "parameters": "All Mission Markers are Activated. Split the Battlefield into four quarters as shown on the Deployment Card.",
+    "scoring": "Same as Standard: Enemy Supply destroyed = VPs; from Round 1, 1 VP per quarter where your Wholly Within Supply is higher (+1 for a Unit controlling a Marker); 2 VP for Controlling Marker 5.",
+    "additional": null
+   }
+  },
+  {
+   "id": "artefact",
+   "name": "Artefact Hunt",
+   "standard": {
+    "supply": 6,
+    "supplyPerRound": 2,
+    "gameLength": 5,
+    "earlyWinLead": null,
+    "parameters": "All Mission Markers are Activated.",
+    "scoring": "Score VPs equal to Enemy Supply destroyed this Round. End of Round 5: gain 4 VP for each Friendly Unit that CLAIMS a Mission Marker and is Wholly Within Friendly Zone of Influence. Gain 2 VP for each Mission Marker associated with your colour that is not currently CLAIMED by an Enemy Unit.",
+    "additional": "Scoring Phase: from the Start of the second Round, if a Unit is Within 3″ of a Controlled Mission Marker that is Neutral or associated with the Opponent colour, that Unit may CLAIM it. CLAIM: place the Mission Marker on the Unit Card. A Unit carrying a Mission Marker must DROP it if: it has its Current Supply Value reduced; before it resolves a PLACE effect; it is Engaged with Enemies having a greater combined Current Supply Value; it is Destroyed, removed from the battlefield, or returned to Reserves. When a Unit DROPS a Mission Marker, the Opponent places it Within 2″ of the Unit or its last model removed. A Unit may CLAIM only one Mission Marker at a time."
+   },
+   "skirmish": {
+    "supply": 3,
+    "supplyPerRound": 1,
+    "gameLength": 5,
+    "earlyWinLead": null,
+    "parameters": "All Mission Markers are Activated.",
+    "scoring": "Score VPs equal to Enemy Supply destroyed this Round. End of Round 5: gain 3 VP for each Friendly Unit that CLAIMS a Mission Marker and is Wholly Within Friendly Zone of Influence. Gain 1 VP for each Mission Marker associated with your colour that is not currently CLAIMED by an Enemy Unit.",
+    "additional": "Same CLAIM and DROP rules as Standard: from Round 2, a Unit Within 3″ of a Controlled Neutral or Opponent-colour Marker may CLAIM it (place it on the Unit Card). DROP it if its Current Supply Value is reduced, before it resolves a PLACE effect, if Engaged with Enemies of greater combined Current Supply, or if Destroyed, removed or returned to Reserves. The Opponent places a DROPPED Marker Within 2″. One CLAIM per Unit."
+   }
+  },
+  {
+   "id": "fireinsky",
+   "name": "Fire in the Sky",
+   "standard": {
+    "supply": 5,
+    "supplyPerRound": 3,
+    "gameLength": 5,
+    "earlyWinLead": 10,
+    "parameters": "All Mission Markers are Activated. During battlefield setup, place a D6 next to each Mission Marker to track its Sabotage Level. Set the starting Sabotage Level of each Mission Marker to 1.",
+    "scoring": "Score VPs equal to Enemy Supply destroyed this Round. From the start of the second Round: gain VP for each Controlled Mission Marker that is Neutral or associated with the Opponent colour, equal to the Sabotage Level on the marker (Level 3 = 3 VP, Level 2 = 2 VP, Level 1 = 1 VP).",
+    "additional": "Assault Phase: if an Unengaged Unit is Within 3″ of a Controlled Mission Marker, it may perform the Sabotage Action instead of a standard action. Sabotage Action: decrease or increase that Mission Marker's Sabotage Level by 1 (minimum 1, maximum 3)."
+   },
+   "skirmish": {
+    "supply": 3,
+    "supplyPerRound": 2,
+    "gameLength": 5,
+    "earlyWinLead": 8,
+    "parameters": "All Mission Markers are Activated. During battlefield setup, place a D6 next to each Mission Marker to track its Sabotage Level. Set the starting Sabotage Level of each Mission Marker to 1.",
+    "scoring": "Same as Standard: Enemy Supply destroyed = VPs. From Round 2: VP equal to the Sabotage Level of each Controlled Neutral or Opponent-colour Marker.",
+    "additional": "Same Sabotage Action as Standard: an Unengaged Unit Within 3″ of a Controlled Marker may raise or lower its Sabotage Level by 1 (1–3) instead of a standard action."
+   }
+  }
+ ],
+ "meta": {
+  "api": "v1",
+  "dataVersion": "23df0c6e7fe3",
+  "costs": "Cost table 09.10.2026",
+  "cards": "Official card sheets, waves 1–3 (v1.09.26)",
+  "docs": "https://github.com/zariaskobold/sctmg-data-disc/blob/main/API.md",
+  "legal": "Unofficial, free fan tool. Not affiliated with, endorsed by, or sponsored by Blizzard Entertainment or Archon Studio. StarCraft® is a trademark or registered trademark of Blizzard Entertainment, Inc. in the U.S. and/or other countries. Card text and game data © Blizzard Entertainment, Inc. and © Archon Sp. z o.o., used for non-commercial reference.",
+  "count": 7
+ }
+}

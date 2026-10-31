@@ -1,0 +1,133 @@
+{
+ "data": {
+  "id": "sentry",
+  "name": "Sentry",
+  "race": "protoss",
+  "factionTags": [
+   "Protoss"
+  ],
+  "status": "official",
+  "summoned": false,
+  "unique": false,
+  "armySlot": "Support",
+  "combatRole": "Lifesaver",
+  "base": "50mm",
+  "stats": {
+   "shield": 2,
+   "speed": "4/7",
+   "armour": "5+",
+   "evade": "6+",
+   "hitPoints": 4,
+   "size": 1
+  },
+  "combatTags": [
+   "Light",
+   "Mechanical",
+   "Psionic",
+   "Ground"
+  ],
+  "supplyByModels": [
+   {
+    "min": 1,
+    "max": 1,
+    "supply": 0
+   },
+   {
+    "min": 2,
+    "max": 2,
+    "supply": 1
+   }
+  ],
+  "compositions": [
+   {
+    "models": 2,
+    "minerals": 130,
+    "supply": 1
+   }
+  ],
+  "abilities": [
+   {
+    "phase": "Any",
+    "name": "Restoration",
+    "kind": "Reaction · 1 PE",
+    "text": "Use when a Friendly Unit Within 4″ receives a DEBUFF. Remove all DEBUFFS from it."
+   },
+   {
+    "phase": "Movement",
+    "name": "Guardian Shield",
+    "kind": "Active · 1 PE",
+    "text": "All Ranged Attacks targeting a Friendly Unit Within 4″ (Line of Sight is not required) are made with 1 fewer die in the Attack Pool."
+   },
+   {
+    "phase": "Movement",
+    "name": "Force Field",
+    "kind": "Active · 1 PE",
+    "text": "Set a Force Field token Within 8″ in an unoccupied space. Units of Size 2 or lower cannot move across Force Fields. Models of Size 3 or more can move over it, and it's then removed."
+   }
+  ],
+  "weapons": [
+   {
+    "phase": "Assault",
+    "name": "Disruption Beam",
+    "range": 8,
+    "target": "All",
+    "rateOfAttack": 2,
+    "hit": "2+",
+    "surgeType": [],
+    "surgeDice": null,
+    "damage": 1,
+    "keywords": [
+     "INSTANT"
+    ]
+   },
+   {
+    "phase": "Combat",
+    "name": "Beam",
+    "range": "Engagement",
+    "target": "Ground",
+    "rateOfAttack": 2,
+    "hit": "3+",
+    "surgeType": [],
+    "surgeDice": null,
+    "damage": 1,
+    "keywords": []
+   }
+  ],
+  "upgrades": [
+   {
+    "name": "Hallucination",
+    "cost": [
+     20
+    ],
+    "phase": "Assault",
+    "kind": "Reaction · 0 PE",
+    "text": "When an Enemy Unit declares a Ranged Attack against a Friendly Unit Within 4″, the targeted Friendly Unit is eligible to make an Evade Roll against that attack.",
+    "specialist": false,
+    "replaces": null,
+    "weapon": null
+   },
+   {
+    "name": "Solid-Field Projectors",
+    "cost": [
+     10
+    ],
+    "phase": "Movement",
+    "kind": "Active · 1 PE",
+    "text": "Set a Force Field token Within 8″ in an unoccupied space. Units of Size 2 or lower cannot move across Force Fields. Models of Size 3 or more can move over it, and it's then removed.",
+    "specialist": false,
+    "replaces": null,
+    "weapon": null
+   }
+  ],
+  "cannotBeTakenWith": [],
+  "note": null
+ },
+ "meta": {
+  "api": "v1",
+  "dataVersion": "23df0c6e7fe3",
+  "costs": "Cost table 09.10.2026",
+  "cards": "Official card sheets, waves 1–3 (v1.09.26)",
+  "docs": "https://github.com/zariaskobold/sctmg-data-disc/blob/main/API.md",
+  "legal": "Unofficial, free fan tool. Not affiliated with, endorsed by, or sponsored by Blizzard Entertainment or Archon Studio. StarCraft® is a trademark or registered trademark of Blizzard Entertainment, Inc. in the U.S. and/or other countries. Card text and game data © Blizzard Entertainment, Inc. and © Archon Sp. z o.o., used for non-commercial reference."
+ }
+}

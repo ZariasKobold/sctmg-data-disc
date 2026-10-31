@@ -1,0 +1,133 @@
+{
+ "data": {
+  "id": "stalker",
+  "name": "Stalker",
+  "race": "protoss",
+  "factionTags": [
+   "Protoss"
+  ],
+  "status": "official",
+  "summoned": false,
+  "unique": false,
+  "armySlot": "Elite",
+  "combatRole": "Damage Dealer",
+  "base": "80mm",
+  "stats": {
+   "shield": 3,
+   "speed": "4/8",
+   "armour": "4+",
+   "evade": "6+",
+   "hitPoints": 6,
+   "size": 3
+  },
+  "combatTags": [
+   "Armoured",
+   "Mechanical",
+   "Ground"
+  ],
+  "supplyByModels": [
+   {
+    "min": 1,
+    "max": 1,
+    "supply": 1
+   },
+   {
+    "min": 2,
+    "max": 2,
+    "supply": 2
+   }
+  ],
+  "compositions": [
+   {
+    "models": 1,
+    "minerals": 160,
+    "supply": 1
+   },
+   {
+    "models": 2,
+    "minerals": 270,
+    "supply": 2
+   }
+  ],
+  "abilities": [
+   {
+    "phase": "Any",
+    "name": "Squadron",
+    "kind": "Passive",
+    "text": "This Unit's Horizontal Coherency is 4″."
+   },
+   {
+    "phase": "Movement",
+    "name": "Blink",
+    "kind": "Active · 1 PE",
+    "text": "Resolve the PLACE (6) effect. Models set by this effect cannot be set up Within the Engagement Range of any Enemy Unit."
+   }
+  ],
+  "weapons": [
+   {
+    "phase": "Assault",
+    "name": "Particle Disruptors",
+    "range": 12,
+    "target": "All",
+    "rateOfAttack": 4,
+    "hit": "3+",
+    "surgeType": [
+     "Armoured"
+    ],
+    "surgeDice": "D3",
+    "damage": 2,
+    "keywords": []
+   },
+   {
+    "phase": "Combat",
+    "name": "Stomp",
+    "range": "Engagement",
+    "target": "Ground",
+    "rateOfAttack": 2,
+    "hit": "5+",
+    "surgeType": [],
+    "surgeDice": null,
+    "damage": 1,
+    "keywords": []
+   }
+  ],
+  "upgrades": [
+   {
+    "name": "Fury of the Nerazim",
+    "cost": [
+     20,
+     30
+    ],
+    "phase": "Assault",
+    "kind": "Passive",
+    "text": "When this Unit attacks an Enemy Unit that has already been Activated during this Phase, its Particle Disruptors gain INSTANT for that attack.",
+    "specialist": false,
+    "replaces": null,
+    "weapon": null
+   },
+   {
+    "name": "Path of Shadows",
+    "cost": [
+     20,
+     40
+    ],
+    "phase": "Any",
+    "kind": "Active · 1 PE",
+    "text": "This Unit gains HIDDEN Status until it performs another action.",
+    "specialist": false,
+    "replaces": null,
+    "weapon": null
+   }
+  ],
+  "cannotBeTakenWith": [],
+  "note": null
+ },
+ "meta": {
+  "api": "v1",
+  "dataVersion": "23df0c6e7fe3",
+  "costs": "Cost table 09.10.2026",
+  "cards": "Official card sheets, waves 1–3 (v1.09.26)",
+  "docs": "https://github.com/zariaskobold/sctmg-data-disc/blob/main/API.md",
+  "legal": "Unofficial, free fan tool. Not affiliated with, endorsed by, or sponsored by Blizzard Entertainment or Archon Studio. StarCraft® is a trademark or registered trademark of Blizzard Entertainment, Inc. in the U.S. and/or other countries. Card text and game data © Blizzard Entertainment, Inc. and © Archon Sp. z o.o., used for non-commercial reference."
+ }
+}

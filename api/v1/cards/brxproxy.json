@@ -1,0 +1,43 @@
+{
+ "data": {
+  "id": "brxproxy",
+  "name": "Barracks (Proxy)",
+  "race": "terran",
+  "type": "tactical",
+  "factionTags": [
+   "Terran"
+  ],
+  "status": "official",
+  "unique": true,
+  "gas": 40,
+  "armySlots": {
+   "Core": 2
+  },
+  "resource": {
+   "type": "CP",
+   "amount": 2
+  },
+  "abilities": [
+   {
+    "phase": "Movement",
+    "name": "Go! Go! Go!",
+    "kind": "Active",
+    "text": "The active Biological Unit performs a 2″ Move action. This does not count towards its action limit."
+   },
+   {
+    "phase": "Movement",
+    "name": "Armed and Ready",
+    "kind": "Active",
+    "text": "The active Biological Unit Deploys from any table edge that is not a player's Entry Edge. No model may be placed Within 10″ of any Enemy model. This ability cannot be used if another Friendly Biological Unit has already been Deployed this Round."
+   }
+  ]
+ },
+ "meta": {
+  "api": "v1",
+  "dataVersion": "23df0c6e7fe3",
+  "costs": "Cost table 09.10.2026",
+  "cards": "Official card sheets, waves 1–3 (v1.09.26)",
+  "docs": "https://github.com/zariaskobold/sctmg-data-disc/blob/main/API.md",
+  "legal": "Unofficial, free fan tool. Not affiliated with, endorsed by, or sponsored by Blizzard Entertainment or Archon Studio. StarCraft® is a trademark or registered trademark of Blizzard Entertainment, Inc. in the U.S. and/or other countries. Card text and game data © Blizzard Entertainment, Inc. and © Archon Sp. z o.o., used for non-commercial reference."
+ }
+}

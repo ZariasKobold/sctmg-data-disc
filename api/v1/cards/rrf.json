@@ -1,0 +1,47 @@
+{
+ "data": {
+  "id": "rrf",
+  "name": "Raynor's Raiders",
+  "race": "terran",
+  "type": "faction",
+  "factionTags": [
+   "Terran",
+   "Raynor's Raiders"
+  ],
+  "status": "official",
+  "unique": true,
+  "gas": 0,
+  "armySlots": {
+   "Core": 3,
+   "Hero": 1,
+   "Support": 1,
+   "Air": 1
+  },
+  "resource": {
+   "type": "CP",
+   "amount": 1
+  },
+  "abilities": [
+   {
+    "phase": "Movement",
+    "name": "Rapid Ingress",
+    "kind": "Active",
+    "text": "Set a Friendly Point Defence Drone Unit anywhere on the battlefield, more than 1″ away from any Enemy model. Remove this Unit at the End of the Round."
+   },
+   {
+    "phase": "Movement",
+    "name": "Ready for Pickup?",
+    "kind": "Active",
+    "text": "Once Per Game. The active Unit resolves the PLACE (12) effect. Models set by this effect cannot be set up Within the Engagement Range of any Enemy Unit. This resolves instead of performing a standard action."
+   }
+  ]
+ },
+ "meta": {
+  "api": "v1",
+  "dataVersion": "23df0c6e7fe3",
+  "costs": "Cost table 09.10.2026",
+  "cards": "Official card sheets, waves 1–3 (v1.09.26)",
+  "docs": "https://github.com/zariaskobold/sctmg-data-disc/blob/main/API.md",
+  "legal": "Unofficial, free fan tool. Not affiliated with, endorsed by, or sponsored by Blizzard Entertainment or Archon Studio. StarCraft® is a trademark or registered trademark of Blizzard Entertainment, Inc. in the U.S. and/or other countries. Card text and game data © Blizzard Entertainment, Inc. and © Archon Sp. z o.o., used for non-commercial reference."
+ }
+}

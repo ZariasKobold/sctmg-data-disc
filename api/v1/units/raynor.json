@@ -1,0 +1,150 @@
+{
+ "data": {
+  "id": "raynor",
+  "name": "Jim Raynor",
+  "race": "terran",
+  "factionTags": [
+   "Terran"
+  ],
+  "status": "official",
+  "summoned": false,
+  "unique": true,
+  "armySlot": "Hero",
+  "combatRole": "Tactician",
+  "base": "40mm",
+  "stats": {
+   "shield": null,
+   "speed": "7",
+   "armour": "4+",
+   "evade": "5+",
+   "hitPoints": 8,
+   "size": 2
+  },
+  "combatTags": [
+   "Biological",
+   "Ground"
+  ],
+  "supplyByModels": [
+   {
+    "min": 1,
+    "max": 1,
+    "supply": 1
+   }
+  ],
+  "compositions": [
+   {
+    "models": 1,
+    "minerals": 280,
+    "supply": 1
+   }
+  ],
+  "abilities": [
+   {
+    "phase": "Any",
+    "name": "Commander",
+    "kind": "Passive",
+    "text": "Treat this Unit's Supply characteristic as increased by 1 for Controlling and Contesting Mission Markers, completing objectives, and resolving Disengage checks."
+   },
+   {
+    "phase": "Any",
+    "name": "Freedom Fighters",
+    "kind": "Passive",
+    "text": "The Supply Value of all Friendly Units Within 8″ of this Unit cannot be reduced below 1 for Contesting Mission Markers and completing objectives."
+   },
+   {
+    "phase": "Movement",
+    "name": "Orders",
+    "kind": "Active · X CP · Repeatable",
+    "text": "Select another Friendly Biological Unit Within 8″, spend CP and apply one of: 1 CP: that Unit's first used weapon gains CRITICAL HIT (2). 1 CP: that Unit ignores the Disengage penalty for the remainder of the Round. 2 CP: remove the Activation Marker from that Unit."
+   }
+  ],
+  "weapons": [
+   {
+    "phase": "Assault",
+    "name": "Commando Rifle",
+    "range": 18,
+    "target": "All",
+    "rateOfAttack": 3,
+    "hit": "3+",
+    "surgeType": [
+     "Armoured"
+    ],
+    "surgeDice": "D3",
+    "damage": 1,
+    "keywords": [
+     "BULKY",
+     "PIERCE Armoured (3)"
+    ]
+   },
+   {
+    "phase": "Assault",
+    "name": "“Justice” Revolver",
+    "range": 6,
+    "target": "Ground",
+    "rateOfAttack": 2,
+    "hit": "3+",
+    "surgeType": [],
+    "surgeDice": null,
+    "damage": 2,
+    "keywords": [
+     "ANTI-EVADE (2)",
+     "SIDEARM",
+     "PINPOINT"
+    ]
+   },
+   {
+    "phase": "Combat",
+    "name": "Bayonet",
+    "range": "Engagement",
+    "target": "Ground",
+    "rateOfAttack": 2,
+    "hit": "4+",
+    "surgeType": [
+     "Light"
+    ],
+    "surgeDice": "D3",
+    "damage": 1,
+    "keywords": []
+   }
+  ],
+  "upgrades": [
+   {
+    "name": "C-14 Rifle",
+    "cost": [
+     0
+    ],
+    "phase": "Assault",
+    "kind": null,
+    "text": null,
+    "specialist": false,
+    "replaces": "Commando Rifle",
+    "weapon": {
+     "phase": "Assault",
+     "name": "C-14 Rifle",
+     "range": 12,
+     "target": "All",
+     "rateOfAttack": 6,
+     "hit": "3+",
+     "surgeType": [
+      "Light"
+     ],
+     "surgeDice": "D3+1",
+     "damage": 1,
+     "keywords": [
+      "BURST FIRE 8″ (3)"
+     ]
+    }
+   }
+  ],
+  "cannotBeTakenWith": [],
+  "note": null
+ },
+ "meta": {
+  "api": "v1",
+  "dataVersion": "23df0c6e7fe3",
+  "costs": "Cost table 09.10.2026",
+  "cards": "Official card sheets, waves 1–3 (v1.09.26)",
+  "docs": "https://github.com/zariaskobold/sctmg-data-disc/blob/main/API.md",
+  "legal": "Unofficial, free fan tool. Not affiliated with, endorsed by, or sponsored by Blizzard Entertainment or Archon Studio. StarCraft® is a trademark or registered trademark of Blizzard Entertainment, Inc. in the U.S. and/or other countries. Card text and game data © Blizzard Entertainment, Inc. and © Archon Sp. z o.o., used for non-commercial reference."
+ }
+}

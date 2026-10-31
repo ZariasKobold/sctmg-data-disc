@@ -1,0 +1,32 @@
+{
+ "data": {
+  "id": "hold",
+  "name": "Hold Position",
+  "standard": {
+   "supply": 6,
+   "supplyPerRound": 2,
+   "gameLength": 5,
+   "earlyWinLead": 10,
+   "parameters": "All Mission Markers are Activated.",
+   "scoring": "Score VPs equal to Enemy Supply destroyed this Round. From the start of the second Round: gain 1 VP for each Controlled Mission Marker that is Neutral or associated with your colour; gain 2 VPs for each Controlled Mission Marker associated with the Opponent colour.",
+   "additional": null
+  },
+  "skirmish": {
+   "supply": 3,
+   "supplyPerRound": 1,
+   "gameLength": 5,
+   "earlyWinLead": 8,
+   "parameters": "All Mission Markers are Activated.",
+   "scoring": "Same as Standard: Enemy Supply destroyed = VPs. From Round 2: 1 VP per Controlled Neutral/own-colour Marker, 2 VPs per Controlled Opponent-colour Marker.",
+   "additional": null
+  }
+ },
+ "meta": {
+  "api": "v1",
+  "dataVersion": "23df0c6e7fe3",
+  "costs": "Cost table 09.10.2026",
+  "cards": "Official card sheets, waves 1–3 (v1.09.26)",
+  "docs": "https://github.com/zariaskobold/sctmg-data-disc/blob/main/API.md",
+  "legal": "Unofficial, free fan tool. Not affiliated with, endorsed by, or sponsored by Blizzard Entertainment or Archon Studio. StarCraft® is a trademark or registered trademark of Blizzard Entertainment, Inc. in the U.S. and/or other countries. Card text and game data © Blizzard Entertainment, Inc. and © Archon Sp. z o.o., used for non-commercial reference."
+ }
+}

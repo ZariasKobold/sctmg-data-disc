@@ -23,6 +23,12 @@ The whole app is **one self-contained file: `index.html`**. Markup, CSS and vani
 - **Theming:** CSS custom properties on `:root`, with light and dark modes (system preference plus a manual `data-theme` override). Race accent colors come from `body[data-race="T|Z|P"]`, with Terran blue, Zerg purple and Protoss gold.
 - **Layout:** mobile-first (it's used at the table on a phone). Fixed bottom tab bar, safe-area insets, max width of 720px.
 
+### Public API
+
+`api/v1/` is a static, read-only JSON API generated from `index.html` by `node scripts/build-api.mjs` (no dependencies). **After any data change, rebuild it and commit `api/v1/` in the same commit**; `--check` exits 1 if it's stale. Contract, shapes and traps are in `API.md`. Renaming or removing fields means a new `api/v2/`.
+
+The legal basis is Blizzard's trademark guidelines, which allow non-commercial fan use with a credit line. Archon publishes rules and card sheets free but has no fan policy. The credit line lives in the `LEGAL` constant (shown at the bottom of the Cards tab and in every API response's `meta.legal`) and in the README. Keep the project non-commercial, and never put a Blizzard mark in a domain name.
+
 ### Features
 
 - **Build:** race, scale (Skirmish 1000/100, Standard 2000/200, custom Grand Offensive), faction card, tactical cards and units. Tracks minerals, gas, and Core/Elite/Support/Air/Hero slots. The legality check flags over-budget lists, slot overflow, wrong faction tags, duplicate Uniques, Zerg without exactly one Creep card, and upgrades that replace the same weapon. Supports multiple saved rosters and copying a roster as text.
@@ -34,8 +40,9 @@ The whole app is **one self-contained file: `index.html`**. Markup, CSS and vani
 
 - **Primary:** official rulebook and card PDFs/photos supplied by Dalton (May 2026 card sheets; Cocoon is from a v1.06.26 card).
 - **Wave 2** (Siege Tank, Factory (Tech Lab), Ravager, Cocoon, Immortal, Zeratul, Nerazim Watchers, Nerazim faction, Robotics Facility, Void Seeker, Artefact Hunt mission, Meeting Engagement and Green Valleys deployments): verified against the official W2 card sheets in `Docs/Official Cards/*-W2-*.pdf` (Oct 2026). These were first imported from the community Command Center snapshot; the official cards corrected combat roles, Ravager base (80mm), `PIERCE Armoured` keywords, and the Siege Tank's Shock Cannon (RoA `BT+4`, SIEGE MODE only). The `src:"cc"` tag is gone from all data, but the renderer still supports it for future imports.
-- **Costs:** reflect the **October 9, 2026 cost-table patch** (`Docs/StarCraft-TMG-Changelog-10.2026_EN.pdf`). `Docs/StarCraft-TMG-Cost-Table-09.2026_EN.pdf` is the older September table, so don't "fix" costs back to it.
-- **Unreleased units** are cost-only stubs (`unk: true`, no abilities). As of Oct 2026, none of them have cards in `Docs/`.
+- **Wave 3** (Nova Stealth/Assault, Spec Ops Marauder, Raven, Holo Decoy, Sabotage Drone, Auto-Turret, Nova Covert Ops faction, Vanadium Plating; Zagara, Vileling, Defiler, Bile Launcher, Zagara's Swarm faction, Defiler Mound, Reactive Creep; Tassadar, Twilight Templar, High Templar, Templar Caste faction, Templar Archives; Fire in the Sky mission; One Bridge Too Close and Power Lines deployments): from the official W3 sheets in `Docs/Official Cards/*-W3-*.pdf` (v1.09.26, downloaded 31 Oct 2026 from starcraft-tmg.com/downloads). Text extracts sit next to them as `.txt`. Gotcha when reading the extracts: each phase heading comes *after* its block of abilities. Zagara's Broodmother is printed as an upgrade but has no cost in the table, so it's `c:[0]` with a visible `note`.
+- **Costs:** reflect the **October 9, 2026 cost-table patch**. The authoritative file is `Docs/StarCraft-TMG-Cost-Table-10.2026_EN.pdf` (dated 09.10.2026), which corrected three costs the app had wrong: Spec Ops Marauder 230, Defiler 130, High Templar 130/200. `Docs/StarCraft-TMG-Cost-Table-09.2026_EN.pdf` is the older September table, so don't "fix" costs back to it.
+- **Unreleased units** are cost-only stubs (`unk: true`, no abilities). As of 31 Oct 2026, after W3, there are none; the stub code paths stay for future cost tables.
 - **Cocoon:** the official W2 sheet prints no BM value, so the app gives it `res:null` (no resource, can't be exhausted in Play). Confirm against a physical card.
 - **Missions without an early-win lead** (Artefact Hunt) use `lead:null`; UI code must guard for it.
 

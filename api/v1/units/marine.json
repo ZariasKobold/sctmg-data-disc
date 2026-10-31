@@ -1,0 +1,227 @@
+{
+ "data": {
+  "id": "marine",
+  "name": "Marine",
+  "race": "terran",
+  "factionTags": [
+   "Terran"
+  ],
+  "status": "official",
+  "summoned": false,
+  "unique": false,
+  "armySlot": "Core",
+  "combatRole": "Damage Dealer",
+  "base": "32mm",
+  "stats": {
+   "shield": null,
+   "speed": "4/7",
+   "armour": "5+",
+   "evade": "5+",
+   "hitPoints": 2,
+   "size": 2
+  },
+  "combatTags": [
+   "Biological",
+   "Light",
+   "Ground"
+  ],
+  "supplyByModels": [
+   {
+    "min": 1,
+    "max": 3,
+    "supply": 0
+   },
+   {
+    "min": 4,
+    "max": 6,
+    "supply": 1
+   },
+   {
+    "min": 7,
+    "max": 9,
+    "supply": 2
+   }
+  ],
+  "compositions": [
+   {
+    "models": 6,
+    "minerals": 170,
+    "supply": 1
+   },
+   {
+    "models": 9,
+    "minerals": 220,
+    "supply": 2
+   }
+  ],
+  "abilities": [
+   {
+    "phase": "Movement",
+    "name": "Stimpack",
+    "kind": "Active · 1 CP",
+    "text": "This Unit suffers NON-LETHAL DAMAGE (2). This Unit gains BUFF Speed (3). Additionally, its C-14 Rifle and all Close Combat Weapons gain PRECISION (3)."
+   }
+  ],
+  "weapons": [
+   {
+    "phase": "Assault",
+    "name": "C-14 Rifle",
+    "range": 12,
+    "target": "All",
+    "rateOfAttack": 2,
+    "hit": "3+",
+    "surgeType": [
+     "Light"
+    ],
+    "surgeDice": "D3",
+    "damage": 1,
+    "keywords": []
+   },
+   {
+    "phase": "Combat",
+    "name": "Strike",
+    "range": "Engagement",
+    "target": "Ground",
+    "rateOfAttack": 1,
+    "hit": "5+",
+    "surgeType": [],
+    "surgeDice": null,
+    "damage": 1,
+    "keywords": []
+   }
+  ],
+  "upgrades": [
+   {
+    "name": "AGG-12",
+    "cost": [
+     10,
+     10
+    ],
+    "phase": "Assault",
+    "kind": null,
+    "text": null,
+    "specialist": true,
+    "replaces": "C-14 Rifle",
+    "weapon": {
+     "phase": "Assault",
+     "name": "AGG-12",
+     "range": 12,
+     "target": "Ground",
+     "rateOfAttack": 2,
+     "hit": "3+",
+     "surgeType": [
+      "Armoured"
+     ],
+     "surgeDice": "D3",
+     "damage": 1,
+     "keywords": [
+      "LONG RANGE (18″)",
+      "SPECIALIST"
+     ]
+    }
+   },
+   {
+    "name": "Bayonet",
+    "cost": [
+     20,
+     30
+    ],
+    "phase": "Combat",
+    "kind": null,
+    "text": null,
+    "specialist": false,
+    "replaces": "Strike",
+    "weapon": {
+     "phase": "Combat",
+     "name": "Bayonet",
+     "range": "Engagement",
+     "target": "Ground",
+     "rateOfAttack": 2,
+     "hit": "5+",
+     "surgeType": [],
+     "surgeDice": null,
+     "damage": 1,
+     "keywords": []
+    }
+   },
+   {
+    "name": "Combat Shield",
+    "cost": [
+     20,
+     30
+    ],
+    "phase": "Movement",
+    "kind": "Active · 1 CP",
+    "text": "This Unit is always eligible to make an Evade Roll against any Close Combat Attack targeting it and any Damage from an Enemy Special Ability.",
+    "specialist": false,
+    "replaces": null,
+    "weapon": null
+   },
+   {
+    "name": "Grenades - Frag",
+    "cost": [
+     10,
+     10
+    ],
+    "phase": "Assault",
+    "kind": "Passive",
+    "text": "When this Unit makes a Ranged Attack with a C-14 Rifle and the target is Within 8″, that weapon's S Dice is replaced by D6.",
+    "specialist": false,
+    "replaces": null,
+    "weapon": null
+   },
+   {
+    "name": "Rocket Launcher",
+    "cost": [
+     40,
+     40
+    ],
+    "phase": "Assault",
+    "kind": null,
+    "text": null,
+    "specialist": true,
+    "replaces": null,
+    "weapon": {
+     "phase": "Assault",
+     "name": "Rocket Launcher",
+     "range": 12,
+     "target": "Ground",
+     "rateOfAttack": 4,
+     "hit": "3+",
+     "surgeType": [],
+     "surgeDice": null,
+     "damage": 1,
+     "keywords": [
+      "INDIRECT FIRE",
+      "LONG RANGE (18″)",
+      "SIDEARM",
+      "SPECIALIST"
+     ]
+    }
+   },
+   {
+    "name": "Slugthrower",
+    "cost": [
+     10,
+     20
+    ],
+    "phase": "Assault",
+    "kind": "Passive",
+    "text": "When this Unit makes a Ranged Attack with a C-14 Rifle and the target is Within 8″, that weapon gains ANTI-EVADE (1).",
+    "specialist": false,
+    "replaces": null,
+    "weapon": null
+   }
+  ],
+  "cannotBeTakenWith": [],
+  "note": null
+ },
+ "meta": {
+  "api": "v1",
+  "dataVersion": "23df0c6e7fe3",
+  "costs": "Cost table 09.10.2026",
+  "cards": "Official card sheets, waves 1–3 (v1.09.26)",
+  "docs": "https://github.com/zariaskobold/sctmg-data-disc/blob/main/API.md",
+  "legal": "Unofficial, free fan tool. Not affiliated with, endorsed by, or sponsored by Blizzard Entertainment or Archon Studio. StarCraft® is a trademark or registered trademark of Blizzard Entertainment, Inc. in the U.S. and/or other countries. Card text and game data © Blizzard Entertainment, Inc. and © Archon Sp. z o.o., used for non-commercial reference."
+ }
+}

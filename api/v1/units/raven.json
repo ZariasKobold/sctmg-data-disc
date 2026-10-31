@@ -1,0 +1,137 @@
+{
+ "data": {
+  "id": "raven",
+  "name": "Raven",
+  "race": "terran",
+  "factionTags": [
+   "Terran"
+  ],
+  "status": "official",
+  "summoned": false,
+  "unique": false,
+  "armySlot": "Support",
+  "combatRole": "Tactician",
+  "base": "Flight stand",
+  "stats": {
+   "shield": null,
+   "speed": "7",
+   "armour": "5+",
+   "evade": "6+",
+   "hitPoints": 8,
+   "size": null
+  },
+  "combatTags": [
+   "Light",
+   "Mechanical",
+   "Flying"
+  ],
+  "supplyByModels": [
+   {
+    "min": 1,
+    "max": 1,
+    "supply": 1
+   }
+  ],
+  "compositions": [
+   {
+    "models": 1,
+    "minerals": 170,
+    "supply": 1
+   }
+  ],
+  "abilities": [
+   {
+    "phase": "Any",
+    "name": "Detection",
+    "kind": "Passive",
+    "text": "While Enemy Units are Within 6″ of this Unit, they lose the HIDDEN Status."
+   },
+   {
+    "phase": "Movement",
+    "name": "Deploy Auto-Turret",
+    "kind": "Active · 1 CP",
+    "text": "Set a Friendly Auto-Turret Unit Within 6″, and not Within the Engagement Range of any Enemy Unit."
+   },
+   {
+    "phase": "Movement",
+    "name": "Anti-Armour Missile",
+    "kind": "Active · 1 CP",
+    "text": "Select one Enemy Unit Within 12″. Apply DEBUFF Armour (1)."
+   }
+  ],
+  "weapons": [
+   {
+    "phase": "Assault",
+    "name": "Railguns",
+    "range": 12,
+    "target": "Ground",
+    "rateOfAttack": 4,
+    "hit": "3+",
+    "surgeType": [],
+    "surgeDice": null,
+    "damage": 1,
+    "keywords": []
+   }
+  ],
+  "upgrades": [
+   {
+    "name": "Corvid Reactor",
+    "cost": [
+     30
+    ],
+    "phase": "Any",
+    "kind": "Passive",
+    "text": "This Unit may resolve its first Special Ability with the CP cost reduced by 1 if it targets the closest Enemy Unit.",
+    "specialist": false,
+    "replaces": null,
+    "weapon": null
+   },
+   {
+    "name": "Internal Tech Module",
+    "cost": [
+     20
+    ],
+    "phase": "Movement",
+    "kind": "Passive",
+    "text": "When this Unit is nominated to deploy from Reserves, it may Deploy from any table edge that is not a player's Entry Edge. This Unit cannot be set Within 8″ of any Enemy model.",
+    "specialist": false,
+    "replaces": null,
+    "weapon": null
+   },
+   {
+    "name": "Seeker Missile",
+    "cost": [
+     20
+    ],
+    "phase": "Movement",
+    "kind": "Active · 1 CP",
+    "text": "Select one Enemy Unit Within 12″. At the End of the Assault Phase, if that Enemy Unit has the Stationary Status or it is Within 8″ of this Unit, it suffers HITS 4 (2). If that Unit is Engaged, it is eligible to make an Evade Roll against these hits.",
+    "specialist": false,
+    "replaces": null,
+    "weapon": null
+   },
+   {
+    "name": "Explosive Shrapnel Shells",
+    "cost": [
+     10
+    ],
+    "phase": "Assault",
+    "kind": "Passive",
+    "text": "The Gauss Cannon of the Auto-Turret set by this Unit gains Surge Type: Light and S-Dice: D3+1.",
+    "specialist": false,
+    "replaces": null,
+    "weapon": null
+   }
+  ],
+  "cannotBeTakenWith": [],
+  "note": null
+ },
+ "meta": {
+  "api": "v1",
+  "dataVersion": "23df0c6e7fe3",
+  "costs": "Cost table 09.10.2026",
+  "cards": "Official card sheets, waves 1–3 (v1.09.26)",
+  "docs": "https://github.com/zariaskobold/sctmg-data-disc/blob/main/API.md",
+  "legal": "Unofficial, free fan tool. Not affiliated with, endorsed by, or sponsored by Blizzard Entertainment or Archon Studio. StarCraft® is a trademark or registered trademark of Blizzard Entertainment, Inc. in the U.S. and/or other countries. Card text and game data © Blizzard Entertainment, Inc. and © Archon Sp. z o.o., used for non-commercial reference."
+ }
+}

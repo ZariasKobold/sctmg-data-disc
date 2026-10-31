@@ -1,0 +1,64 @@
+{
+ "data": {
+  "id": "sabdrone",
+  "name": "Sabotage Drone",
+  "race": "terran",
+  "factionTags": [
+   "Terran",
+   "Nova Covert Ops"
+  ],
+  "status": "official",
+  "summoned": true,
+  "unique": false,
+  "armySlot": null,
+  "combatRole": "Damage Dealer",
+  "base": "40mm",
+  "stats": {
+   "shield": null,
+   "speed": null,
+   "armour": "6+",
+   "evade": "6+",
+   "hitPoints": 3,
+   "size": 1
+  },
+  "combatTags": [
+   "Armoured",
+   "Mechanical",
+   "Ground"
+  ],
+  "supplyByModels": [
+   {
+    "min": 1,
+    "max": 1,
+    "supply": 0
+   }
+  ],
+  "compositions": [],
+  "abilities": [
+   {
+    "phase": "Any",
+    "name": "Structure",
+    "kind": "Passive",
+    "text": "This Unit cannot be Activated in any Phase and cannot perform actions. Its Current Supply Value is treated as 0, and it can never Control or Contest Mission Markers, ignoring the standard Zero Supply Exception. This Unit cannot be a target of an ability, unless stated otherwise."
+   },
+   {
+    "phase": "Assault",
+    "name": "Have a Nice Day",
+    "kind": "Passive",
+    "text": "At the End of the Assault Phase, target each Unit Within 3″ of this Unit (including Units with the Structure ability) suffers HITS 5 (1). If an affected Unit has the Structure ability, that Unit suffers an additional HITS 5 (1)."
+   }
+  ],
+  "weapons": [],
+  "upgrades": [],
+  "cannotBeTakenWith": [],
+  "note": null
+ },
+ "meta": {
+  "api": "v1",
+  "dataVersion": "23df0c6e7fe3",
+  "costs": "Cost table 09.10.2026",
+  "cards": "Official card sheets, waves 1–3 (v1.09.26)",
+  "docs": "https://github.com/zariaskobold/sctmg-data-disc/blob/main/API.md",
+  "legal": "Unofficial, free fan tool. Not affiliated with, endorsed by, or sponsored by Blizzard Entertainment or Archon Studio. StarCraft® is a trademark or registered trademark of Blizzard Entertainment, Inc. in the U.S. and/or other countries. Card text and game data © Blizzard Entertainment, Inc. and © Archon Sp. z o.o., used for non-commercial reference."
+ }
+}
