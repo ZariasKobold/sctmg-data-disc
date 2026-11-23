@@ -162,8 +162,8 @@ Grand Offensive, where `minerals` is only the default).
    is `null`: a Raven has `size: null`, a structure has `speed: null`, and
    Terran and Zerg units have `shield: null`.
 2. **`earlyWinLead` can be null.** Artefact Hunt has no early-win condition.
-3. **Cocoon's `resource` is null.** The official sheet prints none. Confirm
-   against a physical card before relying on it.
+3. **Cocoon's `resource` is null.** It's a passive card that supplies no BM
+   (confirmed against the physical card, Nov 2026), so it can't be exhausted.
 4. **Zagara's Broodmother upgrade costs `[0]`** because the cost table lists no
    cost for it, not because it's free. Its `note` says so.
 5. **Legality isn't in the API.** The rules the app enforces (slot counts,

@@ -1,0 +1,38 @@
+# Runs the regression tests on every push and pull request.
+#
+# Note: GitHub Pages deploys straight from main and doesn't wait for this
+# workflow, so a red run here is a warning to fix fast, not a gate. To make it a
+# gate, work on branches and merge via pull requests once this goes green.
+
+name: Tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Logic and data checks
+        run: node tests/logic.mjs
+
+      - name: API is in sync with index.html
+        run: node scripts/build-api.mjs --check
+
+      - name: Install Playwright
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: Headless click-through
+        run: node tests/smoke.mjs

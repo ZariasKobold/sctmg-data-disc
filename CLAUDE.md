@@ -43,7 +43,7 @@ The legal basis is Blizzard's trademark guidelines, which allow non-commercial f
 - **Wave 3** (Nova Stealth/Assault, Spec Ops Marauder, Raven, Holo Decoy, Sabotage Drone, Auto-Turret, Nova Covert Ops faction, Vanadium Plating; Zagara, Vileling, Defiler, Bile Launcher, Zagara's Swarm faction, Defiler Mound, Reactive Creep; Tassadar, Twilight Templar, High Templar, Templar Caste faction, Templar Archives; Fire in the Sky mission; One Bridge Too Close and Power Lines deployments): from the official W3 sheets in `Docs/Official Cards/*-W3-*.pdf` (v1.09.26, downloaded 31 Oct 2026 from starcraft-tmg.com/downloads). Text extracts sit next to them as `.txt`. Gotcha when reading the extracts: each phase heading comes *after* its block of abilities. Zagara's Broodmother is printed as an upgrade but has no cost in the table, so it's `c:[0]` with a visible `note`.
 - **Costs:** reflect the **October 9, 2026 cost-table patch**. The authoritative file is `Docs/StarCraft-TMG-Cost-Table-10.2026_EN.pdf` (dated 09.10.2026), which corrected three costs the app had wrong: Spec Ops Marauder 230, Defiler 130, High Templar 130/200. `Docs/StarCraft-TMG-Cost-Table-09.2026_EN.pdf` is the older September table, so don't "fix" costs back to it.
 - **Unreleased units** are cost-only stubs (`unk: true`, no abilities). As of 31 Oct 2026, after W3, there are none; the stub code paths stay for future cost tables.
-- **Cocoon:** the official W2 sheet prints no BM value, so the app gives it `res:null` (no resource, can't be exhausted in Play). Confirm against a physical card.
+- **Cocoon:** the official W2 sheet prints no BM value, so the app gives it `res:null` (no resource, can't be exhausted in Play). Confirmed against a physical card (Nov 2026): it supplies no BM.
 - **Missions without an early-win lead** (Artefact Hunt) use `lead:null`; UI code must guard for it.
 
 **Convention: be transparent about data quality.** Anything imported from an unofficial source, approximated, or missing card text carries a visible in-app tag (e.g. "imported from Command Center snapshot," "no card text"). Keep doing this for new data. Never silently present unverified stats as official.
@@ -60,32 +60,35 @@ The legal basis is Blizzard's trademark guidelines, which allow non-commercial f
 
 ## Testing
 
-There's no test framework in the repo yet. The established process before any release:
+Run `npm test` before every release. It runs three stages, cheapest first:
 
-1. **Syntax check:** extract the inline `<script>` and run `node --check` on it.
-2. **Logic check:** eval the pure-logic half (everything before `UI HELPERS`) in Node with a stubbed `localStorage`, build a sample roster, and confirm `totals()` and `issues()` match the rulebook. For example, Barracks, Barracks Proxy, Factory, Orbital, Academy and Eng Bay should give 8 Core, 2 Elite and 3 Support.
-3. **Headless click-through (Playwright, 400×850 viewport):** load `index.html` and fail on any `pageerror`. Confirm every view renders non-empty. For each race, pick a faction, add units and tactical cards, start a game from Setup, advance phases, then open and close every unit, tactical and mission card in the Cards tab.
+1. **`tests/logic.mjs`** (plain Node, no install): compiles the whole inline script (syntax), evaluates the pure-logic half with a stubbed `localStorage`, and checks `totals()`/`issues()` against hand-checked rulebook cases (e.g. Raynor's Raiders + Barracks, Barracks Proxy, Factory, Orbital, Academy and Eng Bay gives 8 Core, 2 Elite, 3 Support), plus data integrity (unique IDs, references resolve, upgrade costs line up with compositions). Add a case here when you fix a rules bug.
+2. **`node scripts/build-api.mjs --check`**: `api/v1/` matches `index.html`.
+3. **`tests/smoke.mjs`** (Playwright, 400×850): for each race it builds a legal roster, saves it, runs Setup, plays a game to the end, and opens and closes every card. Any `pageerror` or console error fails the run. Google Fonts are stubbed so it runs offline. `node tests/smoke.mjs --headed` shows the browser; `VERBOSE=1` prints each step.
 
-**Gotcha:** the UI re-renders after every click, so element handles go stale. Re-query selectors after each interaction instead of caching them.
+First-time setup: `npm install`, then `npx playwright install chromium`. `package.json` is dev tooling only; the app still needs no build.
 
-Turning this into a committed `tests/` script is a next step (below).
+**CI:** `.github/workflows/test.yml` runs the same three stages on every push and PR. Pages deploys from `main` without waiting for it, so a red run is a warning, not a gate.
+
+**Gotcha:** the UI re-renders after every click, so element handles go stale. Use Playwright locators (they re-query) instead of caching handles. A `<details>` picker also closes on every re-render, so open it again before each pick.
 
 ## Deploying
 
-Commit to `main`. GitHub Pages redeploys automatically within a minute or two. Run the tests first.
+Commit to `main`. GitHub Pages redeploys automatically within a minute or two. Run `npm test` first.
 
 ## Next steps
 
 Rough priority order. Confirm with Dalton before starting any of them.
 
-1. **Commit the regression test** as a real script (e.g. `tests/smoke.mjs`) with a minimal `package.json` for Playwright. Optionally run it in a GitHub Actions workflow on push.
+1. ~~Commit the regression test~~ Done Nov 2026: `npm test` plus a GitHub Actions workflow (see Testing).
+   - **Next up: tolerate stale IDs.** `totals()` throws if a saved roster or game references a unit or faction ID that no longer exists, which blanks the Build tab. Sanitize on load (drop or flag unknown IDs) before roster import ships or any ID is renamed.
 2. **Roster export/import (JSON).** Rosters are trapped in each origin's localStorage. Export/import protects them and makes moving between web, offline and any future app possible.
 3. **Bundle fonts locally** (`fonts/` folder plus `@font-face`) so offline use doesn't fall back to system fonts.
 4. ~~Reconcile the in-app name~~ Done Oct 2026: title and header say SCTMG Data Disc. The localStorage `KEY` stays `sctmg-fieldkit-v1` on purpose, because renaming it would orphan everyone's saved rosters.
 5. **Fill in the stubs** as unreleased units get real cards, removing the `unk` tags.
 6. **Consider splitting data out of `index.html`** (e.g. `data/*.json`) if the file gets unwieldy. This is a trade-off against the single-file offline copy, so discuss it first.
 7. **Optional Data Disc theming ideas (not yet decided):** `.disc` roster exports or "Data Disc #" share links, a Confederate terminal flavor ("ACCESSING…", "DECRYPTION COMPLETE"), unit "dossiers," and an empty-roster easter egg.
-8. **Possible Android APK (proposed, not decided):** a Capacitor wrapper was suggested as the lightest route (`npx cap init`, with `index.html` in `www/`). If pursued, it needs items 2 and 3 first, plus `@capacitor/app` back-button handling so Back closes modals instead of the app.
+8. ~~Possible Android APK~~ Not needed for now (Nov 2026): Dalton is happy with Add to Home Screen. If it returns, a Capacitor wrapper (`index.html` in `www/`) is the lightest route and needs items 2 and 3 first, plus `@capacitor/app` back-button handling.
 
 ## Working with Dalton
 
