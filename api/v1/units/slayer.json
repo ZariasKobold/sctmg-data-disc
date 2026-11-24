@@ -1,0 +1,119 @@
+{
+ "data": {
+  "id": "slayer",
+  "name": "Slayer (Stalker)",
+  "race": "protoss",
+  "factionTags": [
+   "Protoss",
+   "Tal'darim"
+  ],
+  "status": "official",
+  "summoned": false,
+  "unique": false,
+  "armySlot": "Elite",
+  "combatRole": null,
+  "base": null,
+  "stats": {
+   "shield": 3,
+   "speed": "4/8",
+   "armour": "4+",
+   "evade": "6+",
+   "hitPoints": 6,
+   "size": 3
+  },
+  "combatTags": [
+   "Armoured",
+   "Mechanical",
+   "Ground"
+  ],
+  "supplyByModels": [
+   {
+    "min": 1,
+    "max": 1,
+    "supply": 1
+   },
+   {
+    "min": 2,
+    "max": 2,
+    "supply": 2
+   }
+  ],
+  "compositions": [
+   {
+    "models": 1,
+    "minerals": 180,
+    "supply": 1
+   },
+   {
+    "models": 2,
+    "minerals": 280,
+    "supply": 2
+   }
+  ],
+  "abilities": [
+   {
+    "phase": "Any",
+    "name": "Squadron",
+    "kind": "Passive",
+    "text": "This Unit's Horizontal Coherency is 4″."
+   },
+   {
+    "phase": "Any",
+    "name": "Seek Bloodshed",
+    "kind": "Reaction · 1 PE",
+    "text": "When the Current Supply Value of another Friendly Unit Within 12″ of this Unit is reduced, this Unit, if Unengaged, may perform a Move action Directly Towards that Friendly Unit."
+   },
+   {
+    "phase": "Any",
+    "name": "Bloodshard Blink",
+    "kind": "Passive",
+    "text": "Immediately before this Unit resolves any PLACE effect, you may target one Enemy Unit. This Unit's weapons gain BUFF RoA (1) against the targeted Unit, but this Unit must perform PLACE Directly Towards the chosen Unit."
+   },
+   {
+    "phase": "Movement",
+    "name": "Blink",
+    "kind": "Active · 1 PE",
+    "text": "Resolve the PLACE (6) effect. Models set by this effect cannot be set up Within the Engagement Range of any Enemy Unit."
+   }
+  ],
+  "weapons": [
+   {
+    "phase": "Assault",
+    "name": "Particle Disruptors",
+    "range": 12,
+    "target": "All",
+    "rateOfAttack": 4,
+    "hit": "3+",
+    "surgeType": [
+     "Armoured"
+    ],
+    "surgeDice": "D3",
+    "damage": 2,
+    "keywords": []
+   },
+   {
+    "phase": "Combat",
+    "name": "Stomp",
+    "range": "Engagement",
+    "target": "Ground",
+    "rateOfAttack": 2,
+    "hit": "5+",
+    "surgeType": [],
+    "surgeDice": null,
+    "damage": 1,
+    "keywords": []
+   }
+  ],
+  "upgrades": [],
+  "cannotBeTakenWith": [],
+  "note": null
+ },
+ "meta": {
+  "api": "v1",
+  "dataVersion": "be49cef1bac6",
+  "costs": "Cost table 09.10.2026",
+  "cards": "Official card sheets, waves 1–3 (v1.09.26); Wave 4 from Archon's official online card database (sc.starcraft-tmg.com)",
+  "docs": "https://github.com/zariaskobold/sctmg-data-disc/blob/main/API.md",
+  "legal": "Unofficial, free fan tool. Not affiliated with, endorsed by, or sponsored by Blizzard Entertainment or Archon Studio. StarCraft® is a trademark or registered trademark of Blizzard Entertainment, Inc. in the U.S. and/or other countries. Card text and game data © Blizzard Entertainment, Inc. and © Archon Sp. z o.o., used for non-commercial reference."
+ }
+}

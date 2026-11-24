@@ -93,6 +93,28 @@ const build = (race, faction, tac = {}, units = []) => {
   lacks("Zerg with one Creep card", L.issues(oneCreep), "Creep Card");
   const twoCreep = build("Z", "kswarm", { acccreep: 1, malcreep: 1 }, ["zergling"]);
   has("Zerg with two Creep cards", L.issues(twoCreep), "exactly one Creep Card");
+  // Stukov's Forces (Wave 4) takes one Virus card instead of a Creep card.
+  const noVirus = build("Z", "stukovforces", {}, ["infmarine"]);
+  has("Stukov without a Virus card", L.issues(noVirus), "exactly one Virus Card");
+  const oneVirus = build("Z", "stukovforces", { hungerinf: 1 }, ["infmarine", "infgoliath", "stukov"]);
+  lacks("Stukov with one Virus card", L.issues(oneVirus), "Virus Card");
+  check("Stukov legal army has no issues", L.issues(oneVirus).length === 0, L.issues(oneVirus).join(" | "));
+  const creepStukov = build("Z", "stukovforces", { hungerinf: 1, acccreep: 1 }, ["infmarine"]);
+  has("Stukov with a Creep card", L.issues(creepStukov), "not a Creep Card");
+  const virusSwarm = build("Z", "zswarm", { acccreep: 1, healpathogen: 1 }, ["zergling"]);
+  has("Zerg Swarm with a Virus card", L.issues(virusSwarm), "isn't allowed with this Faction Card");
+  const tankSwarm = build("Z", "kswarm", { acccreep: 1 }, ["infsiegetank"]);
+  has("Infested Siege Tank outside Stukov", L.issues(tankSwarm), "Stukov's Forces");
+  // Wave 4 Terran: Barracks (Reactor) gives 3 Core, so TAF (3 Core) fits 6 Core of Firebats (3 units x Supply 2 at 6 models).
+  const fire = build("T", "taf", { brxreactor: 1 }, [{ id: "firebat", ci: 1 }, { id: "firebat", ci: 1 }, { id: "firebat", ci: 1 }]);
+  lacks("Firebats fit Barracks (Reactor) Core slots", L.issues(fire), "Core slots");
+  eq("Firebat 4 models with both upgrades", L.unitCost({ id: "firebat", ci: 0, ups: ["Incinerator Gauntlets", "Need A Light?"] }), 160 + 40);
+  // Wave 4 Protoss: Tal'darim (1 Elite) + Robotics Support Bay (2 Elite) fits a Slayer (Supply 1) and a Reaver (Supply 2).
+  const tal = build("P", "taldarim", { robobay: 1 }, ["alarak", "slayer", "reaver"]);
+  check("Tal'darim legal army has no issues", L.issues(tal).length === 0, L.issues(tal).join(" | "));
+  const slayerKhalai = build("P", "khalai", {}, ["slayer"]);
+  has("Slayer outside Tal'darim", L.issues(slayerKhalai), "Tal'darim");
+  check("Infested Goliath copies the Terran Goliath", JSON.stringify(L.U("infgoliath").wp) === JSON.stringify(L.U("goliath").wp) && L.U("infgoliath").ct.includes("Infested"));
 }
 {
   // Supply by models alive: a 9-Marine squad is Supply 2, drops to 1 at 6 models, 0 at 3.
@@ -213,7 +235,7 @@ const build = (race, faction, tac = {}, units = []) => {
       check(`${u.id}/${up.n}: one cost or one per composition`, up.c.length === 1 || up.c.length === u.comps.length, `${up.c.length} costs, ${u.comps.length} compositions`);
   }
   for (const t of L.TAC) {
-    check(`${t.id}: known type`, ["Faction", "Tactical", "Creep"].includes(t.type), t.type);
+    check(`${t.id}: known type`, ["Faction", "Tactical", "Creep", "Virus"].includes(t.type), t.type);
     for (const s of Object.keys(t.slots || {})) check(`${t.id}: slot "${s}" is real`, L.SLOT_TYPES.includes(s));
     if (t.res) check(`${t.id}: resource is CP, BM or PE`, ["CP", "BM", "PE"].includes(t.res[0]) && t.res[1] > 0, JSON.stringify(t.res));
   }

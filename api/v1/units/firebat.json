@@ -1,0 +1,141 @@
+{
+ "data": {
+  "id": "firebat",
+  "name": "Firebat",
+  "race": "terran",
+  "factionTags": [
+   "Terran"
+  ],
+  "status": "official",
+  "summoned": false,
+  "unique": false,
+  "armySlot": "Core",
+  "combatRole": null,
+  "base": null,
+  "stats": {
+   "shield": null,
+   "speed": "4/7",
+   "armour": "5+",
+   "evade": "6+",
+   "hitPoints": 3,
+   "size": 2
+  },
+  "combatTags": [
+   "Armoured",
+   "Biological",
+   "Ground"
+  ],
+  "supplyByModels": [
+   {
+    "min": 1,
+    "max": 2,
+    "supply": 0
+   },
+   {
+    "min": 3,
+    "max": 4,
+    "supply": 1
+   },
+   {
+    "min": 5,
+    "max": 6,
+    "supply": 2
+   }
+  ],
+  "compositions": [
+   {
+    "models": 4,
+    "minerals": 160,
+    "supply": 1
+   },
+   {
+    "models": 6,
+    "minerals": 210,
+    "supply": 2
+   }
+  ],
+  "abilities": [
+   {
+    "phase": "Movement",
+    "name": "Stimpack",
+    "kind": "Active · 1 CP",
+    "text": "This Unit suffers NON-LETHAL DAMAGE (2). This Unit gains BUFF Speed (3). Additionally, its Perdition Flamethrower and all Close Combat Weapons gain PRECISION (3)."
+   },
+   {
+    "phase": "Assault",
+    "name": "Fire it Up",
+    "kind": "Passive",
+    "text": "When this Unit makes a Ranged Attack with its Perdition Flamethrower, you may choose 1 model in this Unit to attack using a Flamer Template (FT) instead of rolling its regular Rate of Attack (RoA). If this Unit's Current Supply Value is 2, you may choose up to 2 models to attack using Flamer Templates instead."
+   }
+  ],
+  "weapons": [
+   {
+    "phase": "Assault",
+    "name": "Perdition Flamethrower",
+    "range": 8,
+    "target": "Ground",
+    "rateOfAttack": 2,
+    "hit": "3+",
+    "surgeType": [
+     "Light"
+    ],
+    "surgeDice": "D3",
+    "damage": 1,
+    "keywords": [
+     "ANTI-EVADE (1)",
+     "INSTANT"
+    ]
+   },
+   {
+    "phase": "Combat",
+    "name": "Flame Strike",
+    "range": "Engagement",
+    "target": "Ground",
+    "rateOfAttack": 2,
+    "hit": "3+",
+    "surgeType": [
+     "Light"
+    ],
+    "surgeDice": "D3",
+    "damage": 1,
+    "keywords": []
+   }
+  ],
+  "upgrades": [
+   {
+    "name": "Incinerator Gauntlets",
+    "cost": [
+     20
+    ],
+    "phase": "Movement",
+    "kind": "Active · 1 CP",
+    "text": "Set a Fire Wall token Within 4″ in an unoccupied space. If a Unit's Leading Model's path of travel passes through this token, or if any model in a Unit ends either a Move, Deploy, Run, Charge, Disengage, or Close Ranks action, or is Set Within 1″ of this token, remove the Fire Wall token from the battlefield before executing that move. If you do, that Unit suffers HITS 5 (1). If that Unit performed a Charge action, it cannot resolve the IMPACT effect.",
+    "specialist": false,
+    "replaces": null,
+    "weapon": null
+   },
+   {
+    "name": "Need A Light?",
+    "cost": [
+     20
+    ],
+    "phase": "Combat",
+    "kind": "Passive",
+    "text": "When this Unit makes a Close Combat Attack with its Flame Strike, you may choose 1 model in this Unit to attack using a Flamer Template (FT) instead of rolling its regular Rate of Attack (RoA).",
+    "specialist": false,
+    "replaces": null,
+    "weapon": null
+   }
+  ],
+  "cannotBeTakenWith": [],
+  "note": null
+ },
+ "meta": {
+  "api": "v1",
+  "dataVersion": "be49cef1bac6",
+  "costs": "Cost table 09.10.2026",
+  "cards": "Official card sheets, waves 1–3 (v1.09.26); Wave 4 from Archon's official online card database (sc.starcraft-tmg.com)",
+  "docs": "https://github.com/zariaskobold/sctmg-data-disc/blob/main/API.md",
+  "legal": "Unofficial, free fan tool. Not affiliated with, endorsed by, or sponsored by Blizzard Entertainment or Archon Studio. StarCraft® is a trademark or registered trademark of Blizzard Entertainment, Inc. in the U.S. and/or other countries. Card text and game data © Blizzard Entertainment, Inc. and © Archon Sp. z o.o., used for non-commercial reference."
+ }
+}

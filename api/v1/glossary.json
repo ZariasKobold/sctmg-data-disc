@@ -437,6 +437,20 @@
    ]
   },
   {
+   "id": "infestation",
+   "term": "INFESTATION",
+   "category": "status",
+   "definition": "A Status that Stukov's Forces put on Enemy Units (Spread Infestation, Parasitic Bio-Toxins). It counts as a DEBUFF, and many Stukov abilities and Virus Cards do extra things to Units that have it.",
+   "rulesRef": "Stukov's Forces cards",
+   "matches": [
+    "INFESTATION"
+   ],
+   "seeAlso": [
+    "debuff",
+    "virus-card"
+   ]
+  },
+  {
    "id": "burrowed",
    "term": "BURROWED",
    "category": "status",
@@ -1242,7 +1256,9 @@
     "Template",
     "Templates",
     "Blast Template",
-    "Flamer Template"
+    "Flamer Templates",
+    "Flamer Template",
+    "FT"
    ],
    "seeAlso": [
     "spillover"
@@ -1447,7 +1463,7 @@
    "id": "tactical-card",
    "term": "Tactical Card",
    "category": "card",
-   "definition": "Bought with Vespene Gas. Each adds Army Slots, provides a resource when Exhausted, and has abilities. Zerg also take exactly one Creep card.",
+   "definition": "Bought with Vespene Gas. Each adds Army Slots, provides a resource when Exhausted, and has abilities. Zerg also take exactly one Creep card (Stukov's Forces: one Virus card instead).",
    "rulesRef": "Core Rules section 5.3",
    "matches": [
     "Tactical Card",
@@ -1455,7 +1471,23 @@
    ],
    "seeAlso": [
     "army-slot",
-    "exhaust"
+    "exhaust",
+    "virus-card"
+   ]
+  },
+  {
+   "id": "virus-card",
+   "term": "Virus Card",
+   "category": "card",
+   "definition": "Stukov's Forces' answer to the Creep card: the army takes exactly one, paying its gas cost. Each one adds an effect against INFESTATION-ed enemies plus the usual Creep Tumor rules.",
+   "rulesRef": "Stukov's Forces faction card",
+   "matches": [
+    "Virus Card",
+    "Virus Cards"
+   ],
+   "seeAlso": [
+    "infestation",
+    "tactical-card"
    ]
   },
   {
@@ -1665,11 +1697,11 @@
  ],
  "meta": {
   "api": "v1",
-  "dataVersion": "54dd7232c3bd",
+  "dataVersion": "be49cef1bac6",
   "costs": "Cost table 09.10.2026",
-  "cards": "Official card sheets, waves 1–3 (v1.09.26)",
+  "cards": "Official card sheets, waves 1–3 (v1.09.26); Wave 4 from Archon's official online card database (sc.starcraft-tmg.com)",
   "docs": "https://github.com/zariaskobold/sctmg-data-disc/blob/main/API.md",
   "legal": "Unofficial, free fan tool. Not affiliated with, endorsed by, or sponsored by Blizzard Entertainment or Archon Studio. StarCraft® is a trademark or registered trademark of Blizzard Entertainment, Inc. in the U.S. and/or other countries. Card text and game data © Blizzard Entertainment, Inc. and © Archon Sp. z o.o., used for non-commercial reference.",
-  "count": 118
+  "count": 120
  }
 }

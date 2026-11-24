@@ -120,7 +120,9 @@ Field names are camelCase.
 - `factionTags: string[]`: tags the army's **Faction Card** must carry for the
   unit to be legal. `["Terran"]` fits any Terran faction;
   `["Terran","Nova Covert Ops"]` needs the Nova Covert Ops faction.
-- `status`: `"official"` (from an official card) or `"cost-only"` (in the cost
+- `status`: `"official"` (from an official card sheet or Archon's online card database;
+  Wave 4 cards come from the database and have `combatRole` and `base` null)
+  or `"cost-only"` (in the cost
   table, no card yet: stats, abilities and weapons will be empty or null)
 - `summoned`: true for units that are set by an ability (Auto-Turret, Pylon,
   Omega Worm…). They have no cost, no `armySlot` and empty `compositions`.
@@ -143,9 +145,10 @@ Field names are camelCase.
 - `note`: free-text caveat, or null.
 
 **Card** (`cards/{id}.json`): `id`, `name`, `race`, `type` (`faction` /
-`tactical` / `creep`), `factionTags`, `status`, `unique`, `gas`,
+`tactical` / `creep` / `virus`), `factionTags`, `status`, `unique`, `gas`,
 `armySlots: { Core: 3, Hero: 1, … }` (only slots it grants),
-`resource: { type: "CP"|"BM"|"PE", amount }` or null, `abilities[]`.
+`resource: { type: "CP"|"BM"|"PE", amount }` or null, `abilities[]`,
+`note` (free-text caveat, or null; e.g. the Tal'darim Faction Card prints no resource).
 
 **Mission** (`missions/{id}.json`): `id`, `name`, and `standard` / `skirmish`,
 each `{ supply, supplyPerRound, gameLength, earlyWinLead, parameters, scoring, additional }`.
@@ -177,7 +180,7 @@ Grand Offensive, where `minerals` is only the default).
 4. **Zagara's Broodmother upgrade costs `[0]`** because the cost table lists no
    cost for it, not because it's free. Its `note` says so.
 5. **Legality isn't in the API.** The rules the app enforces (slot counts,
-   Unique, Zerg needs exactly one Creep card, `cannotBeTakenWith`, upgrades
+   Unique, Zerg needs exactly one Creep card (Stukov's Forces: one Virus card), `cannotBeTakenWith`, upgrades
    replacing the same weapon) live in `issues()` in `index.html`. Re-implement
    them if you need them.
 6. **Weapon range `"Engagement"`** is the card's `E` (close combat).

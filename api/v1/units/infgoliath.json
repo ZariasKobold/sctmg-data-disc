@@ -1,0 +1,209 @@
+{
+ "data": {
+  "id": "infgoliath",
+  "name": "Infested Goliath",
+  "race": "zerg",
+  "factionTags": [
+   "Zerg",
+   "Stukov's Forces"
+  ],
+  "status": "official",
+  "summoned": false,
+  "unique": false,
+  "armySlot": "Elite",
+  "combatRole": "Damage Dealer",
+  "base": "80mm",
+  "stats": {
+   "shield": null,
+   "speed": "7",
+   "armour": "4+",
+   "evade": null,
+   "hitPoints": 10,
+   "size": 3
+  },
+  "combatTags": [
+   "Armoured",
+   "Mechanical",
+   "Infested",
+   "Ground"
+  ],
+  "supplyByModels": [
+   {
+    "min": 1,
+    "max": 1,
+    "supply": 2
+   }
+  ],
+  "compositions": [
+   {
+    "models": 1,
+    "minerals": 180,
+    "supply": 2
+   }
+  ],
+  "abilities": [
+   {
+    "phase": "Movement",
+    "name": "Target Lock",
+    "kind": "Active · 1 CP",
+    "text": "Select one Enemy Unit Within 12″. Whenever a Friendly Goliath Unit targets that enemy with an Autocannon, that weapon gains Surge Type: Light, Armoured, and S Dice: D3+1."
+   },
+   {
+    "phase": "Assault",
+    "name": "Indomitable",
+    "kind": "Passive",
+    "text": "While Engaged, this Unit may target and be targeted by Unengaged Enemy Units. In both cases, the defending Unit gains an Evade Roll against those attacks."
+   },
+   {
+    "phase": "Assault",
+    "name": "Devastating Charge",
+    "kind": "Passive",
+    "text": "Immediately after this Unit completes a successful Charge, resolve the IMPACT (4) 3+ effect."
+   }
+  ],
+  "weapons": [
+   {
+    "phase": "Assault",
+    "name": "Autocannon",
+    "range": 12,
+    "target": "Ground",
+    "rateOfAttack": 9,
+    "hit": "4+",
+    "surgeType": [],
+    "surgeDice": null,
+    "damage": 1,
+    "keywords": [
+     "LONG RANGE (18″)"
+    ]
+   },
+   {
+    "phase": "Assault",
+    "name": "Underbelly Machine Gun",
+    "range": 8,
+    "target": "Ground",
+    "rateOfAttack": 6,
+    "hit": "3+",
+    "surgeType": [
+     "Light"
+    ],
+    "surgeDice": "D3",
+    "damage": 1,
+    "keywords": [
+     "PINPOINT",
+     "SIDEARM"
+    ]
+   },
+   {
+    "phase": "Assault",
+    "name": "Hellfire Missiles",
+    "range": 16,
+    "target": "Flying",
+    "rateOfAttack": 6,
+    "hit": "3+",
+    "surgeType": [
+     "Light"
+    ],
+    "surgeDice": "D3",
+    "damage": 1,
+    "keywords": [
+     "ANTI-EVADE (1)",
+     "SIDEARM"
+    ]
+   },
+   {
+    "phase": "Combat",
+    "name": "Stomp",
+    "range": "Engagement",
+    "target": "Ground",
+    "rateOfAttack": 4,
+    "hit": "5+",
+    "surgeType": [],
+    "surgeDice": null,
+    "damage": 1,
+    "keywords": []
+   }
+  ],
+  "upgrades": [
+   {
+    "name": "Ares-Class Targeting System",
+    "cost": [
+     20
+    ],
+    "phase": "Any",
+    "kind": "Passive",
+    "text": "This Unit's Autocannon and Underbelly Machine Gun weapons gain PRECISION (1).",
+    "specialist": false,
+    "replaces": null,
+    "weapon": null
+   },
+   {
+    "name": "Haywire Missiles",
+    "cost": [
+     40
+    ],
+    "phase": "Assault",
+    "kind": null,
+    "text": null,
+    "specialist": false,
+    "replaces": "Hellfire Missiles",
+    "weapon": {
+     "phase": "Assault",
+     "name": "Haywire Missiles",
+     "range": 12,
+     "target": "Ground",
+     "rateOfAttack": 3,
+     "hit": "3+",
+     "surgeType": [
+      "Armoured"
+     ],
+     "surgeDice": "D3",
+     "damage": 1,
+     "keywords": [
+      "PIERCE Armoured (3)",
+      "SIDEARM"
+     ]
+    }
+   },
+   {
+    "name": "Scatter Missiles",
+    "cost": [
+     30
+    ],
+    "phase": "Assault",
+    "kind": null,
+    "text": null,
+    "specialist": false,
+    "replaces": "Hellfire Missiles",
+    "weapon": {
+     "phase": "Assault",
+     "name": "Scatter Missiles",
+     "range": 18,
+     "target": "Ground",
+     "rateOfAttack": 6,
+     "hit": "5+",
+     "surgeType": [
+      "Light"
+     ],
+     "surgeDice": "D3",
+     "damage": 1,
+     "keywords": [
+      "INDIRECT FIRE",
+      "LOCKED IN (6)",
+      "LONG RANGE (24″)",
+      "SIDEARM"
+     ]
+    }
+   }
+  ],
+  "cannotBeTakenWith": [],
+  "note": "Ashes of the UED (Stukov's Forces): this is the Terran card, taken in a Stukov's Forces army. It gains the Infested Combat Tag, pays any CP cost of its Special Abilities as BM, and can't gain the BURROWED Status."
+ },
+ "meta": {
+  "api": "v1",
+  "dataVersion": "be49cef1bac6",
+  "costs": "Cost table 09.10.2026",
+  "cards": "Official card sheets, waves 1–3 (v1.09.26); Wave 4 from Archon's official online card database (sc.starcraft-tmg.com)",
+  "docs": "https://github.com/zariaskobold/sctmg-data-disc/blob/main/API.md",
+  "legal": "Unofficial, free fan tool. Not affiliated with, endorsed by, or sponsored by Blizzard Entertainment or Archon Studio. StarCraft® is a trademark or registered trademark of Blizzard Entertainment, Inc. in the U.S. and/or other countries. Card text and game data © Blizzard Entertainment, Inc. and © Archon Sp. z o.o., used for non-commercial reference."
+ }
+}

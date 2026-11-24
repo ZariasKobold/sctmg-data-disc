@@ -1,0 +1,214 @@
+{
+ "data": {
+  "id": "infmarine",
+  "name": "Infested Marine",
+  "race": "zerg",
+  "factionTags": [
+   "Zerg"
+  ],
+  "status": "official",
+  "summoned": false,
+  "unique": false,
+  "armySlot": "Core",
+  "combatRole": null,
+  "base": null,
+  "stats": {
+   "shield": null,
+   "speed": "3/6",
+   "armour": "4+",
+   "evade": "6+",
+   "hitPoints": 2,
+   "size": 2
+  },
+  "combatTags": [
+   "Biological",
+   "Infested",
+   "Light",
+   "Ground"
+  ],
+  "supplyByModels": [
+   {
+    "min": 1,
+    "max": 3,
+    "supply": 1
+   },
+   {
+    "min": 4,
+    "max": 6,
+    "supply": 2
+   }
+  ],
+  "compositions": [
+   {
+    "models": 6,
+    "minerals": 160,
+    "supply": 2
+   }
+  ],
+  "abilities": [
+   {
+    "phase": "Any",
+    "name": "Live for the Swarm!",
+    "kind": "Passive",
+    "text": "When this Unit attacks an Enemy Unit with the INFESTATION Status or a Unit Within 6″ of any Source of Creep or Creep Tumor, its Infested C-14 Rifle and all Close Combat Attacks gain PRECISION (2)."
+   },
+   {
+    "phase": "Any",
+    "name": "Detonation",
+    "kind": "Reaction · 1 BM",
+    "text": "Immediately before any models in this Unit are Destroyed, Enemy Units Within 2″ suffer HITS 1 (1) for each model in this Unit that will be Destroyed."
+   },
+   {
+    "phase": "Assault",
+    "name": "Devastating Charge",
+    "kind": "Passive",
+    "text": "Immediately after this Unit completes a successful Charge, resolve the IMPACT (2) 4+ effect."
+   }
+  ],
+  "weapons": [
+   {
+    "phase": "Assault",
+    "name": "Infested C-14 Rifle",
+    "range": 12,
+    "target": "All",
+    "rateOfAttack": 2,
+    "hit": "4+",
+    "surgeType": [
+     "Light"
+    ],
+    "surgeDice": "D3",
+    "damage": 1,
+    "keywords": [
+     "BURST FIRE 6″ (2)"
+    ]
+   },
+   {
+    "phase": "Combat",
+    "name": "Strike",
+    "range": "Engagement",
+    "target": "Ground",
+    "rateOfAttack": 1,
+    "hit": "4+",
+    "surgeType": [],
+    "surgeDice": null,
+    "damage": 1,
+    "keywords": []
+   }
+  ],
+  "upgrades": [
+   {
+    "name": "Burrow Ambush",
+    "cost": [
+     20
+    ],
+    "phase": "Movement",
+    "kind": "Passive",
+    "text": "When this Unit is nominated to deploy from the Reserves, it may resolve the PLACE (18) effect from the controlling player's Entry Edge. No model may be set Within 10″ of any Enemy model. This Unit's Activation ends.",
+    "specialist": false,
+    "replaces": null,
+    "weapon": null
+   },
+   {
+    "name": "Infested Missile Launcher - Acid Blast",
+    "cost": [
+     20
+    ],
+    "phase": "Assault",
+    "kind": null,
+    "text": null,
+    "specialist": true,
+    "replaces": "Infested C-14 Rifle",
+    "weapon": {
+     "phase": "Assault",
+     "name": "Infested Missile Launcher - Acid Blast",
+     "range": 6,
+     "target": "All",
+     "rateOfAttack": 3,
+     "hit": "3+",
+     "surgeType": [],
+     "surgeDice": null,
+     "damage": 1,
+     "keywords": [
+      "CRITICAL HIT (1)",
+      "LONG RANGE (12″)",
+      "PIERCE Armoured (2)",
+      "SPECIALIST"
+     ]
+    }
+   },
+   {
+    "name": "Infested Missile Launcher - Scourgeshot",
+    "cost": [
+     20
+    ],
+    "phase": "Assault",
+    "kind": null,
+    "text": null,
+    "specialist": true,
+    "replaces": "Infested C-14 Rifle",
+    "weapon": {
+     "phase": "Assault",
+     "name": "Infested Missile Launcher - Scourgeshot",
+     "range": 12,
+     "target": "All",
+     "rateOfAttack": 3,
+     "hit": "3+",
+     "surgeType": [],
+     "surgeDice": null,
+     "damage": 1,
+     "keywords": [
+      "BURST FIRE 6″ (2)",
+      "SPECIALIST"
+     ]
+    }
+   },
+   {
+    "name": "Plagued Munitions",
+    "cost": [
+     10
+    ],
+    "phase": "Assault",
+    "kind": "Passive",
+    "text": "Immediately after an attack with the Infested C-14 Rifle, if the attacked Unit suffered Damage, it also suffers NON-LETHAL DAMAGE (1).",
+    "specialist": false,
+    "replaces": null,
+    "weapon": null
+   },
+   {
+    "name": "Wild Mutation",
+    "cost": [
+     1
+    ],
+    "phase": "Combat",
+    "kind": null,
+    "text": null,
+    "specialist": false,
+    "replaces": null,
+    "weapon": {
+     "phase": "Combat",
+     "name": "Wild Mutation",
+     "range": "Engagement",
+     "target": "Ground",
+     "rateOfAttack": 2,
+     "hit": "3+",
+     "surgeType": [
+      "Armoured"
+     ],
+     "surgeDice": "D3+1",
+     "damage": 1,
+     "keywords": []
+    }
+   }
+  ],
+  "cannotBeTakenWith": [],
+  "note": "The card database lists Wild Mutation at 1 mineral and as replacing the Infested C-14 Rifle, though it's a Close Combat weapon. Both look like typos, so the app charges 1 and keeps the rifle. Check against the printed card."
+ },
+ "meta": {
+  "api": "v1",
+  "dataVersion": "be49cef1bac6",
+  "costs": "Cost table 09.10.2026",
+  "cards": "Official card sheets, waves 1–3 (v1.09.26); Wave 4 from Archon's official online card database (sc.starcraft-tmg.com)",
+  "docs": "https://github.com/zariaskobold/sctmg-data-disc/blob/main/API.md",
+  "legal": "Unofficial, free fan tool. Not affiliated with, endorsed by, or sponsored by Blizzard Entertainment or Archon Studio. StarCraft® is a trademark or registered trademark of Blizzard Entertainment, Inc. in the U.S. and/or other countries. Card text and game data © Blizzard Entertainment, Inc. and © Archon Sp. z o.o., used for non-commercial reference."
+ }
+}

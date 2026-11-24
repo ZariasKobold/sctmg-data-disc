@@ -218,6 +218,7 @@ const RAPTOR_STRAIN=A("Any","Raptor Strain","Passive","This Unit can move throug
 const ADRENAL_OVER=A("Assault","Adrenal Overload","Active · 1 BM","This Unit gains a +1 Modifier to all IMPACT Hit Rolls.");
 const BURROW=(eng)=>A("Any","Burrow","Active · 2 BM",`If this Unit is ${eng?"not Engaged":"Unengaged"}, it gains or loses the Burrowed Status.`);
 const REGEN=A("Assault","Regeneration","Passive","When this Unit becomes Activated, if it has the Burrowed Status, resolve the HEAL (2) effect.");
+const NIMBLE=A("Any","Nimble","Passive","This Unit is always eligible to use Evade Rolls against Attacks or Special Abilities.");
 const TIMED_LIFE=A("Any","Timed Life","Passive","Remove this Unit at the End of the Round.");
 const NOVA_PREP=A("Any","Battle Preparation","Passive","During Army Building, your army cannot include both the Nova Assault Mode Unit and the Nova Stealth Mode Unit.");
 const GHOST_VISOR=A("Any","Ghost Visor","Passive","While Enemy Units are Within 6″ of this Unit, they lose the HIDDEN Status.");
@@ -226,6 +227,10 @@ const HOLO_DECOY=A("Movement","Holo Decoy","Active · 1 CP","Resolve the SUMMON 
 const INDOM=A("Assault","Indomitable","Passive","While Engaged, this Unit may target and be targeted by Unengaged Enemy Units. In both cases, the defending Unit gains an Evade Roll against those attacks.");
 const FEEDBACK=A("Movement","Feedback","Active · 1 PE","Target one Enemy Mechanical or Psionic Unit Within 8″. Until the End of the Round, after that Unit resolves an Active or Reaction Special Ability (excluding abilities granted by a Tactical Card or Faction Card), it suffers NON-LETHAL DAMAGE (3).");
 const STIM=(w,p)=>A("Movement","Stimpack","Active · 1 CP",`This Unit suffers NON-LETHAL DAMAGE (2). This Unit gains BUFF Speed (3). Additionally, its ${w} and all Close Combat Weapons gain PRECISION (${p}).`);
+const SPREAD_INF="Target an Enemy Unit Within 8″. The targeted Unit gains the INFESTATION Status. For the purposes of resolving Special Abilities, this effect is treated as a DEBUFF.";
+const LIVE_SWARM=A("Any","Live for the Swarm!","Passive","When this Unit attacks an Enemy Unit with the INFESTATION Status or a Unit Within 6″ of any Source of Creep or Creep Tumor, its Infested C-14 Rifle and all Close Combat Attacks gain PRECISION (2).");
+const DETONATION=x=>A("Any","Detonation","Reaction · 1 BM",`Immediately before any models in this Unit are Destroyed, Enemy Units Within 2″ suffer HITS 1 (${x}) for each model in this Unit that will be Destroyed.`);
+const PLAGUED=A("Assault","Plagued Munitions","Passive","Immediately after an attack with the Infested C-14 Rifle, if the attacked Unit suffered Damage, it also suffers NON-LETHAL DAMAGE (1).");
 const ROACH_UPS=(glial)=>[
  {n:"Tunneling Claws",c:[10],ph:"Any",k:"Passive",tx:"While this Unit has the Burrowed Status, it may perform the Move and Run actions without losing that Status. It may also move through other Units' bases."},
  {n:"Glial Reconstitution",c:[10],ph:"Movement",k:"Active · 1 "+glial,tx:"This Unit gains BUFF SPEED (1), or BUFF SPEED (2) if the Unit is ON CREEP."+(glial==="CP"?" (Printed as 1 CP on this card.)":"")},
@@ -278,6 +283,13 @@ const UNITS=[
      A("Movement","Orders","Active · X CP · Repeatable","Select another Friendly Biological Unit Within 8″, spend CP and apply one of: 1 CP: that Unit's first used weapon gains CRITICAL HIT (2). 1 CP: that Unit ignores the Disengage penalty for the remainder of the Round. 2 CP: remove the Activation Marker from that Unit.")],
  wp:[W("Assault","Commando Rifle",18,"All",3,"3+","Armoured","D3",1,"BULKY, PIERCE Armoured (3)"),W("Assault","“Justice” Revolver",6,"Ground",2,"3+","-","-",2,"ANTI-EVADE (2), SIDEARM, PINPOINT"),W("Combat","Bayonet","E","Ground",2,"4+","Light","D3",1)],
  up:[{n:"C-14 Rifle",c:[0],ph:"Assault",rep:"Commando Rifle",w:W("Assault","C-14 Rifle",12,"All",6,"3+","Light","D3+1",1,"BURST FIRE 8″ (3)")}]},
+{id:"firebat",n:"Firebat",r:"T",tags:["Terran"],slot:"Core",src:"w4",st:["-","4/7","5+","6+",3,2],ct:"Armoured, Biological, Ground",
+ prof:[[1,2,0],[3,4,1],[5,6,2]],comps:[[4,160,1],[6,210,2]],
+ ab:[STIM("Perdition Flamethrower",3),
+     A("Assault","Fire it Up","Passive","When this Unit makes a Ranged Attack with its Perdition Flamethrower, you may choose 1 model in this Unit to attack using a Flamer Template (FT) instead of rolling its regular Rate of Attack (RoA). If this Unit's Current Supply Value is 2, you may choose up to 2 models to attack using Flamer Templates instead.")],
+ wp:[W("Assault","Perdition Flamethrower",8,"Ground",2,"3+","Light","D3",1,"ANTI-EVADE (1), INSTANT"),W("Combat","Flame Strike","E","Ground",2,"3+","Light","D3",1)],
+ up:[{n:"Incinerator Gauntlets",c:[20],ph:"Movement",k:"Active · 1 CP",tx:"Set a Fire Wall token Within 4″ in an unoccupied space. If a Unit's Leading Model's path of travel passes through this token, or if any model in a Unit ends either a Move, Deploy, Run, Charge, Disengage, or Close Ranks action, or is Set Within 1″ of this token, remove the Fire Wall token from the battlefield before executing that move. If you do, that Unit suffers HITS 5 (1). If that Unit performed a Charge action, it cannot resolve the IMPACT effect."},
+     {n:"Need A Light?",c:[20],ph:"Combat",k:"Passive",tx:"When this Unit makes a Close Combat Attack with its Flame Strike, you may choose 1 model in this Unit to attack using a Flamer Template (FT) instead of rolling its regular Rate of Attack (RoA)."}]},
 {id:"goliath",n:"Goliath",r:"T",tags:["Terran"],slot:"Elite",role:"Damage Dealer",base:"80mm",st:["-","7","4+","-",10,3],ct:"Armoured, Mechanical, Ground",
  prof:[[1,1,2]],comps:[[1,180,2]],
  ab:[A("Movement","Target Lock","Active · 1 CP","Select one Enemy Unit Within 12″. Whenever a Friendly Goliath Unit targets that enemy with an Autocannon, that weapon gains Surge Type: Light, Armoured, and S Dice: D3+1."),
@@ -428,6 +440,36 @@ const UNITS=[
 {id:"roachling",n:"Roachling",r:"Z",tags:["Zerg"],slot:"—",role:"Tank",base:"32mm",sum:true,st:["-","4/7","6+","6+",1,1],ct:"Biological, Light, Ground",
  prof:[[1,3,0]],comps:[[3,0,0]],
  ab:[A("Any","Underdeveloped Claws","Passive","This Unit cannot gain Burrowed Status.")],wp:[W("Combat","Claws","E","Ground",2,"4+","-","-",1)],up:[]},
+/* Wave 4: Stukov's Forces (src:"w4" = from the official online card database, sc.starcraft-tmg.com) */
+{id:"stukov",n:"Stukov",r:"Z",tags:["Zerg"],slot:"Hero",uq:true,src:"w4",st:["-","7","4+","6+",10,2],ct:"Biological, Infested, Ground",
+ prof:[[1,1,1]],comps:[[1,240,1]],
+ ab:[CMDR,A("Any","Plague Warden","Passive","Treat the Supply characteristic of any Enemy Unit that has the INFESTATION Status and is Within 6″ as reduced by 1 (to a minimum of 0) for Controlling and Contesting Mission Markers, and completing objectives."),
+     A("Movement","Spread Infestation","Active · 1 BM",SPREAD_INF),
+     A("Movement","Admiral of the Infested","Active · 1 BM","Target an Enemy Unit Within 8″ that has the INFESTATION Status. That Unit counts as Activated in this Phase (set an Activation Marker next to it) and remove the INFESTATION Status from that Unit. You may target any Non-Unique Infested Friendly Unit that is Within 8″ of the previously targeted Enemy Unit. Remove the Activation Marker from that targeted Friendly Unit."),
+     A("Assault","Bio-Kill Switch","Active · 0 BM","Each Enemy Unit with the INFESTATION Status on the battlefield suffers Damage (2). Immediately after this Special Ability is resolved, remove the INFESTATION Status from Units that suffered Damage."),
+     A("Assault","Corrode Armor","Reaction · 1 BM","Immediately after this Unit resolves a Ranged Attack against an Enemy Unit, the targeted Unit suffers the DEBUFF Armour (1)."),DEV("6) 4+ (")],
+ wp:[W("Assault","Corrosive Blast",8,"Ground",3,"3+","Light, Armoured","D3",1),W("Combat","Infested Arm","E","Ground",3,"3+","Armoured","D3",2)],up:[]},
+{id:"inftrooper",n:"Infested Trooper",r:"Z",tags:["Zerg","Stukov's Forces"],slot:"Elite",src:"w4",st:["-","3/6","4+","6+",4,2],ct:"Biological, Infested, Light, Ground",
+ prof:[[1,1,0],[2,3,1]],comps:[[3,210,1]],
+ ab:[LIVE_SWARM,DETONATION(2),A("Any","Spread Infestation","Active · 1 BM",SPREAD_INF),A("Movement","Burrow Ambush","Passive",BURROW_AMB),PLAGUED,DEV("2) 4+ (")],
+ wp:[W("Assault","Infested C-14 Rifle",12,"All",3,"3+","Light","D3",1,"BURST FIRE 6″ (2)"),W("Combat","Bayonet","E","Ground",2,"5+","-","-",1)],up:[]},
+{id:"infmarine",n:"Infested Marine",r:"Z",tags:["Zerg"],slot:"Core",src:"w4",st:["-","3/6","4+","6+",2,2],ct:"Biological, Infested, Light, Ground",
+ note:"The card database lists Wild Mutation at 1 mineral and as replacing the Infested C-14 Rifle, though it's a Close Combat weapon. Both look like typos, so the app charges 1 and keeps the rifle. Check against the printed card.",
+ prof:[[1,3,1],[4,6,2]],comps:[[6,160,2]],
+ ab:[LIVE_SWARM,DETONATION(1),DEV("2) 4+ (")],
+ wp:[W("Assault","Infested C-14 Rifle",12,"All",2,"4+","Light","D3",1,"BURST FIRE 6″ (2)"),W("Combat","Strike","E","Ground",1,"4+","-","-",1)],
+ up:[{n:"Burrow Ambush",c:[20],ph:"Movement",k:"Passive",tx:BURROW_AMB},
+     {n:"Infested Missile Launcher - Acid Blast",c:[20],ph:"Assault",spec:true,rep:"Infested C-14 Rifle",w:W("Assault","Infested Missile Launcher - Acid Blast",6,"All",3,"3+","-","-",1,"CRITICAL HIT (1), LONG RANGE (12″), PIERCE Armoured (2), SPECIALIST")},
+     {n:"Infested Missile Launcher - Scourgeshot",c:[20],ph:"Assault",spec:true,rep:"Infested C-14 Rifle",w:W("Assault","Infested Missile Launcher - Scourgeshot",12,"All",3,"3+","-","-",1,"BURST FIRE 6″ (2), SPECIALIST")},
+     {n:"Plagued Munitions",c:[10],ph:"Assault",k:"Passive",tx:PLAGUED.tx},
+     {n:"Wild Mutation",c:[1],ph:"Combat",w:W("Combat","Wild Mutation","E","Ground",2,"3+","Armoured","D3+1",1)}]},
+{id:"infturret",n:"Infested Missile Turret",r:"Z",tags:["Zerg","Stukov's Forces"],slot:"—",sum:true,src:"w4",st:["-","-","5+","-",8,3],ct:"Armoured, Biological, Infested, Ground",
+ prof:[[1,1,0]],comps:[[1,0,0]],
+ ab:[A("Any","Detection","Passive","While Enemy Units are Within 8″ of this Unit, they lose the HIDDEN Status."),
+     A("Any","Source of Creep","Passive","A Friendly or Enemy Ground Zerg Unit Within 6″ of this Unit counts as being ON CREEP."),
+     A("Any","Infestation","Reaction · 0 BM","When the Supply of an Enemy Unit with the INFESTATION Status is reduced to 0, or when that Unit is Destroyed, you can apply the INFESTATION Status to another Enemy Unit Within 8″ of that Unit. For the purposes of resolving Special Abilities, this effect is treated as a DEBUFF."),STRUCT,
+     A("Assault","Ocular Overwatch","Reaction · 0 BM","When an Enemy Flying Unit ends its Activation Within 14″, this Unit immediately performs a Ranged Attack against that Enemy Unit.")],
+ wp:[W("Assault","Firefly Missiles",14,"Flying",8,"4+","Light, Armoured","D3",1,"ANTI-EVADE (1)")],up:[]},
 /* ---------- PROTOSS ---------- */
 {id:"zealot",n:"Zealot",r:"P",tags:["Protoss"],slot:"Core",role:"Damage Dealer",base:"40mm",st:[3,"4/7","5+","5+",4,2],ct:"Biological, Light, Ground",
  prof:[[1,1,1],[2,3,2]],comps:[[3,170,2]],
@@ -511,11 +553,65 @@ const UNITS=[
  prof:[[1,1,0]],comps:[[1,0,0]],
  ab:[A("Any","Khalai Ingenuity","Passive","Once per Round, when a Friendly Unit Within 4″ of this Pylon uses a Special Ability that costs Psionic Energy, that ability's PE cost is reduced by 1."),STRUCT,
      A("Movement","Warp Conduit","Passive","Once per Round, the controlling player may deploy a Ground Unit from Reserves using this Pylon base as the Entry Edge. This Unit's Activation ends.")],wp:[],up:[]},
+/* Wave 4: Tal'darim (src:"w4", official online card database) */
+{id:"alarak",n:"Alarak",r:"P",tags:["Protoss"],slot:"Hero",uq:true,src:"w4",st:[3,"7","4+","5+",6,2],ct:"Biological, Psionic, Ground",
+ prof:[[1,1,1]],comps:[[1,260,1]],
+ ab:[CMDR,A("Any","Highlord of the Tal'darim","Passive","Calculate the total lost Supply of all Friendly Units (a Unit's lost Supply is its Initial Supply Value minus its Current Supply Value). While this total is: 2 or more: When this Unit resolves IMPACT, it generates 3 additional IMPACT dice. 4 or more: This Unit's weapons gain INSTANT. 6 or more: This Unit's abilities are Empowered."),
+     A("Any","Sacrifice","Reaction · 1 PE","When this Unit receives Damage, target another Friendly Biological Unit Within 8″. The targeted Unit suffers 2 Damage, and the Damage received by this Unit is reduced by 2 (when Empowered, reduced by 3)."),
+     A("Assault","Wrath of the Highlord","Active · 0 PE","Target another Friendly Biological Unit Within 8″. The targeted Unit suffers 2 Damage, and this Unit performs a 4″ Run Action (when Empowered, perform a 6″ Run Action)."),
+     A("Assault","Destruction Wave","Active · 0 PE","Target another Friendly Biological Unit Within 8″. The targeted Friendly Unit suffers 2 Damage. Then target an Enemy Unit Within 8″ of this Unit. The targeted Enemy Unit suffers HITS 4 (1) (when Empowered, HITS 6 (1))."),
+     A("Assault","Empower Me","Active · 0 PE","Target another Friendly Biological Unit Within 8″. The targeted Unit suffers 2 Damage, and this Unit's Bane Blades gain BUFF RoA (4) (when Empowered, BUFF RoA (6))."),DEV("6) 4+ (")],
+ wp:[W("Combat","Bane Blades","E","Ground",6,"2+","Light, Armoured","D3+1",1)],up:[]},
+{id:"slayer",n:"Slayer (Stalker)",r:"P",tags:["Protoss","Tal'darim"],slot:"Elite",src:"w4",st:[3,"4/8","4+","6+",6,3],ct:"Armoured, Mechanical, Ground",
+ prof:[[1,1,1],[2,2,2]],comps:[[1,180,1],[2,280,2]],
+ ab:[SQUAD,A("Any","Seek Bloodshed","Reaction · 1 PE","When the Current Supply Value of another Friendly Unit Within 12″ of this Unit is reduced, this Unit, if Unengaged, may perform a Move action Directly Towards that Friendly Unit."),
+     A("Any","Bloodshard Blink","Passive","Immediately before this Unit resolves any PLACE effect, you may target one Enemy Unit. This Unit's weapons gain BUFF RoA (1) against the targeted Unit, but this Unit must perform PLACE Directly Towards the chosen Unit."),
+     A("Movement","Blink","Active · 1 PE","Resolve the PLACE (6) effect. Models set by this effect cannot be set up Within the Engagement Range of any Enemy Unit.")],
+ wp:[W("Assault","Particle Disruptors",12,"All",4,"3+","Armoured","D3",2),W("Combat","Stomp","E","Ground",2,"5+","-","-",1)],up:[]},
+{id:"reaver",n:"Reaver",r:"P",tags:["Protoss"],slot:"Elite",src:"w4",st:[6,"6","5+","-",8,4],ct:"Armoured, Mechanical, Ground",
+ prof:[[1,1,2]],comps:[[1,200,2]],
+ ab:[A("Any","Large","Passive","When this Unit's Leading Model moves, it cannot pass through physical gaps smaller than 3″ wide, regardless of its size. If the Leading Model's path of travel passes through, or any model in this Unit ends its movement on a Size 0 or Size 1 Impassable Terrain piece (excluding Tokens) during any movement action, that terrain piece is immediately removed from the game."),
+     A("Any","Limited Artificial Intelligence","Passive","If this Unit is a parent to any SUMMONED Unit, it cannot SUMMON another one."),
+     A("Movement","Microfactory","Active · 2 PE","This Unit's Scarab Special Ability can be used this Round even if it was already used."),
+     A("Movement","Scarab","Active · 0 PE","Once per Game. Resolve the SUMMON (Scarab) effect. Then, the Scarab may immediately perform a Move action."),
+     A("Assault","Siege Triangulation","Active · 1 PE","Move a Scarab, Solarite Scarab or Phasing Scarab created by this Unit up to 5″."),INDOM],
+ wp:[W("Combat","Crawl Over","E","Ground",2,"2+","-","-",1)],
+ up:[{n:"Solarite Scarab",c:[20],ph:"Movement",k:"Active · 0 PE",tx:"Once per Game. Resolve the SUMMON (Solarite Scarab) effect. Then, the Solarite Scarab may immediately perform a Move action."},
+     {n:"Phasing Scarab",c:[20],ph:"Movement",k:"Active · 0 PE",tx:"Once per Game. Resolve the SUMMON (Phasing Scarab) effect. Then, the Phasing Scarab may immediately perform a Move action."},
+     {n:"Shuttle",c:[20],ph:"Movement",k:"Active · 0 PE",tx:"Once per Game. This ability can be used while this Unit is in Reserves. Set a Faction Indicator anywhere on the battlefield more than 10″ away from any Enemy model. At the End of the Round, the controlling player may Deploy this Unit in base-to-base contact with this Faction Indicator. This Unit's Activation ends."}]},
+{id:"scarab",n:"Scarab",r:"P",tags:["Protoss"],slot:"—",sum:true,src:"w4",st:[1,"3","6+","3+",2,1],ct:"Psionic, Ground",
+ prof:[[1,1,0]],comps:[[1,0,0]],
+ ab:[TIMED_LIFE,NIMBLE,A("Assault","Proximity Detonation","Passive","When an Enemy Ground Unit ends its Activation Within 2″ of this Unit, this Unit immediately performs a Close Combat Attack against that Enemy Unit. Immediately after this Close Combat Attack is resolved, remove this Unit from the battlefield."),
+     A("Assault","Explosive Charge","Passive","Immediately after this Unit completes a successful Charge, it performs a Close Combat Attack against one of the targets of that Charge. Immediately after this Close Combat Attack is resolved, remove this Unit from the battlefield.")],
+ wp:[W("Combat","Scarab Detonation","E","Ground",12,"2+","-","-",1,"CRITICAL HIT (2)")],up:[]},
+{id:"phasescarab",n:"Phasing Scarab",r:"P",tags:["Protoss"],slot:"—",sum:true,src:"w4",st:[1,"3","6+","3+",2,1],ct:"Psionic, Ground",
+ prof:[[1,1,0]],comps:[[1,0,0]],
+ ab:[TIMED_LIFE,NIMBLE,A("Assault","Proximity Detonation","Passive","When an Enemy Ground Unit ends its Activation Within 2″ of this Unit, this Unit immediately performs a Close Combat Attack against that Enemy Unit. Immediately after this Close Combat Attack is resolved, remove this Unit from the battlefield."),
+     A("Assault","Explosive Charge","Passive","Immediately after this Unit completes a successful Charge, it performs a Close Combat Attack against one of the targets of that Charge. Immediately after this Close Combat Attack is resolved, remove this Unit from the battlefield.")],
+ wp:[W("Combat","Phase Blast","E","Ground",6,"2+","Armoured","D3",1,"CRITICAL HIT (2), PIERCE Armoured (2)")],up:[]},
+{id:"solscarab",n:"Solarite Scarab",r:"P",tags:["Protoss"],slot:"—",sum:true,src:"w4",st:[1,"5","6+","3+",2,1],ct:"Psionic, Ground",
+ prof:[[1,1,0]],comps:[[1,0,0]],
+ ab:[TIMED_LIFE,NIMBLE,A("Assault","Proximity Detonation","Passive","When an Enemy Ground Unit ends its Activation Within 2″ of this Unit, this Unit immediately performs a Close Combat Attack against that Enemy Unit. Immediately after this Close Combat Attack is resolved, remove this Unit from the battlefield."),
+     A("Assault","Explosive Charge","Passive","Immediately after this Unit completes a successful Charge, it performs a Close Combat Attack against one of the targets of that Charge. Immediately after this Close Combat Attack is resolved, remove this Unit from the battlefield.")],
+ wp:[W("Combat","Solarite Blast","E","Ground",5,"2+","-","-",2,"CRITICAL HIT (2), INSTANT")],up:[]},
+{id:"tdpylon",n:"Tal'darim Pylon",r:"P",tags:["Protoss","Tal'darim"],slot:"—",sum:true,uq:true,src:"w4",st:[2,"-","5+","-",6,3],ct:"Armoured, Ground",
+ prof:[[1,1,0]],comps:[[1,0,0]],
+ ab:[STRUCT,A("Any","Warp Conduit","Passive","Once per Round, the controlling player may deploy a Ground Unit from the Reserves using this Pylon base as the Entry Edge. This Unit's Activation ends."),
+     A("Any","Bloodshard Monument","Passive","When the Current Supply Value of a Unit Within 8″ is reduced, return one non-Unique Exhausted Tactical Card to the Ready state."),
+     A("Assault","Overwatch","Reaction · 1 PE","When an Enemy Unit ends its Activation Within 8″, this Unit immediately performs a Ranged Attack against that Enemy Unit.")],
+ wp:[W("Assault","Overcharged Pylon",8,"All",3,"3+","-","-",1,"PIERCE Armoured (2), PINPOINT")],up:[]},
 ];
 // DEV helper hack: fix text for "IMPACT (x) y+" form
 UNITS.forEach(u=>(u.ab||[]).forEach(a=>{if(a.n==="Devastating Charge")a.tx=a.tx.replace(/IMPACT \((\d)\) (\d\+) \(\)/,"IMPACT ($1) $2");}));
+// Stukov's Forces "Ashes of the UED": Terran Ground Mechanical units join the army as Infested.
+// The Goliath and Siege Tank are the only ones, so they're copies of the Terran cards (fixes there carry over).
+const ASHES="Ashes of the UED (Stukov's Forces): this is the Terran card, taken in a Stukov's Forces army. It gains the Infested Combat Tag, pays any CP cost of its Special Abilities as BM, and can't gain the BURROWED Status.";
+[["goliath","infgoliath"],["siegetank","infsiegetank"]].forEach(([from,id])=>{const t=UNITS.find(u=>u.id===from);
+  UNITS.push(Object.assign({},t,{id,n:"Infested "+t.n,r:"Z",tags:["Zerg","Stukov's Forces"],src:"w4",
+    ct:t.ct.replace("Mechanical,","Mechanical, Infested,"),note:ASHES+(t.note?" "+t.note:"")}))});
 
 const S=(o)=>o; // slots
+const STUKOV_CREEP=A("Any","Stukov's Creep","Passive","If an Enemy Unit ends a Move, Deploy, Run, Charge or Disengage action Within 1″ of a Friendly Creep Tumor token, remove that token from the battlefield. Creep Tumor tokens have STAY IN PLAY and DISPLACEMENT.");
 const TAC=[
 /* Terran */
 {id:"taf",n:"Terran Armed Forces",r:"T",type:"Faction",tags:["Terran"],uq:true,gas:0,slots:{Core:3,Elite:1,Support:1,Air:1},res:["CP",1],
@@ -524,6 +620,7 @@ const TAC=[
  ab:[A("Movement","Rapid Ingress","Active","Set a Friendly Point Defence Drone Unit anywhere on the battlefield, more than 1″ away from any Enemy model. Remove this Unit at the End of the Round."),A("Movement","Ready for Pickup?","Active","Once Per Game. The active Unit resolves the PLACE (12) effect. Models set by this effect cannot be set up Within the Engagement Range of any Enemy Unit. This resolves instead of performing a standard action.")]},
 {id:"barracks",n:"Barracks",r:"T",tags:["Terran"],gas:30,slots:{Core:1},res:["CP",1],ab:[A("Movement","Go! Go! Go!","Active","The active Biological Unit performs a 2″ Move action. This does not count towards its action limit.")]},
 {id:"brxproxy",n:"Barracks (Proxy)",r:"T",tags:["Terran"],uq:true,gas:40,slots:{Core:2},res:["CP",2],ab:[A("Movement","Go! Go! Go!","Active","The active Biological Unit performs a 2″ Move action. This does not count towards its action limit."),A("Movement","Armed and Ready","Active","The active Biological Unit Deploys from any table edge that is not a player's Entry Edge. No model may be placed Within 10″ of any Enemy model. This ability cannot be used if another Friendly Biological Unit has already been Deployed this Round.")]},
+{id:"brxreactor",n:"Barracks (Reactor)",r:"T",tags:["Terran"],uq:true,gas:35,slots:{Core:3},res:["CP",1],src:"w4",ab:[A("Movement","Go! Go! Go!","Active","The active Biological Unit performs a 2″ Move action. This does not count towards its action limit."),A("Assault","Terran Charge","Reaction","Immediately after a Friendly Biological Unit completes a successful Charge, resolve the IMPACT (1) 4+ effect.")]},
 {id:"brxtech",n:"Barracks (Tech Lab)",r:"T",tags:["Terran"],uq:true,gas:40,slots:{Core:1,Elite:1},res:["CP",2],ab:[A("Movement","Go! Go! Go!","Active","The active Biological Unit performs a 2″ Move action. This does not count towards its action limit."),A("Assault","Let's Have a Blast!","Active","The active Biological Unit's first Ranged Weapon used gains ANTI-EVADE (1).")]},
 {id:"supplydepot",n:"Supply Depot",r:"T",tags:["Terran"],uq:true,gas:40,slots:{Core:1,Elite:1,Hero:1},res:["CP",1],ab:[A("Movement","Additional Supply Depots","Active","The active Unit's Supply Value is improved by 1 for Controlling and Contesting Mission Markers and completing objectives.")]},
 {id:"factory",n:"Factory",r:"T",tags:["Terran"],gas:35,slots:{Elite:2},res:["CP",1],ab:[A("Movement","Field Repair","Active","The active Mechanical Unit resolves the HEAL (2) effect.")]},
@@ -552,6 +649,7 @@ const TAC=[
 {id:"evo",n:"Evolution Chamber",r:"Z",tags:["Zerg"],gas:25,slots:{Core:1},res:["BM",1],ab:[A("Any","Carapace","Reaction","Use before a Friendly Unit makes an Armour Roll. That Unit gains TOUGH (1) for this roll."),A("Assault","Extended Claws","Active","The active Unit gains a +1 Modifier to all IMPACT Hit Rolls.")]},
 {id:"hatch",n:"Hatchery",r:"Z",tags:["Zerg"],gas:30,slots:{Support:1},res:["BM",1],ab:[A("Movement","Lie in Wait","Active","The active, Unengaged Ground Unit gains the Burrowed Status."),A("Movement","Creep Spread","Active","Set a Creep Tumor token on the battlefield Within 6″ (Line of Sight is not required) of either a Friendly Entry Edge or an existing Friendly Creep Tumor token.")]},
 {id:"lair",n:"Lair",r:"Z",tags:["Zerg"],uq:true,gas:35,slots:{Core:1,Elite:1},res:["BM",1],ab:[A("Any","Predation","Active","The active Unit's Close Combat Weapons gain INSTANT."),A("Movement","Creep Spread","Active","Set a Creep Tumor token on the battlefield Within 6″ (Line of Sight is not required) of either a Friendly Entry Edge or an existing Friendly Creep Tumor token.")]},
+{id:"hive",n:"Hive",r:"Z",tags:["Zerg"],uq:true,gas:35,slots:{Core:1,Elite:1},res:["BM",1],src:"w4",ab:[A("Movement","Brutal Instinct","Reaction","Immediately after an Enemy Unit ends its Activation Within 12″ of a Friendly Ground Unit. That Friendly Unit gains or loses the BURROWED Status."),A("Movement","Creep Spread","Active","Set a Creep Tumor token on the battlefield Within 6″ (Line of Sight is not required) of either a Friendly Entry Edge or an existing Friendly Creep Tumor token.")]},
 {id:"overseer",n:"Overseer",r:"Z",tags:["Zerg"],uq:true,gas:25,slots:{Support:1},res:["BM",1],ab:[A("Movement","Oversight Mode","Active","Set a Faction Indicator anywhere on the battlefield. While Enemy Units are Within 6″ of this Faction Indicator, they lose HIDDEN Status."),A("Assault","Pneumatized Carapace","Reaction","Use after a Friendly Unit rolls a D6 for Charge Distance. Roll an additional D6 and use the higher result to calculate the total Charge Distance.")]},
 {id:"overlord",n:"Overlord",r:"Z",tags:["Zerg"],uq:true,gas:35,slots:{Core:1,Elite:1,Hero:1},res:["BM",1],ab:[A("Movement","Ventral Sacs","Active","Set a Faction Indicator anywhere on the battlefield more than 10″ away from any Enemy model. At the End of the Round, the controlling player may Deploy one Ground Unit from Reserves in base-to-base contact with this Faction Indicator."),A("Assault","Excrete Creep","Active","Set a Creep Tumor token on the battlefield Within 6″ (Line of Sight is not required) of either a Friendly Entry Edge or an existing Friendly Creep Tumor token.")]},
 {id:"cocoon",n:"Cocoon",r:"Z",tags:["Zerg"],uq:true,gas:30,slots:{Elite:1},res:null,ab:[A("Movement","Spawn Larva","Active","The active Friendly non-Unique Biological Unit with a Size Characteristic of 1 resolves the RESPAWN (2) effect."),A("Movement","Ravager Morph","Active","Once per Game. The active Friendly Roach Unit performs MORPH (Ravager) 1.")]},
@@ -560,7 +658,30 @@ const TAC=[
  ab:[A("Any","Living Glob of Tissue","Passive","Creep Tumor tokens have STAY IN PLAY and DISPLACEMENT."),A("Any","Creep Removal","Passive","If an Enemy Unit ends a Move, Deploy, Run, Charge or Disengage action Within 1″ of a Friendly Creep Tumor token, remove that token from the battlefield."),A("Any","Reactive Tissue","Passive","While a Friendly Zerg Unit is ON CREEP, it gains DODGE (1) against any attacks targeting it.")]},
 {id:"zagswarm",n:"Zagara's Swarm",r:"Z",type:"Faction",tags:["Zerg","Zagara's Swarm"],uq:true,gas:0,slots:{Core:4,Support:1,Hero:1},res:["BM",1],
  ab:[A("Any","Instinctive Reaction","Reaction","Use when an Enemy Unit declares a Close Combat Attack against a Friendly Unit. That Friendly Unit becomes eligible to make an Evade Roll against that attack."),A("Any","Zerg Creep","Passive","During Army Building, select exactly one Creep Card and add it to their Army List, paying its listed cost (if any)."),A("Combat","Scourge Queen","Active","If the active Unit contains more models than the combined number of models in all Engaged Enemy Units, its Close Combat Weapons gain INSTANT and PRECISION (4).")]},
+/* Zerg Wave 4: Stukov's Forces (src:"w4", official online card database) */
+{id:"stukovforces",n:"Stukov's Forces",r:"Z",type:"Faction",tags:["Zerg","Stukov's Forces"],uq:true,gas:0,slots:{Core:4,Elite:2,Hero:1},res:["BM",1],need:"Virus",src:"w4",
+ ab:[A("Any","Ashes of the UED","Passive","During Army Building, you may include Units with the Terran Faction Tag and both Ground and Mechanical Combat Tags in your army. Those Units gain the Infested Combat Tag. Treat any CP cost for those Units' Special Abilities as BM. These Units cannot gain the BURROWED Status. (In this app: pick the Infested Goliath and Infested Siege Tank.)"),
+     A("Any","Infestation","Passive","During Army Building, select exactly one Virus Card and add it to your Army List, paying its listed cost (if any)."),
+     A("Movement","Hostile Incubation","Active","If there is no Friendly Infested Missile Turret on the battlefield, set a Friendly Infested Missile Turret Unit anywhere on the GROUND LEVEL of the battlefield more than 10″ away from any Enemy model. This Round, the Missile Turret is not eligible to use its Special Abilities (excluding Structure).")]},
+{id:"healpathogen",n:"Healing Pathogen",r:"Z",type:"Virus",tags:["Zerg","Stukov's Forces"],uq:true,gas:0,slots:{},res:null,src:"w4",
+ ab:[A("Any","Universal Carrier","Passive","While an Enemy Unit has the INFESTATION Status, immediately after its Supply is reduced or it is Destroyed, target any Friendly Biological Unit Within 12″. This Friendly Unit resolves the HEAL (2) effect."),STUKOV_CREEP]},
+{id:"hungerinf",n:"Hungering Infestation",r:"Z",type:"Virus",tags:["Zerg","Stukov's Forces"],uq:true,gas:10,slots:{},res:null,src:"w4",
+ ab:[A("Any","Growing Infestation","Passive","While an Enemy Unit has the INFESTATION Status, it is not eligible to use or to be targeted by any Enemy Reaction Special Ability, except Restoration."),STUKOV_CREEP]},
+{id:"weightpustule",n:"Weighted Pustule",r:"Z",type:"Virus",tags:["Zerg","Stukov's Forces"],uq:true,gas:5,slots:{},res:null,src:"w4",
+ ab:[A("Any","Fetid Touch","Passive","While an Enemy Unit has the INFESTATION Status, it cannot resolve the PLACE and set effects and cannot be returned to Reserves."),STUKOV_CREEP]},
+{id:"infbarracks",n:"Infested Barracks",r:"Z",tags:["Zerg","Stukov's Forces"],gas:30,slots:{Core:1},res:["BM",1],src:"w4",
+ ab:[A("Movement","For the Swarm!","Active","The active Biological Ground Unit performs a 2″ Move action. This does not count towards its action limit.")]},
+{id:"infcc",n:"Infested Command Center",r:"Z",tags:["Zerg","Stukov's Forces"],uq:true,gas:30,slots:{Elite:1},res:["BM",1],src:"w4",
+ ab:[A("Movement","Parasitic Bio-Toxins","Reaction","Immediately after a Friendly Infested Unit ends their action Within 8″ of an Enemy Unit, that Enemy Unit gains the INFESTATION Status. This effect is treated as a DEBUFF."),
+     A("Movement","Scanner Sweep","Active","Set a Faction Indicator anywhere on the battlefield. While Enemy Units are Within 6″ of this Faction Indicator, they lose the HIDDEN Status.")]},
 /* Protoss */
+{id:"taldarim",n:"Tal'darim",r:"P",type:"Faction",tags:["Protoss","Tal'darim"],uq:true,gas:0,slots:{Core:4,Elite:1,Hero:1},res:null,src:"w4",
+ note:"The card database shows no Resource on this Faction Card (every other Faction Card gives +1). The app follows it, so it can't be Exhausted for PE in Play. Check the printed card.",
+ ab:[A("Any","Chain of Ascension","Passive","Calculate the total lost Supply of all Friendly Units. While this total is: 4 or more: All your Units' first used weapons gain PRECISION (1). 6 or more: All your Units' first used weapons gain CRITICAL HIT (1)."),
+     A("Movement","Proxy Pylon","Active","If there is no Friendly Tal'darim Pylon on the battlefield, set a Friendly Tal'darim Pylon Unit anywhere on the GROUND LEVEL of the battlefield more than 10″ away from any Enemy model. This Round, the Tal'darim Pylon is not eligible to use its Special Abilities (excluding Structure).")]},
+{id:"robobay",n:"Robotics Support Bay",r:"P",tags:["Protoss"],uq:true,gas:35,slots:{Elite:2},res:["PE",1],src:"w4",
+ note:"The card database prints the Resource as \"+1 EN\"; the app reads it as PE, the Protoss resource.",
+ ab:[A("Movement","Master of Robotics","Active","The active Mechanical Unit resolves the HEAL (2) effect.")]},
 {id:"khalai",n:"Khalai",r:"P",type:"Faction",tags:["Protoss","Khalai"],uq:true,gas:0,slots:{Core:3,Elite:2,Hero:1},res:["PE",1],
  ab:[A("Movement","Pylon Warp-In","Active","If there is no Friendly Pylon on the battlefield, set a Friendly Pylon Unit anywhere on the GROUND LEVEL of the battlefield more than 10″ away from any Enemy model. This Round, the Pylon is not eligible to use its Special Abilities (excluding Structure)."),A("Movement","Bound by the Khala","Active","At the end of the active Unit's Activation, select one other Friendly Unit eligible to Activate in the current Phase. Immediately Activate that Unit.")]},
 {id:"daelaam",n:"Daelaam",r:"P",type:"Faction",tags:["Protoss"],uq:true,gas:0,slots:{Core:3,Elite:1,Support:1,Air:1},res:["PE",1],
@@ -676,6 +797,7 @@ const GLOSSARY=[
  G("summon","SUMMON (Unit)","Keyword","11","Set the named Unit's Leading Model in base contact with the Parent Unit and the rest In Coherency, not Within Engagement Range of an Enemy or in the opponent's Zone of Influence. Needs enough Available Supply. It can't activate in the Phase it arrived; after that it activates right after its Parent.",["SUMMON","SUMMONED"],["available-supply","zone-of-influence"]),
  G("tough","TOUGH (X)","Keyword","11","When this Unit makes Armour Rolls, turn up to X failures into successes.",["TOUGH"],["armour-roll"]),
  // ---- Statuses ----
+ G("infestation","INFESTATION","Status","Stukov's Forces cards","A Status that Stukov's Forces put on Enemy Units (Spread Infestation, Parasitic Bio-Toxins). It counts as a DEBUFF, and many Stukov abilities and Virus Cards do extra things to Units that have it.",["INFESTATION"],["debuff","virus-card"]),
  G("burrowed","BURROWED","Status","11","A mode (Status). The Unit also gains HIDDEN, counts as Size 0, counts as Supply 0 for Disengage checks, and can't Control or Contest Mission Markers. It may only Deploy, Move, Disengage, Run, Hold or Close Ranks, and all of those except Hold remove BURROWED. It gets an Evade Roll against every attack. Other models may move through it but not end Within its Engagement Range. If Engaged in the Combat Phase, it must Close Ranks (which unburrows it) to attack.",["BURROWED"],["hidden","status"]),
  G("hidden","HIDDEN","Status","11","Can't be targeted by Ranged Attacks or Line of Sight abilities unless the attacker is Within 4″, and isn't Visible beyond 4″. Immune to IMPACT. Gets an Evade Roll against every attack.",undefined,["burrowed","evade-roll"]),
  G("siege-mode","SIEGE MODE","Status","11","A mode (Status). The Unit can't Move, Disengage, Run, Charge or Close Ranks. Only its SIEGE MODE weapons work, and those work only in this mode. Lost if the Unit returns to Reserves.",undefined,["status"]),
@@ -731,7 +853,7 @@ const GLOSSARY=[
  G("supply-value","Supply Value","Rules","11","A Unit's Supply from its Supply Profile. Its starting Supply Value (from the composition you bought) is how many Army Slots it fills.",["Supply Value","Supply Values"],["current-supply","army-slot"]),
  G("surge","Surge","Rules","8.7.4","Weapons with S Dice roll a Surge Die with their attack. If the target has the weapon's Surge Type tag, move that many dice from the Armour Pool straight to the Damage Pool, skipping Armour. Otherwise the Surge Die does nothing.",["Surge","Surge Die","Surge Type"],["dice-pools","combat-tags","dodge"]),
  G("tactical-mass","Tactical Mass","Rules","11","A Unit has Tactical Mass when its Current Supply Value is higher than the combined Current Supply of every Enemy Unit it's Engaged with. A Unit that Disengages with Tactical Mass may still Ranged Attack and Charge next Assault Phase.",undefined,["disengage"]),
- G("template","Template (BT / FT)","Rules","8.7.6","Blast Template (BT) and Flamer Template (FT) weapons hit every model under the template at the target's elevation. Models outside the Primary target take Spillover.",["Template","Templates","Blast Template","Flamer Template"],["spillover"]),
+ G("template","Template (BT / FT)","Rules","8.7.6","Blast Template (BT) and Flamer Template (FT) weapons hit every model under the template at the target's elevation. Models outside the Primary target take Spillover.",["Template","Templates","Blast Template","Flamer Templates","Flamer Template","FT"],["spillover"]),
  G("token","Token","Rules","7.3.1","A physical battlefield object (Creep Tumor, Corrosive Bile…). It's treated as Size 0 terrain: models move through it but can't end on it. Removed at the End of the Round unless stated.",["Token","Tokens"],["stay-in-play"]),
  G("unengaged","Unengaged","Rules","11","Not Within 1″ of any Enemy Ground model (or terrain prevents Engagement). Only Unengaged Units can Move, Run, Charge or fire freely. Flying Units are always Unengaged.",undefined,["engaged"]),
  G("unique","Unique","Rules","5.3","Only one copy of this Unit or card may be in your army.",["Unique"]),
@@ -747,7 +869,8 @@ const GLOSSARY=[
  G("flying","Flying","Card","11","A Combat Tag. Flying Units ignore terrain and elevation when moving, are never Engaged, can't Charge or be Charged, don't fight in the Combat Phase, and can't Control or Contest Mission Markers. For cover they count as taller than any terrain.",["Flying"],["combat-tags"]),
  G("faction-tags","Faction Tags","Card","11","Race (Terran, Zerg, Protoss) and sub-faction tags (e.g. Raynor's Raiders). A Unit or Tactical Card is allowed only if every one of its tags is on your Faction Card.",["Faction Tag","Faction Tags"],["faction-card"]),
  G("faction-card","Faction Card","Card","5.4","Every army has exactly one. It sets your Faction Tags, gives your starting Army Slots and resource, and has its own abilities.",["Faction Card","Faction Cards"],["tactical-card","faction-tags"]),
- G("tactical-card","Tactical Card","Card","5.3","Bought with Vespene Gas. Each adds Army Slots, provides a resource when Exhausted, and has abilities. Zerg also take exactly one Creep card.",["Tactical Card","Tactical Cards"],["army-slot","exhaust"]),
+ G("tactical-card","Tactical Card","Card","5.3","Bought with Vespene Gas. Each adds Army Slots, provides a resource when Exhausted, and has abilities. Zerg also take exactly one Creep card (Stukov's Forces: one Virus card instead).",["Tactical Card","Tactical Cards"],["army-slot","exhaust","virus-card"]),
+ G("virus-card","Virus Card","Card","Stukov's Forces faction card","Stukov's Forces' answer to the Creep card: the army takes exactly one, paying its gas cost. Each one adds an effect against INFESTATION-ed enemies plus the usual Creep Tumor rules.",["Virus Card","Virus Cards"],["infestation","tactical-card"]),
  G("cp","CP (Terran resource)","Card","10.5.1","Terran's resource for paying ability costs (e.g. \"1 CP\"). Generated by Exhausting a Ready Terran card.",["CP"],["exhaust"]),
  G("bm","BM (Zerg resource, Biomass)","Card","10.5.1","Zerg's resource for paying ability costs (e.g. \"1 BM\"). Generated by Exhausting a Ready Zerg card.",["BM"],["exhaust"]),
  G("pe","PE (Protoss resource)","Card","10.5.1","Protoss's resource for paying ability costs (e.g. \"1 PE\"). Generated by Exhausting a Ready Protoss card.",["PE"],["exhaust"]),
@@ -847,7 +970,10 @@ function issues(b){
   Object.keys(b.tac).forEach(id=>{const tc=T(id);if(b.tac[id]&&!eligible(b,tc.tags))out.push(`${tc.n} isn't allowed with this Faction Card.`)});
   const cnt={};b.units.forEach(bu=>{cnt[bu.id]=(cnt[bu.id]||0)+1});Object.entries(cnt).forEach(([id,n])=>{if(U(id).uq&&n>1)out.push(`${U(id).n} is Unique: only one allowed.`)});
   b.units.forEach(bu=>(U(bu.id).excl||[]).forEach(x=>{if(bu.id<x&&cnt[x])out.push(`${U(bu.id).n} and ${U(x).n} can't be in the same army.`)}));
-  if(b.faction&&b.race==="Z"){const creeps=Object.keys(b.tac).filter(id=>b.tac[id]&&T(id).type==="Creep").length;if(creeps!==1)out.push("Zerg armies must take exactly one Creep Card.")}
+  // Zerg factions take exactly one Creep Card, or whatever card type the faction names in `need` (Stukov's Forces: Virus).
+  if(b.faction&&b.race==="Z"){const f=T(b.faction),need=f.need||"Creep",count=ty=>Object.keys(b.tac).filter(id=>b.tac[id]&&T(id).type===ty).length;
+    if(count(need)!==1)out.push(need==="Creep"?"Zerg armies must take exactly one Creep Card.":`${f.n} must take exactly one ${need} Card.`);
+    ["Creep","Virus"].filter(ty=>ty!==need&&count(ty)).forEach(ty=>out.push(`${f.n} takes a ${need} Card, not a ${ty} Card.`))}
   b.units.forEach(bu=>{const u=U(bu.id);const reps={};(bu.ups||[]).forEach(n=>{const up=u.up.find(x=>x.n===n);if(up&&up.rep&&!up.spec){if(reps[up.rep])out.push(`${u.n}: ${reps[up.rep]} and ${n} both replace ${up.rep}; pick one.`);reps[up.rep]=n}})});
   if(b.units.some(bu=>U(bu.id).unk))out.push("Some units have no card in your PDFs; check their Army Slot and tags against the real card.");
   return out;
@@ -1036,9 +1162,10 @@ function unitCardHTML(u,chosenUps){
   if(u.unk)return `<p class="note">This unit is in the 09.10.2026 cost table, but its card hasn't been released in the files you have, so stats and abilities aren't available here. Slot is a guess (<b>${u.slot}</b>) and any sub-faction tag is unknown; set the slot in the builder once you see the card.</p><div class="phh">Compositions</div>${u.comps.map(c=>`<div class="ab">${c[0]} model${c[0]>1?"s":""}: <b>${c[1]}</b> minerals, Supply ${c[2]}</div>`).join("")}<div class="phh">Upgrades</div>${u.up.map(x=>`<div class="ab"><b>${esc(x.n)}</b> ${x.rep?"(replaces "+esc(x.rep)+") ":""}— ${x.c.join(" / ")}</div>`).join("")||"<div class='note'>None</div>"}`;
   const s=u.st,labels=["Shield","Speed","Armour","Evade","HP","Size"],lid=["shield","speed","armour","evade","hp","size"];
   let h=`<div class="sgrid">${s.map((v,i)=>`<div><b>${v}</b><small>${glb(lid[i],labels[i])}</small></div>`).join("")}</div>`;
-  h+=`<div class="note">${esc(u.tags.join(" · "))} &nbsp;|&nbsp; ${rt(u.ct)} &nbsp;|&nbsp; ${u.slot==="—"?"Summoned (no cost, no slot)":u.slot+" slot"} ${u.role&&u.role!=="—"?" &nbsp;|&nbsp; "+esc(u.role):""} &nbsp;|&nbsp; ${u.base}${u.uq?" &nbsp;|&nbsp; Unique":""}</div>`;
+  h+=`<div class="note">${esc(u.tags.join(" · "))} &nbsp;|&nbsp; ${rt(u.ct)} &nbsp;|&nbsp; ${u.slot==="—"?"Summoned (no cost, no slot)":u.slot+" slot"} ${u.role&&u.role!=="—"?" &nbsp;|&nbsp; "+esc(u.role):""} ${u.base?" &nbsp;|&nbsp; "+u.base:""}${u.uq?" &nbsp;|&nbsp; Unique":""}</div>`;
   h+=`<div class="note" style="margin-top:4px">Supply by models: ${u.prof.map(p=>`${p[0]===p[1]?p[0]:p[0]+"–"+p[1]}→${p[2]}`).join(", ")}</div>`;
   if(!u.sum)h+=`<div class="note">Buy at: ${u.comps.map(c=>`${c[0]} models ${c[1]}m`).join(" · ")}</div>`;
+  if(u.src==="w4")h+=`<div class="note" style="margin-top:4px"><span class="tag">Wave 4</span> From Archon's official online card database (sc.starcraft-tmg.com). Not in a PDF card sheet yet, so base size and combat role aren't listed.</div>`;
   if(u.src==="cc")h+=`<div class="note" style="margin-top:4px">Data imported from Co-op Command's Command Center snapshot (16 Sep 2026), not from your printed card. Base size approximate.</div>`;
   if(u.note)h+=`<div class="note" style="margin-top:4px">${esc(u.note)}</div>`;
   h+=abilityBlock(u.ab||[]);
@@ -1054,6 +1181,8 @@ function tacCardHTML(t){
   let h=`<div class="note">${linkTerms(`${t.type} card · ${esc(t.tags.join(" · "))}${t.uq?" · Unique":""} · ${t.gas} Vespene Gas${t.res?` · provides ${t.res[1]} ${t.res[0]}`:""}`)}</div>`;
   const sl=Object.entries(t.slots).filter(e=>e[1]).map(e=>`${e[1]}× ${e[0]}`).join(", ");
   h+=`<div class="ab"><b>Army slots:</b> ${sl||(t.unk?"not in your PDFs":"none")}</div>`;
+  if(t.note)h+=`<p class="note">${esc(t.note)}</p>`;
+  if(t.src==="w4")h+=`<p class="note"><span class="tag">Wave 4</span> From Archon's official online card database (sc.starcraft-tmg.com).</p>`;
   if(t.src==="cc")h+=`<p class="note">Imported from Co-op Command's Command Center snapshot (16 Sep 2026).</p>`;
   if(t.unk)h+=`<p class="note">This card is in the cost table but its text isn't in your uploads. Set the slots it gives in the builder from your physical card.</p>`;
   return h+abilityBlock(t.ab);
@@ -1082,7 +1211,7 @@ function renderBuild(){
   // tactical
   h+=`<div class="panel"><h2>Tactical cards <small>${t.gas} gas spent</small></h2>`;
   tacs.forEach(tc=>{const q=b.tac[tc.id]||0;const el=eligible(b,tc.tags);const sl=Object.entries(tc.slots).filter(e=>e[1]).map(e=>`+${e[1]} ${e[0]}`).join(" ");
-    h+=`<div class="item"><div class="hd"><div class="grow"><button class="link" data-tac="${tc.id}">${esc(tc.n)}</button><div class="meta">${tc.type==="Creep"?"Creep card":sl||(tc.unk?"slots: set below":"")}${tc.uq?' <span class="tag">Unique</span>':""}${tc.unk?' <span class="tag warn">No card text</span>':""}${!el?' <span class="tag warn">Not allowed with this faction</span>':""}</div></div>
+    h+=`<div class="item"><div class="hd"><div class="grow"><button class="link" data-tac="${tc.id}">${esc(tc.n)}</button><div class="meta">${tc.type==="Creep"||tc.type==="Virus"?tc.type+" card":sl||(tc.unk?"slots: set below":"")}${tc.uq?' <span class="tag">Unique</span>':""}${tc.unk?' <span class="tag warn">No card text</span>':""}${!el?' <span class="tag warn">Not allowed with this faction</span>':""}</div></div>
     <span class="cost">${tc.gas}</span><span class="step"><button data-tq="${tc.id}" data-d="-1" aria-label="Remove ${esc(tc.n)}">−</button><output>${q}</output><button data-tq="${tc.id}" data-d="1" aria-label="Add ${esc(tc.n)}" ${(tc.uq&&q>=1)?"disabled":""}>+</button></span></div>
     ${tc.unk&&q?`<div class="row" style="margin-top:6px">${SLOT_TYPES.map(s=>`<label style="font-size:.8rem;width:58px">${s}<input type="number" min="0" max="4" data-ts="${tc.id}" data-s="${s}" value="${(b.tacSlots[tc.id]||{})[s]||0}"></label>`).join("")}</div>`:""}</div>`});
   h+=`</div>`;

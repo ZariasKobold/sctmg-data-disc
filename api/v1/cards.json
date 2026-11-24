@@ -34,7 +34,8 @@
      "kind": "Active",
      "text": "Once per Game. Immediately claim the First Player Marker. No other player may claim the First Player Marker for the remainder of this Phase."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "rrf",
@@ -71,7 +72,8 @@
      "kind": "Active",
      "text": "Once Per Game. The active Unit resolves the PLACE (12) effect. Models set by this effect cannot be set up Within the Engagement Range of any Enemy Unit. This resolves instead of performing a standard action."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "barracks",
@@ -98,7 +100,8 @@
      "kind": "Active",
      "text": "The active Biological Unit performs a 2″ Move action. This does not count towards its action limit."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "brxproxy",
@@ -131,7 +134,42 @@
      "kind": "Active",
      "text": "The active Biological Unit Deploys from any table edge that is not a player's Entry Edge. No model may be placed Within 10″ of any Enemy model. This ability cannot be used if another Friendly Biological Unit has already been Deployed this Round."
     }
-   ]
+   ],
+   "note": null
+  },
+  {
+   "id": "brxreactor",
+   "name": "Barracks (Reactor)",
+   "race": "terran",
+   "type": "tactical",
+   "factionTags": [
+    "Terran"
+   ],
+   "status": "official",
+   "unique": true,
+   "gas": 35,
+   "armySlots": {
+    "Core": 3
+   },
+   "resource": {
+    "type": "CP",
+    "amount": 1
+   },
+   "abilities": [
+    {
+     "phase": "Movement",
+     "name": "Go! Go! Go!",
+     "kind": "Active",
+     "text": "The active Biological Unit performs a 2″ Move action. This does not count towards its action limit."
+    },
+    {
+     "phase": "Assault",
+     "name": "Terran Charge",
+     "kind": "Reaction",
+     "text": "Immediately after a Friendly Biological Unit completes a successful Charge, resolve the IMPACT (1) 4+ effect."
+    }
+   ],
+   "note": null
   },
   {
    "id": "brxtech",
@@ -165,7 +203,8 @@
      "kind": "Active",
      "text": "The active Biological Unit's first Ranged Weapon used gains ANTI-EVADE (1)."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "supplydepot",
@@ -194,7 +233,8 @@
      "kind": "Active",
      "text": "The active Unit's Supply Value is improved by 1 for Controlling and Contesting Mission Markers and completing objectives."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "factory",
@@ -221,7 +261,8 @@
      "kind": "Active",
      "text": "The active Mechanical Unit resolves the HEAL (2) effect."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "engbay",
@@ -254,7 +295,8 @@
      "kind": "Active",
      "text": "The active Biological Unit's first Ranged Weapon used gains CRITICAL HIT (1)."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "armory",
@@ -287,7 +329,8 @@
      "kind": "Active",
      "text": "The active Mechanical Unit's first Ranged Weapon used gains CRITICAL HIT (1)."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "academy",
@@ -314,7 +357,8 @@
      "kind": "Reaction",
      "text": "Once per Round, when a Friendly Support Unit activates a Special Ability that costs CP, resolve that ability with its CP cost reduced by 1 (to a minimum of 0). Do not Exhaust this card."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "orbital",
@@ -347,7 +391,8 @@
      "kind": "Active",
      "text": "Set a Faction Indicator anywhere on the battlefield. While Enemy Units are Within 6″ of this Faction Indicator, they lose HIDDEN Status."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "dropship",
@@ -381,7 +426,8 @@
      "kind": "Active",
      "text": "Set a Faction Indicator anywhere on the battlefield more than 10″ away from any Enemy model. At the End of the Round, the controlling player may Deploy one Ground Unit from Reserves in base-to-base contact with this Faction Indicator."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "factorytech",
@@ -414,7 +460,8 @@
      "kind": "Active",
      "text": "If the active Mechanical Unit has the Stationary Status, its first Ranged Weapon used gains PRECISION (2)."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "vanadium",
@@ -441,7 +488,8 @@
      "kind": "Reaction",
      "text": "Use before a Friendly Mechanical Unit makes an Armour Roll. That Unit gains DODGE (2) for this roll."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "novaops",
@@ -478,7 +526,8 @@
      "kind": "Active",
      "text": "Target an Enemy Unit on the battlefield. When a Friendly Unit makes an Attack targeting that Unit, its first Melee or Ranged Weapon used gains CRITICAL HIT (1) and PRECISION (1)."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "zswarm",
@@ -520,7 +569,8 @@
      "kind": "Active",
      "text": "Select one Friendly, Unengaged Ground Zerg Unit on the battlefield. That Unit gains the Burrowed Status, even if it has already been Activated this Round."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "kswarm",
@@ -562,7 +612,8 @@
      "kind": "Active",
      "text": "If there is no Friendly Omega Worm on the battlefield, set a Friendly Omega Worm Unit anywhere on GROUND LEVEL of the battlefield, more than 10″ away from any Enemy model. This Round, the Omega Worm is not eligible to use its Special Abilities (excluding Structure)."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "acccreep",
@@ -596,7 +647,8 @@
      "kind": "Passive",
      "text": "If an Enemy Unit ends a Move, Deploy, Run, Charge or Disengage action Within 1″ of a Friendly Creep Tumor token, remove that token from the battlefield."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "malcreep",
@@ -631,7 +683,8 @@
      "kind": "Passive",
      "text": "If the active Friendly Zerg Unit declares a Charge action while ON CREEP, it gains +1 Modifier to IMPACT Hit Rolls."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "pool",
@@ -658,7 +711,8 @@
      "kind": "Active",
      "text": "The active Unit's first Close Combat Weapon used gains PRECISION (2)."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "sixpool",
@@ -691,7 +745,8 @@
      "kind": "Active",
      "text": "The active Unit's first Close Combat Weapon used gains PRECISION (2)."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "warren",
@@ -718,7 +773,8 @@
      "kind": "Active",
      "text": "The active Ground Unit loses the Burrowed Status."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "hyden",
@@ -745,7 +801,8 @@
      "kind": "Active",
      "text": "The active Unit's first Ranged Weapon used gains PRECISION (1)."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "evo",
@@ -778,7 +835,8 @@
      "kind": "Active",
      "text": "The active Unit gains a +1 Modifier to all IMPACT Hit Rolls."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "hatch",
@@ -811,7 +869,8 @@
      "kind": "Active",
      "text": "Set a Creep Tumor token on the battlefield Within 6″ (Line of Sight is not required) of either a Friendly Entry Edge or an existing Friendly Creep Tumor token."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "lair",
@@ -845,7 +904,43 @@
      "kind": "Active",
      "text": "Set a Creep Tumor token on the battlefield Within 6″ (Line of Sight is not required) of either a Friendly Entry Edge or an existing Friendly Creep Tumor token."
     }
-   ]
+   ],
+   "note": null
+  },
+  {
+   "id": "hive",
+   "name": "Hive",
+   "race": "zerg",
+   "type": "tactical",
+   "factionTags": [
+    "Zerg"
+   ],
+   "status": "official",
+   "unique": true,
+   "gas": 35,
+   "armySlots": {
+    "Core": 1,
+    "Elite": 1
+   },
+   "resource": {
+    "type": "BM",
+    "amount": 1
+   },
+   "abilities": [
+    {
+     "phase": "Movement",
+     "name": "Brutal Instinct",
+     "kind": "Reaction",
+     "text": "Immediately after an Enemy Unit ends its Activation Within 12″ of a Friendly Ground Unit. That Friendly Unit gains or loses the BURROWED Status."
+    },
+    {
+     "phase": "Movement",
+     "name": "Creep Spread",
+     "kind": "Active",
+     "text": "Set a Creep Tumor token on the battlefield Within 6″ (Line of Sight is not required) of either a Friendly Entry Edge or an existing Friendly Creep Tumor token."
+    }
+   ],
+   "note": null
   },
   {
    "id": "overseer",
@@ -878,7 +973,8 @@
      "kind": "Reaction",
      "text": "Use after a Friendly Unit rolls a D6 for Charge Distance. Roll an additional D6 and use the higher result to calculate the total Charge Distance."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "overlord",
@@ -913,7 +1009,8 @@
      "kind": "Active",
      "text": "Set a Creep Tumor token on the battlefield Within 6″ (Line of Sight is not required) of either a Friendly Entry Edge or an existing Friendly Creep Tumor token."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "cocoon",
@@ -943,7 +1040,8 @@
      "kind": "Active",
      "text": "Once per Game. The active Friendly Roach Unit performs MORPH (Ravager) 1."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "defmound",
@@ -977,7 +1075,8 @@
      "kind": "Active",
      "text": "The active, Unengaged Ground Unit is returned to Reserves instead of performing an action."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "reactcreep",
@@ -1012,7 +1111,8 @@
      "kind": "Passive",
      "text": "While a Friendly Zerg Unit is ON CREEP, it gains DODGE (1) against any attacks targeting it."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "zagswarm",
@@ -1054,7 +1154,267 @@
      "kind": "Active",
      "text": "If the active Unit contains more models than the combined number of models in all Engaged Enemy Units, its Close Combat Weapons gain INSTANT and PRECISION (4)."
     }
-   ]
+   ],
+   "note": null
+  },
+  {
+   "id": "stukovforces",
+   "name": "Stukov's Forces",
+   "race": "zerg",
+   "type": "faction",
+   "factionTags": [
+    "Zerg",
+    "Stukov's Forces"
+   ],
+   "status": "official",
+   "unique": true,
+   "gas": 0,
+   "armySlots": {
+    "Core": 4,
+    "Elite": 2,
+    "Hero": 1
+   },
+   "resource": {
+    "type": "BM",
+    "amount": 1
+   },
+   "abilities": [
+    {
+     "phase": "Any",
+     "name": "Ashes of the UED",
+     "kind": "Passive",
+     "text": "During Army Building, you may include Units with the Terran Faction Tag and both Ground and Mechanical Combat Tags in your army. Those Units gain the Infested Combat Tag. Treat any CP cost for those Units' Special Abilities as BM. These Units cannot gain the BURROWED Status. (In this app: pick the Infested Goliath and Infested Siege Tank.)"
+    },
+    {
+     "phase": "Any",
+     "name": "Infestation",
+     "kind": "Passive",
+     "text": "During Army Building, select exactly one Virus Card and add it to your Army List, paying its listed cost (if any)."
+    },
+    {
+     "phase": "Movement",
+     "name": "Hostile Incubation",
+     "kind": "Active",
+     "text": "If there is no Friendly Infested Missile Turret on the battlefield, set a Friendly Infested Missile Turret Unit anywhere on the GROUND LEVEL of the battlefield more than 10″ away from any Enemy model. This Round, the Missile Turret is not eligible to use its Special Abilities (excluding Structure)."
+    }
+   ],
+   "note": null
+  },
+  {
+   "id": "healpathogen",
+   "name": "Healing Pathogen",
+   "race": "zerg",
+   "type": "virus",
+   "factionTags": [
+    "Zerg",
+    "Stukov's Forces"
+   ],
+   "status": "official",
+   "unique": true,
+   "gas": 0,
+   "armySlots": {},
+   "resource": null,
+   "abilities": [
+    {
+     "phase": "Any",
+     "name": "Universal Carrier",
+     "kind": "Passive",
+     "text": "While an Enemy Unit has the INFESTATION Status, immediately after its Supply is reduced or it is Destroyed, target any Friendly Biological Unit Within 12″. This Friendly Unit resolves the HEAL (2) effect."
+    },
+    {
+     "phase": "Any",
+     "name": "Stukov's Creep",
+     "kind": "Passive",
+     "text": "If an Enemy Unit ends a Move, Deploy, Run, Charge or Disengage action Within 1″ of a Friendly Creep Tumor token, remove that token from the battlefield. Creep Tumor tokens have STAY IN PLAY and DISPLACEMENT."
+    }
+   ],
+   "note": null
+  },
+  {
+   "id": "hungerinf",
+   "name": "Hungering Infestation",
+   "race": "zerg",
+   "type": "virus",
+   "factionTags": [
+    "Zerg",
+    "Stukov's Forces"
+   ],
+   "status": "official",
+   "unique": true,
+   "gas": 10,
+   "armySlots": {},
+   "resource": null,
+   "abilities": [
+    {
+     "phase": "Any",
+     "name": "Growing Infestation",
+     "kind": "Passive",
+     "text": "While an Enemy Unit has the INFESTATION Status, it is not eligible to use or to be targeted by any Enemy Reaction Special Ability, except Restoration."
+    },
+    {
+     "phase": "Any",
+     "name": "Stukov's Creep",
+     "kind": "Passive",
+     "text": "If an Enemy Unit ends a Move, Deploy, Run, Charge or Disengage action Within 1″ of a Friendly Creep Tumor token, remove that token from the battlefield. Creep Tumor tokens have STAY IN PLAY and DISPLACEMENT."
+    }
+   ],
+   "note": null
+  },
+  {
+   "id": "weightpustule",
+   "name": "Weighted Pustule",
+   "race": "zerg",
+   "type": "virus",
+   "factionTags": [
+    "Zerg",
+    "Stukov's Forces"
+   ],
+   "status": "official",
+   "unique": true,
+   "gas": 5,
+   "armySlots": {},
+   "resource": null,
+   "abilities": [
+    {
+     "phase": "Any",
+     "name": "Fetid Touch",
+     "kind": "Passive",
+     "text": "While an Enemy Unit has the INFESTATION Status, it cannot resolve the PLACE and set effects and cannot be returned to Reserves."
+    },
+    {
+     "phase": "Any",
+     "name": "Stukov's Creep",
+     "kind": "Passive",
+     "text": "If an Enemy Unit ends a Move, Deploy, Run, Charge or Disengage action Within 1″ of a Friendly Creep Tumor token, remove that token from the battlefield. Creep Tumor tokens have STAY IN PLAY and DISPLACEMENT."
+    }
+   ],
+   "note": null
+  },
+  {
+   "id": "infbarracks",
+   "name": "Infested Barracks",
+   "race": "zerg",
+   "type": "tactical",
+   "factionTags": [
+    "Zerg",
+    "Stukov's Forces"
+   ],
+   "status": "official",
+   "unique": false,
+   "gas": 30,
+   "armySlots": {
+    "Core": 1
+   },
+   "resource": {
+    "type": "BM",
+    "amount": 1
+   },
+   "abilities": [
+    {
+     "phase": "Movement",
+     "name": "For the Swarm!",
+     "kind": "Active",
+     "text": "The active Biological Ground Unit performs a 2″ Move action. This does not count towards its action limit."
+    }
+   ],
+   "note": null
+  },
+  {
+   "id": "infcc",
+   "name": "Infested Command Center",
+   "race": "zerg",
+   "type": "tactical",
+   "factionTags": [
+    "Zerg",
+    "Stukov's Forces"
+   ],
+   "status": "official",
+   "unique": true,
+   "gas": 30,
+   "armySlots": {
+    "Elite": 1
+   },
+   "resource": {
+    "type": "BM",
+    "amount": 1
+   },
+   "abilities": [
+    {
+     "phase": "Movement",
+     "name": "Parasitic Bio-Toxins",
+     "kind": "Reaction",
+     "text": "Immediately after a Friendly Infested Unit ends their action Within 8″ of an Enemy Unit, that Enemy Unit gains the INFESTATION Status. This effect is treated as a DEBUFF."
+    },
+    {
+     "phase": "Movement",
+     "name": "Scanner Sweep",
+     "kind": "Active",
+     "text": "Set a Faction Indicator anywhere on the battlefield. While Enemy Units are Within 6″ of this Faction Indicator, they lose the HIDDEN Status."
+    }
+   ],
+   "note": null
+  },
+  {
+   "id": "taldarim",
+   "name": "Tal'darim",
+   "race": "protoss",
+   "type": "faction",
+   "factionTags": [
+    "Protoss",
+    "Tal'darim"
+   ],
+   "status": "official",
+   "unique": true,
+   "gas": 0,
+   "armySlots": {
+    "Core": 4,
+    "Elite": 1,
+    "Hero": 1
+   },
+   "resource": null,
+   "abilities": [
+    {
+     "phase": "Any",
+     "name": "Chain of Ascension",
+     "kind": "Passive",
+     "text": "Calculate the total lost Supply of all Friendly Units. While this total is: 4 or more: All your Units' first used weapons gain PRECISION (1). 6 or more: All your Units' first used weapons gain CRITICAL HIT (1)."
+    },
+    {
+     "phase": "Movement",
+     "name": "Proxy Pylon",
+     "kind": "Active",
+     "text": "If there is no Friendly Tal'darim Pylon on the battlefield, set a Friendly Tal'darim Pylon Unit anywhere on the GROUND LEVEL of the battlefield more than 10″ away from any Enemy model. This Round, the Tal'darim Pylon is not eligible to use its Special Abilities (excluding Structure)."
+    }
+   ],
+   "note": "The card database shows no Resource on this Faction Card (every other Faction Card gives +1). The app follows it, so it can't be Exhausted for PE in Play. Check the printed card."
+  },
+  {
+   "id": "robobay",
+   "name": "Robotics Support Bay",
+   "race": "protoss",
+   "type": "tactical",
+   "factionTags": [
+    "Protoss"
+   ],
+   "status": "official",
+   "unique": true,
+   "gas": 35,
+   "armySlots": {
+    "Elite": 2
+   },
+   "resource": {
+    "type": "PE",
+    "amount": 1
+   },
+   "abilities": [
+    {
+     "phase": "Movement",
+     "name": "Master of Robotics",
+     "kind": "Active",
+     "text": "The active Mechanical Unit resolves the HEAL (2) effect."
+    }
+   ],
+   "note": "The card database prints the Resource as \"+1 EN\"; the app reads it as PE, the Protoss resource."
   },
   {
    "id": "khalai",
@@ -1090,7 +1450,8 @@
      "kind": "Active",
      "text": "At the end of the active Unit's Activation, select one other Friendly Unit eligible to Activate in the current Phase. Immediately Activate that Unit."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "daelaam",
@@ -1126,7 +1487,8 @@
      "kind": "Active",
      "text": "Once per Game. Set a Faction Indicator anywhere on the battlefield. All Friendly Protoss Units Within 6″ of this Faction Indicator are removed from the battlefield and returned to Reserves."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "nerazimfac",
@@ -1162,7 +1524,8 @@
      "kind": "Active",
      "text": "The active Biological Unit gains the HIDDEN Status until the End of the Round."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "gateway",
@@ -1189,7 +1552,8 @@
      "kind": "Active",
      "text": "The active Unit's first Close Combat Weapon used gains PRECISION (2)."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "warpgate",
@@ -1222,7 +1586,8 @@
      "kind": "Active",
      "text": "The active Unit's first Close Combat Weapon used gains PRECISION (2)."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "chrono",
@@ -1256,7 +1621,8 @@
      "kind": "Active",
      "text": "The active Unit's first Close Combat Weapon used gains PRECISION (2)."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "observer",
@@ -1289,7 +1655,8 @@
      "kind": "Reaction",
      "text": "Use after a Friendly Unit rolls a D6 for Charge Distance. Add 1 to the Charge Distance for this Unit."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "nexus",
@@ -1322,7 +1689,8 @@
      "kind": "Active",
      "text": "The active, Unengaged Ground Unit is returned to Reserves instead of performing an action."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "ocnexus",
@@ -1356,7 +1724,8 @@
      "kind": "Active",
      "text": "The active, Unengaged Ground Unit is returned to Reserves instead of performing an action."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "powerfield",
@@ -1385,7 +1754,8 @@
      "kind": "Reaction",
      "text": "Use before a Friendly Ground Unit makes an Armour Roll. That Unit gains DODGE (2) for this roll."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "forge",
@@ -1418,7 +1788,8 @@
      "kind": "Active",
      "text": "The active Ground Unit's first Ranged Weapon used gains CRITICAL HIT (1)."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "warpprism",
@@ -1451,7 +1822,8 @@
      "kind": "Active",
      "text": "Set a Faction Indicator anywhere on the battlefield more than 10″ away from any Enemy model. At the End of the Round, you may Deploy one Ground unit from Reserves in base-to-base Contact with this Faction Indicator."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "twilight",
@@ -1485,7 +1857,8 @@
      "kind": "Active",
      "text": "The active Ground Unit's first Ranged Weapon used gains BUFF Range (4)."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "robo",
@@ -1512,7 +1885,8 @@
      "kind": "Reaction",
      "text": "Use before a Friendly Mechanical Ground Unit makes an Armour Roll. If this Unit has the Shielded Status, it gains TOUGH (1) and DODGE (1) for this roll."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "voidseeker",
@@ -1546,7 +1920,8 @@
      "kind": "Active",
      "text": "This Unit gains the HIDDEN Status until it performs another action."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "templararch",
@@ -1573,7 +1948,8 @@
      "kind": "Reaction",
      "text": "Once per Round, when a Friendly Support Unit activates a Special Ability that costs PE, resolve that ability with its PE cost reduced by 1 (to a minimum of 0). Do not Exhaust this card."
     }
-   ]
+   ],
+   "note": null
   },
   {
    "id": "templarcaste",
@@ -1609,16 +1985,17 @@
      "kind": "Active",
      "text": "Instead of performing an action, select one other Friendly Biological Unit that has already been Activated this Phase. That Unit immediately performs one action available in the current Phase, then suffers NON-LETHAL DAMAGE (3)."
     }
-   ]
+   ],
+   "note": null
   }
  ],
  "meta": {
   "api": "v1",
-  "dataVersion": "54dd7232c3bd",
+  "dataVersion": "be49cef1bac6",
   "costs": "Cost table 09.10.2026",
-  "cards": "Official card sheets, waves 1–3 (v1.09.26)",
+  "cards": "Official card sheets, waves 1–3 (v1.09.26); Wave 4 from Archon's official online card database (sc.starcraft-tmg.com)",
   "docs": "https://github.com/zariaskobold/sctmg-data-disc/blob/main/API.md",
   "legal": "Unofficial, free fan tool. Not affiliated with, endorsed by, or sponsored by Blizzard Entertainment or Archon Studio. StarCraft® is a trademark or registered trademark of Blizzard Entertainment, Inc. in the U.S. and/or other countries. Card text and game data © Blizzard Entertainment, Inc. and © Archon Sp. z o.o., used for non-commercial reference.",
-  "count": 49
+  "count": 59
  }
 }

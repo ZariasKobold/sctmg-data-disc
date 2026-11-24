@@ -1,0 +1,44 @@
+{
+ "data": {
+  "id": "taldarim",
+  "name": "Tal'darim",
+  "race": "protoss",
+  "type": "faction",
+  "factionTags": [
+   "Protoss",
+   "Tal'darim"
+  ],
+  "status": "official",
+  "unique": true,
+  "gas": 0,
+  "armySlots": {
+   "Core": 4,
+   "Elite": 1,
+   "Hero": 1
+  },
+  "resource": null,
+  "abilities": [
+   {
+    "phase": "Any",
+    "name": "Chain of Ascension",
+    "kind": "Passive",
+    "text": "Calculate the total lost Supply of all Friendly Units. While this total is: 4 or more: All your Units' first used weapons gain PRECISION (1). 6 or more: All your Units' first used weapons gain CRITICAL HIT (1)."
+   },
+   {
+    "phase": "Movement",
+    "name": "Proxy Pylon",
+    "kind": "Active",
+    "text": "If there is no Friendly Tal'darim Pylon on the battlefield, set a Friendly Tal'darim Pylon Unit anywhere on the GROUND LEVEL of the battlefield more than 10″ away from any Enemy model. This Round, the Tal'darim Pylon is not eligible to use its Special Abilities (excluding Structure)."
+   }
+  ],
+  "note": "The card database shows no Resource on this Faction Card (every other Faction Card gives +1). The app follows it, so it can't be Exhausted for PE in Play. Check the printed card."
+ },
+ "meta": {
+  "api": "v1",
+  "dataVersion": "be49cef1bac6",
+  "costs": "Cost table 09.10.2026",
+  "cards": "Official card sheets, waves 1–3 (v1.09.26); Wave 4 from Archon's official online card database (sc.starcraft-tmg.com)",
+  "docs": "https://github.com/zariaskobold/sctmg-data-disc/blob/main/API.md",
+  "legal": "Unofficial, free fan tool. Not affiliated with, endorsed by, or sponsored by Blizzard Entertainment or Archon Studio. StarCraft® is a trademark or registered trademark of Blizzard Entertainment, Inc. in the U.S. and/or other countries. Card text and game data © Blizzard Entertainment, Inc. and © Archon Sp. z o.o., used for non-commercial reference."
+ }
+}
