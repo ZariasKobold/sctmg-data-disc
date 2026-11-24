@@ -143,6 +143,21 @@ dialog .mb{padding:12px 14px 24px;overflow:auto}
 .gl:hover,.gl:focus-visible{color:var(--acc)}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .chips button{border:1px solid var(--line);background:var(--panel2);border-radius:999px;padding:5px 11px;font-size:.85rem;font-weight:600}
+.chips .chip.ex{opacity:.55;text-decoration:line-through}
+.av{border-radius:50%;object-fit:cover;flex:none;vertical-align:middle}
+.av.ph{display:inline-grid;place-items:center;background:var(--acc);color:var(--accInk);font-weight:700;font-size:.8rem}
+#acctBtn{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;min-height:34px}
+#acctBtn[hidden]{display:none}
+#acctBtn .av{width:22px;height:22px}
+a.btn{display:inline-flex;align-items:center;text-decoration:none;color:inherit}
+a.btn.pri{color:var(--accInk)}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--muted);flex:none;margin-right:10px}
+.dot.ok{background:var(--ok)}.dot.bad{background:var(--bad)}
+.code{font-family:ui-monospace,Consolas,monospace;letter-spacing:.15em}
+.rtext{white-space:pre-wrap;font:13px/1.4 var(--body);background:var(--panel2);padding:8px 10px;border-radius:6px;max-height:40vh;overflow:auto}
+textarea{width:100%;font:14px/1.4 var(--body);color:inherit;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:8px}
+#sCode{text-transform:uppercase;letter-spacing:.15em;font-family:ui-monospace,Consolas,monospace}
+.urow.opp .sup{margin-left:6px}
 .chips button[aria-pressed="true"]{background:var(--acc);border-color:var(--acc);color:var(--accInk)}
 input[type=search]{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:9px 10px;min-height:42px}
 .gitem{padding:10px 0;border-top:1px solid var(--line)}
@@ -169,7 +184,7 @@ input[type=search]{width:100%;background:var(--panel2);border:1px solid var(--li
 </style>
 </head>
 <body data-race="T">
-<header class="top"><div class="race-mark" aria-hidden="true"></div><h1><span class="brand">SCTMG Data Disc</span><span id="title">Army builder</span></h1><button class="btn sm" id="themeBtn" aria-label="Toggle light or dark theme">◐</button></header>
+<header class="top"><div class="race-mark" aria-hidden="true"></div><h1><span class="brand">SCTMG Data Disc</span><span id="title">Army builder</span></h1><button class="btn sm" id="acctBtn" hidden>Sign in</button><button class="btn sm" id="themeBtn" aria-label="Toggle light or dark theme">◐</button></header>
 <main>
   <section class="view on" id="v-build"></section>
   <section class="view" id="v-setup"></section>
@@ -755,7 +770,7 @@ const GL_CATS={Keyword:"Keywords",Status:"Statuses",Rules:"Rules terms",Card:"Ca
 
 /* ===================== STATE ===================== */
 const KEY="sctmg-fieldkit-v1";
-let S0={build:null,rosters:[],game:null,setup:{rosterId:"current",mission:"",deploy:"",oppGas:"",oppMin:""}};
+let S0={build:null,rosters:[],tomb:{},game:null,setup:{rosterId:"current",mission:"",deploy:"",oppGas:"",oppMin:""}};
 let st=load();
 function load(){try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s)return Object.assign({},S0,s)}catch(e){}return JSON.parse(JSON.stringify(S0))}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
@@ -792,6 +807,7 @@ function cleanState(s){
   cleanBuild(s.build,notes,`Current roster "${s.build.name}"`);
   s.rosters=arr(s.rosters).filter(r=>r&&typeof r==="object").map(r=>cleanBuild(r,notes,`Saved roster "${r.name}"`));
   s.setup=Object.assign({},S0.setup,s.setup);
+  s.tomb=s.tomb&&typeof s.tomb==="object"&&!Array.isArray(s.tomb)?Object.assign({},s.tomb):{};
   if(s.setup.mission&&!M(s.setup.mission))s.setup.mission="";
   if(s.setup.deploy&&!D(s.setup.deploy))s.setup.deploy="";
   if(s.setup.rosterId!=="current"&&!s.rosters.some(r=>r.id===s.setup.rosterId))s.setup.rosterId="current";
@@ -861,6 +877,150 @@ function linkTerms(html,opt){
   }).join("");
 }
 const rt=s=>linkTerms(esc(s)); // rules text: escape, then link terms
+
+/* ===================== ROSTER FILES, TEXT AND SYNC (pure) =====================
+   Export/import a "Data Disc" file, rebuild a roster from its copied text, and
+   merge saved rosters with the copy stored online. No DOM here, so
+   tests/logic.mjs can check all of it in Node. */
+const DISC_FORMAT="sctmg-data-disc";
+const newRosterId=()=>"r"+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+function rosterText(b){const t=totals(b),L=limits(b);let s=`${b.name}\n${RACES[b.race]} — ${b.faction?T(b.faction).n:"(no faction)"} — ${SCALES[b.scale].n}\nMinerals ${t.min}/${L.min} · Vespene ${t.gas}/${L.gas} · Supply ${b.units.reduce((a,bu)=>a+U(bu.id).comps[bu.ci][2],0)}\n\nUNITS\n`;
+  b.units.forEach(bu=>{const u=U(bu.id);s+=`- ${u.n} ×${u.comps[bu.ci][0]} (Supply ${u.comps[bu.ci][2]}, ${unitCost(bu)} min)${bu.ups&&bu.ups.length?" — "+bu.ups.join(", "):""}\n`});
+  s+=`\nTACTICAL CARDS\n`;Object.entries(b.tac).forEach(([id,q])=>{if(q)s+=`- ${T(id).n}${q>1?" ×"+q:""} (${T(id).gas*q} gas)\n`});
+  s+=`\nMISSIONS: ${b.missions.map(id=>M(id).n).join(", ")||"—"}\nDEPLOYMENTS: ${b.deps.map(id=>D(id).n).join(", ")||"—"}\n\nBuilt with SCTMG Data Disc\n`;return s}
+
+function exportData(s){
+  return {format:DISC_FORMAT,kind:"rosters",version:1,exported:new Date().toISOString(),
+    rosters:JSON.parse(JSON.stringify(s.rosters)),current:JSON.parse(JSON.stringify(s.build))};
+}
+// Accepts a Data Disc file, a bare roster, or an array of rosters. Returns the
+// rosters to add (already cleaned, with fresh IDs where they'd clash) plus
+// notes about anything dropped. Never throws on bad input.
+function importData(data,existing){
+  const notes=[],out=[];let list=[];
+  if(Array.isArray(data))list=data;
+  else if(data&&typeof data==="object"){
+    if(Array.isArray(data.rosters))list=data.rosters.slice();
+    else if(data.race&&Array.isArray(data.units))list=[data];
+    if(data.current&&typeof data.current==="object"&&Array.isArray(data.current.units)&&data.current.units.length&&!list.some(r=>r&&r.id===data.current.id))list.push(data.current);
+  }
+  if(!list.length)return {rosters:[],notes:["That file doesn't contain any SCTMG Data Disc rosters."],skipped:0};
+  const strip=r=>{const c=Object.assign({},r);delete c.updated;c.units=arr(c.units).map(u=>{const x=Object.assign({},u);delete x.uid;delete x.slot;return x});return JSON.stringify(c)}; // uid is per-device, slot is filled in on import
+  const have=new Map(arr(existing).map(r=>[r.id,r]));let skipped=0;
+  list.forEach(raw=>{
+    if(!raw||typeof raw!=="object"||!Array.isArray(raw.units))return;
+    const r=cleanBuild(JSON.parse(JSON.stringify(raw)),notes,`Imported roster "${typeof raw.name==="string"?raw.name:"Army"}"`);
+    r.name=r.name.slice(0,80)||"Imported army";if(!SCALES[r.scale])r.scale="std";if(typeof r.goMin!=="number")r.goMin=2500;
+    r.units.forEach(bu=>{bu.uid=++uidc;if(!bu.slot)bu.slot=U(bu.id).slot});
+    const same=typeof r.id==="string"&&have.get(r.id);
+    if(same&&strip(same)===strip(r)){skipped++;return}
+    if(typeof r.id!=="string"||!/^[A-Za-z0-9_-]{1,40}$/.test(r.id)||have.has(r.id)||out.some(x=>x.id===r.id))r.id=newRosterId();
+    r.updated=Date.now();out.push(r);
+  });
+  return {rosters:out,notes,skipped};
+}
+
+// Rebuild a roster from the text that "Copy as text" makes. Lenient: bullet
+// style, case and the × sign don't matter, and anything it can't match is
+// reported instead of guessed.
+function parseRosterText(txt){
+  const notes=[],norm=s=>String(s).toLowerCase().replace(/[’`]/g,"'").replace(/[^a-z0-9']+/g," ").trim();
+  const lines=String(txt||"").split(/\r?\n/).map(l=>l.trim());
+  const raceLine=lines.find(l=>/^(Terran|Zerg|Protoss)\b/i.test(l));
+  if(!raceLine)return {build:null,notes:["Couldn't find the race line (it starts with Terran, Zerg or Protoss)."]};
+  const race=Object.keys(RACES).find(k=>RACES[k].toLowerCase()===raceLine.match(/^(\w+)/)[1].toLowerCase());
+  const b=newBuild(race);b.id=newRosterId();
+  const nameLine=lines.find(l=>l);b.name=(nameLine&&nameLine!==raceLine?nameLine:"Imported army").slice(0,80);
+  const parts=raceLine.split(/\s+[—–-]\s+/);
+  const scale=Object.keys(SCALES).find(k=>parts.some(p=>norm(p)===norm(SCALES[k].n)));if(scale)b.scale=scale;
+  const minL=lines.find(l=>/^Minerals\s/i.test(l));const mm=minL&&minL.match(/Minerals\s+\d+\s*\/\s*(\d+)/i);if(b.scale==="go"&&mm)b.goMin=Math.max(2001,+mm[1]);
+  const facName=parts[1];
+  if(facName&&!/no faction/i.test(facName)){const f=TAC.find(t=>t.r===race&&t.type==="Faction"&&norm(t.n)===norm(facName));if(f)b.faction=f.id;else notes.push(`Faction card not found: ${facName}`)}
+  let sec="";
+  const item=l=>{const m=l.replace(/^[-•*]\s*/,"").match(/^(.*?)(?:\s*[×x]\s*(\d+))?(?:\s*\(([^)]*)\))?(?:\s+[—–]\s+(.*))?$/i);return m&&{n:m[1].trim(),q:m[2]?+m[2]:null,rest:m[4]||""}};
+  lines.forEach(l=>{
+    if(!l)return;
+    if(/^units$/i.test(l)){sec="u";return}
+    if(/^tactical cards$/i.test(l)){sec="t";return}
+    let mt=l.match(/^(missions|deployments)\s*:\s*(.*)$/i);
+    if(mt){sec="";const isM=/^m/i.test(mt[1]);mt[2].split(/\s*,\s*/).filter(x=>x&&x!=="—"&&x!=="-").forEach(n=>{const hit=(isM?MISSIONS:DEPLOYS).find(x=>norm(x.n)===norm(n));if(hit)(isM?b.missions:b.deps).push(hit.id);else notes.push(`${isM?"Mission":"Deployment"} not found: ${n}`)});return}
+    if(!/^[-•*]/.test(l)||!sec)return;
+    const it=item(l);if(!it||!it.n)return;
+    if(sec==="u"){
+      const u=UNITS.find(x=>x.r===race&&!x.sum&&norm(x.n)===norm(it.n));
+      if(!u){notes.push(`Unit not found: ${it.n}`);return}
+      let ci=it.q?u.comps.findIndex(c=>c[0]===it.q):0;if(ci<0){notes.push(`${u.n}: no ${it.q}-model option, used ${u.comps[0][0]}`);ci=0}
+      const ups=[];if(it.rest)it.rest.split(/\s*,\s*/).forEach(n=>{const up=u.up.find(x=>norm(x.n)===norm(n));if(up){if(!ups.includes(up.n))ups.push(up.n)}else notes.push(`${u.n}: upgrade not found: ${n}`)});
+      b.units.push({uid:++uidc,id:u.id,ci,ups,slot:u.slot});
+    }else{
+      const t=TAC.find(x=>x.r===race&&x.type!=="Faction"&&norm(x.n)===norm(it.n));
+      if(!t){notes.push(`Card not found: ${it.n}`);return}
+      b.tac[t.id]=Math.min(t.uq?1:9,(b.tac[t.id]||0)+(it.q||1));
+    }
+  });
+  b.missions=b.missions.slice(0,2);b.deps=b.deps.slice(0,2);
+  b.updated=Date.now();
+  return {build:b,notes};
+}
+
+// Merge local saved rosters with the online copy. Newest `updated` wins per
+// roster; deletes travel as tombstones. Returns the merged list plus what to
+// upload (push) and which deletes to send (drop).
+function mergeRosters(local,tombs,remote){
+  const rem=new Map(arr(remote).map(r=>[r.id,r]));tombs=tombs||{};
+  const rosters=[],push=[],drop=[];let changed=false;
+  arr(local).forEach(r=>{
+    const x=rem.get(r.id),lu=r.updated||0;
+    if(!x){push.push(r);rosters.push(r);return}
+    if(x.deleted){if(lu>x.updated){push.push(r);rosters.push(r)}else changed=true;return}
+    if(lu>x.updated){push.push(r);rosters.push(r)}
+    else if(x.updated>lu){rosters.push(x.data);changed=true}
+    else rosters.push(r);
+  });
+  rem.forEach((x,id)=>{
+    if(x.deleted||arr(local).some(r=>r.id===id))return;
+    if(tombs[id]&&tombs[id]>=x.updated)return; // deleted here after its last edit: sent as a drop below
+    rosters.push(x.data);changed=true;
+  });
+  Object.keys(tombs).forEach(id=>{const x=rem.get(id);if(!x||(!x.deleted&&x.updated<=tombs[id]))drop.push(id)});
+  return {rosters,push,drop,changed};
+}
+
+/* ===================== ONLINE GAME STATE (pure) =====================
+   An online game keeps the same local shape as a solo game (round, phase,
+   units, cards, vp) plus g.online {code, side, v, seen, status} and g.opp, the
+   opponent's side as the server last sent it. */
+const otherSide=s=>s==="A"?"B":"A";
+function gameSide(r){
+  const cards=[];if(r.faction)cards.push({id:r.faction,ready:true});Object.entries(r.tac).forEach(([id,q])=>{for(let i=0;i<q;i++)cards.push({id,ready:true})});
+  return {cards,units:r.units.map(bu=>{const u=U(bu.id);const c=u.comps[bu.ci];return {uid:++uidc,id:u.id,ups:bu.ups||[],models:c[0],max:c[0],startSup:c[2],status:"res",act:false,snap:0}})};
+}
+const stepIndex=(round,phase)=>round*4+phase;
+// Turn a server response into the local game object.
+function gameFromRemote(res){
+  const s=res.state,me=s.sides[res.side],op=s.sides[otherSide(res.side)];
+  return {online:{code:res.code,side:res.side,v:res.v,status:res.status,seen:stepIndex(s.round,s.phase),seenRound:s.round},
+    roster:me.roster,mission:s.mission,deploy:s.deploy,scale:s.scale,round:s.round,phase:s.phase,over:s.over,
+    vp:[me.vp||0,op?op.vp||0:0],units:arr(me.units),cards:arr(me.cards),opp:op||null,log:[]};
+}
+// Apply a newer server state to the local game. keepMine=true while my own
+// side has local edits that haven't been uploaded yet. When the shared Round or
+// Phase moved forward, this does my own side's bookkeeping (activations reset,
+// cards refresh at a new Round) and returns true so the caller uploads it.
+function applyRemoteState(g,res,keepMine){
+  const s=res.state,me=s.sides[g.online.side],op=s.sides[otherSide(g.online.side)];
+  g.online.v=res.v;g.online.status=res.status;
+  g.mission=s.mission;g.deploy=s.deploy;g.scale=s.scale;g.round=s.round;g.phase=s.phase;g.over=s.over;
+  g.vp=[me.vp||0,op?op.vp||0:0];g.opp=op||null;
+  if(!keepMine){g.units=arr(me.units);g.cards=arr(me.cards)}
+  const now=stepIndex(s.round,s.phase);let changed=false;
+  if(now>g.online.seen){
+    g.units.forEach(u=>u.act=false);changed=true;
+    if(s.round>g.online.seenRound){g.cards.forEach(c=>c.ready=true);g.units.forEach(u=>{u.snap=u.status==="field"?curSupply(u):0})}
+  }
+  g.online.seen=now;g.online.seenRound=s.round;
+  return changed;
+}
 
 /* ===================== UI HELPERS ===================== */
 const $=s=>document.querySelector(s);
@@ -944,13 +1104,11 @@ function renderBuild(){
   const is=issues(b);
   h+=`<div class="panel"><h2>Roster check</h2><ul class="issues">${is.length?is.map(x=>`<li>${esc(x)}</li>`).join(""):'<li class="ok">Roster is legal.</li>'}</ul></div>`;
   h+=`<div class="panel"><div class="row"><button class="btn pri" id="bSave">Save roster</button><button class="btn" id="bCopy">Copy as text</button><button class="btn" id="bNew">New roster</button></div>
-  ${st.rosters.length?`<div class="grp">Saved rosters</div>`+st.rosters.map(r=>`<div class="item"><div class="hd"><div class="grow"><b>${esc(r.name)}</b><div class="meta">${RACES[r.race]} · ${SCALES[r.scale].n} · ${totals(r).min} minerals</div></div><button class="btn sm" data-rload="${r.id}">Load</button><button class="btn sm danger" data-rdel="${r.id}" aria-label="Delete ${esc(r.name)}">✕</button></div></div>`).join(""):""}</div>`;
+  <div class="row" style="margin-top:8px"><button class="btn sm" id="bExport">Export file</button><button class="btn sm" id="bImport">Import file</button><button class="btn sm" id="bPaste">Paste text</button><input type="file" id="bFile" accept=".json,.disc,application/json" hidden></div>
+  <p class="note">${net.user?"Saved rosters sync to your account.":net.available?"Sign in (top right) to sync saved rosters across devices.":"Export a file to move rosters to another device."}</p>
+  ${st.rosters.length?`<div class="grp">Saved rosters</div>`+st.rosters.map(r=>`<div class="item"><div class="hd"><div class="grow"><b>${esc(r.name)}</b><div class="meta">${RACES[r.race]} · ${SCALES[r.scale].n} · ${totals(r).min} minerals</div></div><button class="btn sm" data-rload="${r.id}">Load</button>${net.user?`<button class="btn sm" data-rshare="${r.id}">Share</button>`:""}<button class="btn sm danger" data-rdel="${r.id}" aria-label="Delete ${esc(r.name)}">✕</button></div></div>`).join(""):""}</div>`;
   $("#v-build").innerHTML=h;
 }
-function rosterText(b){const t=totals(b),L=limits(b);let s=`${b.name}\n${RACES[b.race]} — ${b.faction?T(b.faction).n:"(no faction)"} — ${SCALES[b.scale].n}\nMinerals ${t.min}/${L.min} · Vespene ${t.gas}/${L.gas} · Supply ${b.units.reduce((a,bu)=>a+U(bu.id).comps[bu.ci][2],0)}\n\nUNITS\n`;
-  b.units.forEach(bu=>{const u=U(bu.id);s+=`- ${u.n} ×${u.comps[bu.ci][0]} (Supply ${u.comps[bu.ci][2]}, ${unitCost(bu)} min)${bu.ups&&bu.ups.length?" — "+bu.ups.join(", "):""}\n`});
-  s+=`\nTACTICAL CARDS\n`;Object.entries(b.tac).forEach(([id,q])=>{if(q)s+=`- ${T(id).n}${q>1?" ×"+q:""} (${T(id).gas*q} gas)\n`});
-  s+=`\nMISSIONS: ${b.missions.map(id=>M(id).n).join(", ")||"—"}\nDEPLOYMENTS: ${b.deps.map(id=>D(id).n).join(", ")||"—"}\n\nBuilt with SCTMG Data Disc\n`;return s}
 function onBuildClick(e){
   const b=st.build,el=e.target.closest("button,input,select");if(!el)return;const ds=el.dataset;
   if(ds.race&&el.tagName==="BUTTON"){if(b.race!==ds.race){if(b.units.length||Object.keys(b.tac).length){if(!confirm("Switching race clears this roster's units and cards. Continue?"))return}Object.assign(b,{race:ds.race,faction:"",tac:{},tacSlots:{},units:[]})}}
@@ -959,16 +1117,21 @@ function onBuildClick(e){
   else if(ds.tq){const id=ds.tq,d=+ds.d;const q=Math.max(0,(b.tac[id]||0)+d);if(T(id).uq&&q>1)return;if(q)b.tac[id]=q;else delete b.tac[id]}
   else if(ds.urm!==undefined){b.units.splice(+ds.urm,1)}
   else if(ds.uadd){const u=U(ds.uadd);b.units.push({uid:++uidc,id:u.id,ci:0,ups:[],slot:u.slot});toast(u.n+" added")}
-  else if(el.id==="bSave"){const copy=JSON.parse(JSON.stringify(b));const i=st.rosters.findIndex(r=>r.id===b.id);if(i>=0)st.rosters[i]=copy;else st.rosters.push(copy);toast("Roster saved")}
+  else if(el.id==="bExport"){exportRosters();return}
+  else if(el.id==="bImport"){$("#bFile").click();return}
+  else if(el.id==="bPaste"){openPaste();return}
+  else if(ds.rshare){shareRoster(st.rosters.find(r=>r.id===ds.rshare));return}
+  else if(el.id==="bSave"){b.updated=Date.now();const copy=JSON.parse(JSON.stringify(b));pushRoster(copy);const i=st.rosters.findIndex(r=>r.id===b.id);if(i>=0)st.rosters[i]=copy;else st.rosters.push(copy);toast("Roster saved")}
   else if(el.id==="bCopy"){const txt=rosterText(b);(navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>toast("Roster copied")).catch(()=>openModal("Roster text",`<pre style="white-space:pre-wrap;font:14px/1.4 var(--body)">${esc(txt)}</pre>`));return}
   else if(el.id==="bNew"){st.build=newBuild(b.race);toast("New roster started")}
   else if(ds.rload){st.build=JSON.parse(JSON.stringify(st.rosters.find(r=>r.id===ds.rload)));toast("Roster loaded")}
-  else if(ds.rdel){if(!confirm("Delete this saved roster?"))return;st.rosters=st.rosters.filter(r=>r.id!==ds.rdel)}
+  else if(ds.rdel){if(!confirm("Delete this saved roster?"))return;st.rosters=st.rosters.filter(r=>r.id!==ds.rdel);st.tomb[ds.rdel]=Date.now();pushDelete(ds.rdel)}
   else return;
   save();renderBuild();
 }
 function onBuildChange(e){
   const b=st.build,el=e.target,ds=el.dataset;
+  if(el.id==="bFile"){if(el.files[0])importFile(el.files[0]);el.value="";return}
   if(el.id==="bName"){b.name=el.value;save();return}
   if(el.id==="bScale"){b.scale=el.value;b.deps=[]}
   else if(el.id==="bGo"){b.goMin=Math.max(2001,+el.value||2001)}
@@ -1002,13 +1165,20 @@ function renderSetup(){
   ${mis?`<div style="margin-top:8px">${missionHTML(mis,scale)}</div>`:""}
   <label class="f" for="sDep" style="margin-top:10px">Deployment</label><select id="sDep"><option value="">Choose…</option>${deps.map(d=>`<option value="${d.id}" ${su.deploy===d.id?"selected":""}>${d.n}${r.deps.includes(d.id)?" (yours)":""}</option>`).join("")}</select>
   ${dep?`<p class="ab">${esc(dep.d)}</p><p class="note">Check the printed card for exact Marker positions.</p>`:""}</div>`;
-  h+=`<div class="panel"><button class="btn pri" id="sStart" ${(!mis||!r.units.length)?"disabled":""}>Start game</button>${st.game?` <button class="btn" data-go-play>Resume current game</button>`:""}${!mis?`<p class="note">Choose a Mission to start.</p>`:""}</div>`;
+  h+=`<div class="panel"><button class="btn pri" id="sStart" ${(!mis||!r.units.length)?"disabled":""}>Start game</button>${st.game?` <button class="btn" data-go-play>Resume current game</button>`:""}${!mis?`<p class="note">Choose a Mission to start.</p>`:""}<p class="note">Starts a game tracked only on this device.</p></div>`;
+  h+=onlineSetupHTML(r,mis);
   $("#v-setup").innerHTML=h;
 }
 $("#v-setup").addEventListener("change",e=>{const el=e.target,su=st.setup;
   if(el.id==="sRos"){su.rosterId=el.value;su.deploy=""}else if(el.id==="sMis")su.mission=el.value;else if(el.id==="sDep")su.deploy=el.value;else if(el.id==="sOG")su.oppGas=el.value;else if(el.id==="sOM")su.oppMin=el.value;else return;save();renderSetup()});
 $("#v-setup").addEventListener("click",e=>{const el=e.target.closest("button");if(!el)return;
   if(el.id==="sStart"){if(st.game&&!confirm("Replace the game in progress?"))return;startGame();show("play")}
+  else if(el.id==="sSignIn")openAccount();
+  else if(el.id==="sHost"||el.id==="sJoin"||el.dataset.resume){
+    if(st.game&&!(el.dataset.resume&&isOnline()&&st.game.online.code===el.dataset.resume)&&!confirm("Replace the game in progress on this device?"))return;
+    el.disabled=true;const r=setupRoster();
+    (el.id==="sHost"?hostGame(r,st.setup.mission,st.setup.deploy):el.id==="sJoin"?joinGame($("#sCode").value,r):resumeGame(el.dataset.resume)).catch(err=>{toast(err.message);el.disabled=false});
+  }
   else if("goPlay" in el.dataset)show("play")});
 function startGame(){
   const r=JSON.parse(JSON.stringify(setupRoster()));const scale=r.scale==="sk"?"sk":"std";
@@ -1030,7 +1200,7 @@ function renderPlay(){
   const lead=g.vp[0]-g.vp[1];
   const rsType=g.cards.find(c=>T(c.id).res)?T(g.cards.find(c=>T(c.id).res).id).res[0]:"";
   const ready=g.cards.filter(c=>c.ready&&T(c.id).res).reduce((a,c)=>a+T(c.id).res[1],0);
-  let h=`<div class="bigrow"><div class="stat"><div class="n">${g.round}<span style="font-size:1rem;color:var(--muted)">/${mv.len}</span></div><div class="k">Round</div></div>
+  let h=(g.online?onlineHeaderHTML(g):"")+`<div class="bigrow"><div class="stat"><div class="n">${g.round}<span style="font-size:1rem;color:var(--muted)">/${mv.len}</span></div><div class="k">Round</div></div>
   <div class="stat hl"><div class="n">${avail===Infinity?"∞":avail}</div><div class="k">Available Supply</div></div>
   <div class="stat"><div class="n">${P===Infinity?"∞":P}</div><div class="k">Supply Pool</div></div></div>`;
   h+=`<div class="panel"><h2>${esc(M(g.mission).n)} <small>${g.deploy?esc(D(g.deploy).n):""}</small></h2>
@@ -1040,7 +1210,7 @@ function renderPlay(){
   ${g.round>=mv.len?`<div class="banner">Final Round: Supply Pool is unlimited. All remaining Reserves may deploy.</div>`:""}</div>`;
   h+=`<div class="panel"><h2>Victory Points <small>${mv.lead?`game ends on a ${mv.lead}+ lead`:"no early-win lead"}</small></h2><div class="vp">
    <div class="box"><div class="note">You</div><div class="n">${g.vp[0]}</div><div class="row"><button class="btn sm" data-vp="0" data-d="-1" aria-label="Your VP minus 1">−1</button><button class="btn sm" data-vp="0" data-d="1" aria-label="Your VP plus 1">+1</button></div></div>
-   <div class="box"><div class="note">Opponent</div><div class="n">${g.vp[1]}</div><div class="row"><button class="btn sm" data-vp="1" data-d="-1" aria-label="Opponent VP minus 1">−1</button><button class="btn sm" data-vp="1" data-d="1" aria-label="Opponent VP plus 1">+1</button></div></div></div>
+   <div class="box"><div class="note">${g.opp?esc(g.opp.name):"Opponent"}</div><div class="n">${g.vp[1]}</div><div class="row"><button class="btn sm" data-vp="1" data-d="-1" aria-label="Opponent VP minus 1">−1</button><button class="btn sm" data-vp="1" data-d="1" aria-label="Opponent VP plus 1">+1</button></div></div></div>
    ${mv.lead&&Math.abs(lead)>=mv.lead?`<div class="banner">${lead>0?"You lead":"Opponent leads"} by ${Math.abs(lead)}: that meets the special winning condition. The game ends.</div>`:""}
    ${lost?`<div class="banner">You've lost ${lost} Supply this Round, so your opponent scores ${lost} VP for destroyed Supply.</div>`:""}
    ${g.over?`<div class="banner good">Game over. ${lead>0?"You win":lead<0?"Opponent wins":"Draw"} ${g.vp[0]}–${g.vp[1]} (VP difference ${Math.abs(lead)}).</div>`:""}</div>`;
@@ -1055,13 +1225,22 @@ function renderPlay(){
    <div class="grp">Reserves</div>${res.map(urow).join("")||'<p class="note">Reserves are empty.</p>'}
    ${dead.length?`<div class="grp">Destroyed</div>`+dead.map(urow).join(""):""}
    <details style="margin-top:8px"><summary>Add a summoned unit</summary><div class="picker" style="margin-top:6px">${UNITS.filter(u=>u.sum&&u.r===g.roster.race).map(u=>`<button class="pick" data-sum="${u.id}"><b>${esc(u.n)}</b><span class="note">Supply 0</span></button>`).join("")}</div></details></div>`;
-  h+=`<div class="panel"><button class="btn danger" id="pEnd">End and clear game</button></div>`;
-  el.innerHTML=h;
+  if(g.online)h+=oppHTML(g);
+  h+=`<div class="panel"><button class="btn danger" id="pEnd">${g.online?"End online game":"End and clear game"}</button>${g.online?`<p class="note">Ends it for both players.</p>`:""}</div>`;
+  el.innerHTML=h;if(g.online)renderSyncDot();
 }
 $("#v-play").addEventListener("click",e=>{
   const el=e.target.closest("button");if(!el)return;const g=st.game,ds=el.dataset;
   if(ds.go){show(ds.go);return}
   if(!g)return;const find=id=>g.units.find(u=>u.uid===+id);
+  if(g.online){
+    if(el.id==="pCode"){(navigator.clipboard?navigator.clipboard.writeText(g.online.code):Promise.reject()).then(()=>toast("Code copied")).catch(()=>toast("Code: "+g.online.code));return}
+    if(el.id==="pClear"){st.game=null;save();renderPlay();return}
+    if(ds.showOpp){let ups=[];try{ups=JSON.parse(ds.ups)}catch(e){}showUnit(ds.showOpp,ups);return}
+    if(el.id==="pNext"||el.id==="pPrev"){if(g.online.status==="ended")return;sendOps([{op:"step",dir:el.id==="pNext"?1:-1,from:{round:g.round,phase:g.phase}}]);return}
+    if(ds.vp!==undefined){const i=+ds.vp;g.vp[i]=Math.max(0,g.vp[i]+(+ds.d));save();renderPlay();sendOps([{op:"vp",side:i===0?g.online.side:otherSide(g.online.side),d:+ds.d}]);return}
+    if(el.id==="pEnd"){if(!confirm("End this online game for both players?"))return;api("POST",`/sync/games/${g.online.code}/end`).catch(()=>{});st.game=null;net.games=null;save();renderPlay();return}
+  }
   if(el.id==="pNext"){if(g.phase<3){g.phase++;g.units.forEach(u=>u.act=false)}else{const mv=M(g.mission)[g.scale];if(g.round>=mv.len){g.over=true}else{g.round++;g.phase=0;g.cards.forEach(c=>c.ready=true);g.units.forEach(u=>{u.act=false;u.snap=u.status==="field"?curSupply(u):0});toast("Round "+g.round+": cards refreshed")}}}
   else if(el.id==="pPrev"){if(g.phase>0)g.phase--;else if(g.round>1){g.round--;g.phase=3}g.over=false}
   else if(el.id==="pMis"){openModal(M(g.mission).n,missionHTML(M(g.mission),g.scale)+(g.deploy?`<div class="phh">Deployment: ${esc(D(g.deploy).n)}</div><div class="ab">${esc(D(g.deploy).d)}</div>`:""));return}
@@ -1076,6 +1255,7 @@ $("#v-play").addEventListener("click",e=>{
   else if(ds.tores!==undefined||ds.toRes){const u=find(ds.tores||ds.toRes);u.status="res";u.snap=0}
   else if(ds.sum){const ud=U(ds.sum);g.units.push({uid:++uidc,id:ud.id,ups:[],models:ud.comps[0][0],max:ud.comps[0][0],startSup:0,status:"field",act:false,snap:0});toast(ud.n+" summoned")}
   else return;
+  if(g.online&&st.game===g)queueSide();
   save();renderPlay();
 });
 
@@ -1136,6 +1316,207 @@ function renderGloss(){
 $("#v-gloss").addEventListener("input",e=>{if(e.target.id==="gQ"){glossFilter.q=e.target.value;renderGlossList()}});
 $("#v-gloss").addEventListener("click",e=>{const b=e.target.closest("button[data-gc]");if(!b)return;glossFilter.cat=b.dataset.gc;const q=$("#gQ").value;renderGloss();if(q)$("#gQ").focus()});
 
+/* ===================== ACCOUNT, SYNC AND ONLINE PLAY =====================
+   Talks to the Worker in worker/index.js. Everything here is optional: on the
+   github.io mirror or the offline file there's no server, net.available stays
+   false, and the app behaves exactly as a local-only app. */
+const net={available:false,user:null,status:"",rstatus:"",busy:false,sidePending:false,sideSeq:0,games:null,lastPull:0};
+async function api(method,path,body){
+  const r=await fetch(path,{method,credentials:"same-origin",headers:body?{"content-type":"application/json"}:{},body:body?JSON.stringify(body):undefined});
+  let data=null;try{data=await r.json()}catch(e){}
+  if(!r.ok||!data){const err=new Error((data&&data.error)||`Server error (${r.status})`);err.status=r.status;throw err}
+  return data;
+}
+const avatarHTML=(u,size=28)=>u&&u.avatar?`<img class="av" src="${esc(u.avatar)}" alt="" width="${size}" height="${size}">`:`<span class="av ph" style="width:${size}px;height:${size}px">${esc(((u&&u.name)||"?").slice(0,1).toUpperCase())}</span>`;
+function renderAcctBtn(){const b=$("#acctBtn");if(!b)return;b.hidden=!net.available;b.innerHTML=net.user?avatarHTML(net.user,22):"Sign in";b.setAttribute("aria-label",net.user?`Account: ${net.user.name}`:"Sign in")}
+function rerenderCurrent(){const v=document.querySelector("section.view.on");if(!v)return;({"v-build":renderBuild,"v-setup":renderSetup,"v-play":renderPlay})[v.id]?.()}
+
+// ---- account sheet ----
+function openAccount(){
+  let h;
+  if(!net.user)h=`<p>Sign in with Discord to keep your saved rosters on every device, share rosters with a link, and play online games where both players see the same score and armies.</p>
+   <p><a class="btn pri" href="/auth/login" id="aLogin">Sign in with Discord</a></p>
+   <p class="note">We only keep your Discord user ID, display name and avatar, plus the rosters and games you save. No email, no password. You can delete it all from this screen.</p>
+   <p class="note">Not signing in is fine: everything else keeps working on this device.</p>`;
+  else h=`<div class="row" style="align-items:center;gap:10px">${avatarHTML(net.user,40)}<div class="grow"><b>${esc(net.user.name)}</b><div class="note">Signed in with Discord</div></div></div>
+   <p>Your saved rosters sync automatically. ${net.rstatus?`<span class="note">${esc(net.rstatus)}</span>`:""}</p>
+   <div class="row"><button class="btn" data-acct="sync">Sync now</button><button class="btn" data-acct="logout">Sign out</button></div>
+   <details style="margin-top:14px"><summary>Delete my account</summary><p class="note">Deletes your account, your synced rosters, your share links and your online games from the server. Rosters saved on this device stay here.</p><button class="btn danger" data-acct="delete">Delete my account and data</button></details>`;
+  openModal("Account",h);
+}
+$("#mBody").addEventListener("click",async e=>{
+  const el=e.target.closest("[data-acct],[data-share-import]");if(!el)return;
+  const a=el.dataset.acct;
+  try{
+    if(a==="sync"){await syncRosters(true);openAccount()}
+    else if(a==="logout"){await api("POST","/auth/logout");net.user=null;net.games=null;renderAcctBtn();$("#modal").close();toast("Signed out");rerenderCurrent()}
+    else if(a==="delete"){if(!confirm("Delete your account and everything synced to it? This can't be undone."))return;await api("DELETE","/auth/account");net.user=null;net.games=null;if(st.game&&st.game.online){st.game=null;save()}renderAcctBtn();$("#modal").close();toast("Account deleted");rerenderCurrent()}
+    else if(el.dataset.shareImport!==undefined){const r=importData(shareCache,st.rosters);st.rosters.push(...r.rosters);r.rosters.forEach(pushRoster);save();$("#modal").close();toast(r.rosters.length?"Roster imported":"You already have this roster");if(r.rosters[0]){st.build=JSON.parse(JSON.stringify(r.rosters[0]));show("build")}}
+  }catch(err){toast(err.message)}
+});
+
+// ---- roster sync ----
+async function syncRosters(manual){
+  if(!net.user)return;
+  try{
+    const {rosters:remote}=await api("GET","/sync/rosters");
+    const m=mergeRosters(st.rosters,st.tomb,remote);
+    st.rosters=m.rosters.map(r=>cleanBuild(r,[],""));
+    for(const r of m.push)await api("PUT","/sync/rosters/"+encodeURIComponent(r.id),{data:r,updated:r.updated||Date.now()});
+    for(const id of m.drop)await api("DELETE","/sync/rosters/"+encodeURIComponent(id)+"?t="+(st.tomb[id]||Date.now()));
+    st.tomb={};net.lastPull=Date.now();net.rstatus="Synced "+new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
+    save();if(m.changed)rerenderCurrent();if(manual)toast("Rosters synced");
+  }catch(err){net.rstatus="Not synced: "+err.message;if(manual)toast(net.rstatus)}
+}
+function pushRoster(r){if(net.user)api("PUT","/sync/rosters/"+encodeURIComponent(r.id),{data:r,updated:r.updated||Date.now()}).catch(()=>{})}
+function pushDelete(id){if(!net.user)return;const t=st.tomb[id];api("DELETE","/sync/rosters/"+encodeURIComponent(id)+"?t="+t).then(()=>{delete st.tomb[id];save()}).catch(()=>{})}
+
+// ---- share links ----
+let shareCache=null;
+async function shareRoster(r){
+  try{
+    const {code}=await api("POST","/sync/shares",{roster:r});
+    const link=`${location.origin}/#share=${code}`;
+    const done=()=>openModal("Share link",`<p>Anyone with this link can view <b>${esc(r.name)}</b> and import a copy. They don't need to sign in.</p><input type="text" readonly value="${esc(link)}" id="shareLink" onclick="this.select()">`);
+    if(navigator.share){navigator.share({title:r.name,text:`${r.name}: my SCTMG Data Disc roster`,url:link}).catch(()=>{});done()}
+    else (navigator.clipboard?navigator.clipboard.writeText(link):Promise.reject()).then(()=>{toast("Link copied");done()}).catch(done);
+  }catch(err){toast(err.message)}
+}
+async function openShare(code){
+  try{
+    const res=await api("GET","/sync/shares/"+encodeURIComponent(code));
+    const r=cleanBuild(JSON.parse(JSON.stringify(res.roster)),[],"");shareCache=r;
+    openModal(r.name,`<p class="note">Shared by ${esc(res.by)}</p><p>${RACES[r.race]} · ${SCALES[r.scale].n} · ${totals(r).min} minerals · ${r.faction?esc(T(r.faction).n):"no faction"}</p><pre class="rtext">${esc(rosterText(r))}</pre><button class="btn pri" data-share-import>Import a copy</button>`);
+  }catch(err){openModal("Share link",`<p>${esc(err.message)}</p>`)}
+}
+
+// ---- import / export ----
+function exportRosters(){
+  const blob=new Blob([JSON.stringify(exportData(st),null,1)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`sctmg-rosters-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);toast("Rosters exported");
+}
+function finishImport(r){
+  st.rosters.push(...r.rosters);r.rosters.forEach(pushRoster);save();renderBuild();
+  const msg=`${r.rosters.length} roster${r.rosters.length===1?"":"s"} imported${r.skipped?`, ${r.skipped} already here`:""}.`;
+  if(r.notes.length)openModal("Import",`<p>${msg}</p><p>Some entries didn't match the current cards and were left out:</p><ul>${r.notes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul>`);else toast(msg);
+}
+function importFile(file){
+  const fr=new FileReader();
+  fr.onload=()=>{let data;try{data=JSON.parse(fr.result)}catch(e){openModal("Import",`<p>That file isn't a Data Disc roster file. Export one from the Build tab's saved rosters.</p>`);return}
+    const r=importData(data,st.rosters);if(!r.rosters.length&&!r.skipped){openModal("Import",`<p>${esc(r.notes[0]||"No rosters found.")}</p>`);return}finishImport(r)};
+  fr.readAsText(file);
+}
+function openPaste(){openModal("Paste roster text",`<p class="note">Paste the text from <b>Copy as text</b> (yours or a friend's). The app matches units, upgrades and cards by name.</p><textarea id="pasteTxt" rows="10" placeholder="My army&#10;Terran — Raynor's Raiders — Standard&#10;…"></textarea><div class="row" style="margin-top:8px"><button class="btn pri" id="pasteGo">Import</button></div>`)}
+$("#mBody").addEventListener("click",e=>{
+  if(e.target.id!=="pasteGo")return;
+  const {build,notes}=parseRosterText($("#pasteTxt").value);
+  if(!build){openModal("Paste roster text",`<p>${esc(notes[0])}</p>`);return}
+  if(!build.units.length&&!Object.keys(build.tac).length){openModal("Paste roster text",`<p>Couldn't find any units or cards in that text.</p>${notes.length?`<ul>${notes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul>`:""}`);return}
+  st.rosters.push(JSON.parse(JSON.stringify(build)));pushRoster(build);st.build=build;save();renderBuild();
+  if(notes.length)openModal("Imported with gaps",`<p><b>${esc(build.name)}</b> is saved and loaded, but these lines didn't match:</p><ul>${notes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul>`);else{$("#modal").close();toast("Roster imported and loaded")}
+});
+
+// ---- online games ----
+const isOnline=()=>!!(st.game&&st.game.online);
+async function hostGame(r,mission,deploy){
+  const scale=r.scale==="sk"?"sk":"std";const side=gameSide(JSON.parse(JSON.stringify(r)));
+  const res=await api("POST","/sync/games",{roster:r,units:side.units,cards:side.cards,mission,deploy,scale,len:M(mission)[scale].len});
+  st.game=gameFromRemote(res);save();net.games=null;show("play");
+}
+async function joinGame(code,r){
+  const side=gameSide(JSON.parse(JSON.stringify(r)));
+  const res=await api("POST",`/sync/games/${encodeURIComponent(code.trim().toUpperCase())}/join`,{roster:r,units:side.units,cards:side.cards});
+  st.game=gameFromRemote(res);save();net.games=null;show("play");toast("Joined game "+res.code);
+}
+async function resumeGame(code){const res=await api("GET","/sync/games/"+code);st.game=gameFromRemote(res);save();show("play")}
+async function loadGames(){if(!net.user)return;try{net.games=(await api("GET","/sync/games")).games}catch(e){net.games=[]}if($("#v-setup").classList.contains("on"))renderSetup()}
+
+// One request at a time, in order, so ops never overtake each other.
+let opChain=Promise.resolve();
+function sendOps(ops){
+  const g=st.game;if(!g||!g.online)return;const code=g.online.code;
+  const seq=net.sideSeq,hasSide=ops.some(o=>o.op==="side");
+  opChain=opChain.then(async()=>{
+    net.busy=true;
+    try{const res=await api("POST",`/sync/games/${code}/ops`,{ops});if(hasSide&&seq===net.sideSeq)net.sidePending=false;net.status="ok";receive(res)}
+    catch(err){net.status="offline";if(!hasSide)toast("Not synced: "+err.message);renderSyncDot()}
+    finally{net.busy=false}
+  });
+}
+// My own units/cards changed: upload them shortly (several taps go as one).
+function queueSide(){net.sidePending=true;net.sideSeq++;clearTimeout(queueSide.h);queueSide.h=setTimeout(()=>{queueSide.h=0;const g=st.game;if(g&&g.online)sendOps([{op:"side",units:g.units,cards:g.cards}])},350)}
+function receive(res){
+  const g=st.game;if(!g||!g.online||res.code!==g.online.code||res.same)return;
+  if(applyRemoteState(g,res,net.sidePending))queueSide();
+  save();if($("#v-play").classList.contains("on"))renderPlay();
+}
+async function poll(){
+  const g=st.game;if(!g||!g.online||net.busy||document.hidden||g.online.status==="ended")return;
+  try{
+    if(net.sidePending&&!queueSide.h)queueSide();
+    const res=await api("GET",`/sync/games/${g.online.code}?v=${g.online.v}`);net.status="ok";
+    if(!res.same)receive(res);else renderSyncDot();
+  }catch(err){net.status=err.status===404?"gone":"offline";renderSyncDot()}
+}
+function renderSyncDot(){const d=$("#syncDot");if(!d)return;const s=net.status;d.className="dot "+(s==="ok"?"ok":s==="offline"?"bad":"");d.title=s==="ok"?"Synced":s==="offline"?"Can't reach the server, retrying":s==="gone"?"Game not found":"Connecting"}
+setInterval(poll,3000);
+document.addEventListener("visibilitychange",()=>{if(document.hidden)return;poll();if(net.user&&Date.now()-net.lastPull>30000)syncRosters()});
+
+function priorityText(a,b,aName,bName){
+  try{const ta=totals(a),tb=totals(b);
+    return ta.gas<tb.gas?`${aName} take${aName==="You"?"":"s"} priority (less Vespene Gas).`:ta.gas>tb.gas?`${bName} takes priority (less Vespene Gas).`:ta.min<tb.min?`Gas tied: ${aName} take${aName==="You"?"":"s"} priority (fewer Minerals).`:ta.min>tb.min?`Gas tied: ${bName} takes priority (fewer Minerals).`:"Both tied: Roll-Off for priority."}catch(e){return ""}
+}
+// Header strip for an online game on the Play tab.
+function onlineHeaderHTML(g){
+  const o=g.opp;const ended=g.online.status==="ended";
+  let h=`<div class="panel online"><div class="row" style="align-items:center"><span id="syncDot" class="dot"></span><div class="grow"><b>Online game ${esc(g.online.code)}</b><div class="note">${o?`vs ${esc(o.name)}`:"Waiting for your opponent to join"}</div></div>${o?avatarHTML(o,28):`<button class="btn sm" id="pCode">Copy code</button>`}</div>`;
+  if(!o)h+=`<p class="note">Send your opponent the code <b class="code">${esc(g.online.code)}</b>. They sign in, choose their roster on the Setup tab and tap <b>Join</b>. You can start playing now; their army appears when they join.</p>`;
+  else{const p=priorityText(g.roster,o.roster||{units:[],tac:{}},"You",o.name);if(p&&g.round===1&&g.phase===0)h+=`<div class="banner">${esc(p)}</div>`}
+  if(ended)h+=`<div class="banner">This online game was ended. <button class="link" id="pClear">Remove it from this device</button></div>`;
+  return h+`</div>`;
+}
+function oppHTML(g){
+  const o=g.opp;if(!o)return"";
+  const units=arr(o.units).filter(u=>u&&U(u.id)),cards=arr(o.cards).filter(c=>c&&T(c.id));
+  const lost=units.reduce((a,u)=>a+Math.max(0,(u.snap||0)-curSupply(u)),0);
+  const grp=(t,l)=>l.length?`<div class="grp">${t}</div>`+l.map(u=>`<div class="urow opp"><div class="hd"><button class="link grow ${u.act?"done":""}" data-show-opp="${esc(u.id)}" data-ups="${esc(JSON.stringify(arr(u.ups)))}">${esc(U(u.id).n)}</button><span class="sup">${u.models}/${u.max} · S ${curSupply(u)}</span>${u.act?'<span class="tag">Activated</span>':""}</div></div>`).join(""):"";
+  return `<div class="panel"><h2>${esc(o.name)}'s army <small>${o.roster&&RACES[o.roster.race]?RACES[o.roster.race]:""}</small></h2>
+   ${cards.length?`<div class="chips">${cards.map(c=>{const t=T(c.id);return `<button class="chip ${c.ready||!t.res?"":"ex"}" data-tac="${t.id}">${esc(t.n)}${t.res?(c.ready?"":" · exhausted"):""}</button>`}).join("")}</div>`:""}
+   ${lost?`<div class="banner good">${esc(o.name)} has lost ${lost} Supply this Round, so you score ${lost} VP for destroyed Supply.</div>`:""}
+   ${grp("On the battlefield",units.filter(u=>u.status==="field"))}${grp("Reserves",units.filter(u=>u.status==="res"))}${grp("Destroyed",units.filter(u=>u.status==="dead"))}</div>`;
+}
+
+// Boot: find out if there's a server and who's signed in, then handle links.
+async function netInit(){
+  // No server behind the offline file copy or the github.io mirror, so don't ask.
+  const hasServer=/^https?:$/.test(location.protocol)&&!/\.github\.io$/.test(location.hostname);
+  if(hasServer)try{const me=await api("GET","/auth/me");net.available=true;net.user=me.user}catch(e){net.available=false}
+  renderAcctBtn();
+  const hash=location.hash;
+  if(/^#(signed-in|signin-error=|share=)/.test(hash))history.replaceState(null,"",location.pathname+location.search);
+  if(hash.startsWith("#signin-error="))toast(decodeURIComponent(hash.slice(14)));
+  if(net.user){if(hash==="#signed-in")toast("Signed in as "+net.user.name);await syncRosters();loadGames();if(isOnline())poll()}
+  if(hash.startsWith("#share="))openShare(hash.slice(7));
+  rerenderCurrent();
+}
+$("#acctBtn").addEventListener("click",openAccount);
+// A share link opened in a tab that already has the app: only the #hash changes.
+window.addEventListener("hashchange",()=>{if(location.hash.startsWith("#share=")){const c=location.hash.slice(7);history.replaceState(null,"",location.pathname+location.search);openShare(c)}});
+
+function onlineSetupHTML(r,mis){
+  if(!net.available)return"";
+  if(!net.user)return `<div class="panel"><h2>Play online</h2><p class="note" style="margin-top:0">Sign in with Discord to host or join an online game. Both players see the same Round, Phase and score, and each other's armies, live.</p><button class="btn" id="sSignIn">Sign in</button></div>`;
+  if(net.games===null)loadGames();
+  const gl=net.games||[];
+  return `<div class="panel"><h2>Play online</h2>
+   <p class="note" style="margin-top:0">Host with this roster, Mission and Deployment, then send your opponent the code. Both players see the same Round, Phase and score, and each other's armies.</p>
+   <button class="btn pri" id="sHost" ${(!mis||!r.units.length)?"disabled":""}>Host online game</button>
+   <div class="grp">Join a game</div><div class="row"><input type="text" id="sCode" maxlength="6" placeholder="CODE" autocomplete="off" autocapitalize="characters" class="grow" aria-label="Game code"><button class="btn" id="sJoin" ${!r.units.length?"disabled":""}>Join</button></div>
+   <p class="note">Joins with the roster chosen above. The host's Mission and Deployment are used.</p>
+   ${net.games===null?`<p class="note">Loading your online games…</p>`:gl.length?`<div class="grp">Your online games</div>`+gl.map(x=>`<div class="item"><div class="hd"><div class="grow"><b class="code">${esc(x.code)}</b> ${x.opp?`vs ${esc(x.opp)}`:`<span class="note">waiting for opponent</span>`}<div class="meta">${M(x.mission)?esc(M(x.mission).n):""} · ${x.over?"finished":"Round "+x.round}${x.status==="ended"?" · ended":""}</div></div>${x.status==="active"?`<button class="btn sm" data-resume="${esc(x.code)}">${isOnline()&&st.game.online.code===x.code?"Open":"Resume"}</button>`:""}</div></div>`).join(""):""}</div>`;
+}
+
 /* ===================== NAV ===================== */
 const TITLES={build:"Army builder",setup:"Game setup",play:"Battle tracker",cards:"Card reference",gloss:"Glossary"};
 function show(v){document.querySelectorAll("nav.tabs button").forEach(b=>b.setAttribute("aria-current",b.dataset.v===v?"true":"false"));document.querySelectorAll("section.view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));$("#title").textContent=TITLES[v];
@@ -1144,6 +1525,7 @@ document.querySelectorAll("nav.tabs button").forEach(b=>b.onclick=()=>show(b.dat
 $("#themeBtn").onclick=()=>{const r=document.documentElement;const dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme: dark)").matches;r.dataset.theme=dark?"light":"dark";try{localStorage.setItem(KEY+"-theme",r.dataset.theme)}catch(e){}};
 try{const th=localStorage.getItem(KEY+"-theme");if(th)document.documentElement.dataset.theme=th}catch(e){}
 show(st.game?"play":"build");
+netInit();
 if(loadNotes.length)openModal("Saved data updated",`<p>Some of your saved data pointed at cards that are no longer in the app, probably because a card was renamed or removed in an update. They've been taken out so everything else keeps working:</p><ul>${loadNotes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul><p class="note">Check these rosters against the current cards.</p>`);
 </script>
 </body>

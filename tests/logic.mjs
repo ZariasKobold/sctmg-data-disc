@@ -3,7 +3,8 @@
 // 1. Syntax: the whole inline script must compile (catches a stray brace that
 //    would blank every tab).
 // 2. Roster math: totals() and issues() against hand-checked rulebook cases.
-// 3. Data integrity: IDs unique, references resolve, costs line up.
+// 3. Stale saved data, 4-5. glossary, 6. data integrity.
+// 7. Roster files and pasted text, 8. roster sync merge, 9. online game bookkeeping.
 
 import { Script } from "node:vm";
 import { appScript, loadLogic } from "./load-app.mjs";
@@ -224,6 +225,117 @@ const build = (race, faction, tac = {}, units = []) => {
       check(`${m.id}.${side}: lead is a number or null`, v.lead === null || Number.isFinite(v.lead));
     }
   for (const d of L.DEPLOYS) check(`${d.id}: scale is std or sk`, ["std", "sk"].includes(d.sc));
+}
+
+// ---------- 7. roster files and pasted text ----------
+{
+  const clone = (x) => JSON.parse(JSON.stringify(x));
+  const strip = (b) => ({ name: b.name, race: b.race, scale: b.scale, faction: b.faction, tac: b.tac,
+    units: b.units.map((u) => [u.id, u.ci, [...u.ups].sort()]), missions: b.missions, deps: b.deps });
+
+  // Every unit, at every squad size, with every upgrade, survives Copy as text -> Paste text.
+  for (const race of ["T", "Z", "P"]) {
+    const units = L.UNITS.filter((u) => u.r === race && !u.sum);
+    const b = L.newBuild(race);
+    b.name = `Round trip ${race}`;
+    b.faction = L.TAC.find((t) => t.r === race && t.type === "Faction").id;
+    L.TAC.filter((t) => t.r === race && t.type !== "Faction").forEach((t, i) => (b.tac[t.id] = t.uq ? 1 : 1 + (i % 2)));
+    b.missions = L.MISSIONS.slice(0, 2).map((m) => m.id);
+    b.deps = L.DEPLOYS.filter((d) => d.sc === "std").slice(0, 2).map((d) => d.id);
+    units.forEach((u) => u.comps.forEach((c, ci) => b.units.push({ uid: 1, id: u.id, ci, ups: u.up.map((x) => x.n), slot: u.slot })));
+    const { build: back, notes } = L.parseRosterText(L.rosterText(b));
+    eq(`paste text ${race}: no unmatched lines`, notes, []);
+    // A unit whose squad sizes repeat (same model count twice) can't be told apart by text; skip those.
+    const ambiguous = new Set(units.filter((u) => new Set(u.comps.map((c) => c[0])).size !== u.comps.length).map((u) => u.id));
+    const keep = (x) => ({ ...x, units: x.units.filter(([id]) => !ambiguous.has(id)) });
+    eq(`paste text ${race}: round trip`, keep(strip(back)), keep(strip(b)));
+  }
+  {
+    const { build, notes } = L.parseRosterText("Friends list\n• Marine x5\nTerran - (no faction) - Skirmish\nUNITS\n* marine X5 (whatever) — combat shield, Laser Sight 9000\n- Ultralisk\nTACTICAL CARDS\n- barracks\nMISSIONS: Nope");
+    eq("paste text: lenient race line and scale", [build.race, build.scale, build.faction], ["T", "sk", ""]);
+    eq("paste text: units matched case-insensitively", build.units.map((u) => u.id), ["marine"]);
+    has("paste text: unknown upgrade reported", notes, "Laser Sight 9000");
+    has("paste text: other race's unit reported", notes, "Ultralisk");
+    has("paste text: unknown mission reported", notes, "Nope");
+    eq("paste text: card matched", build.tac, { barracks: 1 });
+    eq("paste text: no race line", L.parseRosterText("hello").build, null);
+  }
+
+  // Data Disc file import.
+  const st = { build: L.newBuild("Z"), rosters: [] };
+  const a = L.newBuild("T"); a.id = "rA"; a.name = "Alpha"; a.units = [{ uid: 1, id: "marine", ci: 0, ups: [] }];
+  const z = L.newBuild("Z"); z.id = "rZ"; z.name = "Zed"; z.units = [{ uid: 2, id: "zergling", ci: 0, ups: [] }, { uid: 3, id: "gone_unit", ci: 0, ups: [] }];
+  st.rosters = [a, z];
+  const file = clone(L.exportData(st));
+  eq("export: format tag", [file.format, file.version, file.rosters.length], ["sctmg-data-disc", 1, 2]);
+  let r = L.importData(file, []);
+  eq("import into empty: both rosters", r.rosters.map((x) => x.name), ["Alpha", "Zed"]);
+  has("import: unknown unit reported", r.notes, "gone_unit");
+  r = L.importData(clone(file), [clone(a)]);
+  eq("import: identical roster skipped", [r.skipped, r.rosters.map((x) => x.name)], [1, ["Zed"]]);
+  const a2 = clone(a); a2.name = "Alpha v2";
+  r = L.importData([a2], [clone(a)]);
+  check("import: same id but different content gets a fresh id", r.rosters.length === 1 && r.rosters[0].id !== "rA" && r.rosters[0].name === "Alpha v2");
+  eq("import: a bare roster works", L.importData(clone(a), []).rosters.length, 1);
+  eq("import: junk gives a note, not a crash", L.importData({ hello: 1 }, []).rosters, []);
+  eq("import: null is safe", L.importData(null, []).rosters, []);
+  const evil = clone(a); evil.id = "../../x"; evil.name = "<b>x</b>".repeat(30);
+  r = L.importData([evil], []);
+  check("import: unsafe id replaced, long name trimmed", /^r[a-z0-9]+$/.test(r.rosters[0].id) && r.rosters[0].name.length <= 80);
+}
+
+// ---------- 8. roster sync merge ----------
+{
+  const R = (id, updated, name = id) => ({ id, updated, name });
+  const W = (id, updated, name = id, deleted = false) => ({ id, updated, deleted, data: deleted ? null : R(id, updated, name) });
+  let m = L.mergeRosters([R("a", 5)], {}, []);
+  eq("sync: local-only roster is uploaded", [m.rosters.map((x) => x.id), m.push.map((x) => x.id)], [["a"], ["a"]]);
+  m = L.mergeRosters([], {}, [W("b", 3)]);
+  eq("sync: remote-only roster is downloaded", [m.rosters.map((x) => x.id), m.changed], [["b"], true]);
+  m = L.mergeRosters([R("a", 5, "new")], {}, [W("a", 3, "old")]);
+  eq("sync: newer local wins and uploads", [m.rosters[0].name, m.push.length], ["new", 1]);
+  m = L.mergeRosters([R("a", 3, "old")], {}, [W("a", 5, "new")]);
+  eq("sync: newer remote wins", [m.rosters[0].name, m.push.length], ["new", 0]);
+  m = L.mergeRosters([R("a", 3)], {}, [W("a", 5, "a", true)]);
+  eq("sync: deleted on another device after my edit: removed here", m.rosters, []);
+  m = L.mergeRosters([R("a", 9)], {}, [W("a", 5, "a", true)]);
+  eq("sync: edited here after the delete: kept and re-uploaded", [m.rosters.length, m.push.length], [1, 1]);
+  m = L.mergeRosters([], { b: 10 }, [W("b", 3)]);
+  eq("sync: deleted here: not re-downloaded, delete is sent", [m.rosters, m.drop], [[], ["b"]]);
+  m = L.mergeRosters([], { b: 10 }, [W("b", 20, "edited")]);
+  eq("sync: edited elsewhere after my delete: comes back", [m.rosters.map((x) => x.name), m.drop], [["edited"], []]);
+  m = L.mergeRosters([], { c: 10 }, []);
+  eq("sync: delete of a never-synced roster still sent (harmless)", m.drop, ["c"]);
+}
+
+// ---------- 9. online game bookkeeping ----------
+{
+  const b = L.newBuild("T"); b.faction = "rrf"; b.tac = { barracks: 1 }; b.units = [{ id: "marine", ci: 0, ups: [] }, { id: "marauder", ci: 0, ups: [] }];
+  const side = L.gameSide(b);
+  eq("gameSide: cards", side.cards.map((c) => c.id), ["rrf", "barracks"]);
+  eq("gameSide: units start in Reserves", side.units.map((u) => u.status), ["res", "res"]);
+  const state = (round, phase, mine, extra = {}) => ({
+    mission: "hold", deploy: "", scale: "std", len: 5, round, phase, over: false,
+    sides: { A: { name: "Al", roster: b, units: mine.units, cards: mine.cards, vp: 2 }, B: { name: "Bo", roster: b, units: [], cards: [], vp: 1 } }, ...extra,
+  });
+  const res = (v, s) => ({ code: "ABC234", side: "A", v, status: "active", state: s });
+  const g = L.gameFromRemote(res(1, state(1, 0, side)));
+  eq("gameFromRemote: my VP first", g.vp, [2, 1]);
+  eq("gameFromRemote: opponent kept", g.opp.name, "Bo");
+  g.units[0].status = "field"; g.units[0].act = true; g.cards[1].ready = false;
+  const mine = JSON.parse(JSON.stringify({ units: g.units, cards: g.cards }));
+  check("phase forward: tells caller to upload my side", L.applyRemoteState(g, res(2, state(1, 1, mine)), false) === true);
+  eq("phase forward: activations reset, cards stay exhausted", [g.units[0].act, g.cards[1].ready], [false, false]);
+  g.units[0].models = 3;
+  L.applyRemoteState(g, res(3, state(2, 0, { units: g.units, cards: g.cards })), true);
+  eq("new round: cards refresh, Supply snapshot taken", [g.cards[1].ready, g.units[0].snap], [true, L.curSupply(g.units[0])]);
+  check("same step again: nothing to upload", L.applyRemoteState(g, res(4, state(2, 0, { units: g.units, cards: g.cards })), true) === false);
+  g.cards[1].ready = false;
+  L.applyRemoteState(g, res(5, state(1, 3, { units: g.units, cards: g.cards })), true);
+  eq("Back: no refresh", g.cards[1].ready, false);
+  const keep = JSON.stringify(g.units);
+  L.applyRemoteState(g, res(6, state(1, 3, { units: [], cards: [] })), true);
+  eq("keepMine: unsent local edits are not overwritten", JSON.stringify(g.units), keep);
 }
 
 console.log(`logic: ${passed} passed, ${failed} failed`);

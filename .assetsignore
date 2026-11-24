@@ -13,3 +13,6 @@ package.json
 package-lock.json
 wrangler.jsonc
 *.md
+worker
+migrations
+.dev.vars

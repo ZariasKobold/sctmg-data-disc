@@ -217,6 +217,27 @@ try {
   await nav("build");
   expect((await text("#v-build")).includes("Smoke P"), "rosters didn't persist");
   expect(!(await modalOpen()), "a healthy save shouldn't trigger the saved-data notice");
+  expect(!(await $("#acctBtn").isVisible()), "the offline file has no server, so no Sign in button");
+
+  log("export a Data Disc file, wipe rosters, import it back");
+  const [download] = await Promise.all([page.waitForEvent("download"), $("#bExport").click()]);
+  const file = await download.path();
+  await page.evaluate(() => { st.rosters = []; save(); renderBuild(); });
+  expect(!(await text("#v-build")).includes("Smoke T"), "rosters weren't cleared");
+  await $("#bFile").setInputFiles(file);
+  await page.waitForFunction(() => st.rosters.length === 3);
+  expect((await text("#v-build")).includes("Smoke T"), "imported rosters don't show");
+  await $("#bFile").setInputFiles(file);
+  await page.waitForFunction(() => document.querySelector("#toast").textContent.includes("already here"));
+  expect(await page.evaluate(() => st.rosters.length) === 3, "importing the same file twice duplicated rosters");
+
+  log("paste roster text");
+  const pasted = await page.evaluate(() => rosterText(st.rosters[0]).replace(/^.*\n/, "Pasted army\n"));
+  await $("#bPaste").click();
+  await $("#pasteTxt").fill(pasted);
+  await $("#pasteGo").click();
+  expect(await page.evaluate(() => st.build.name === "Pasted army" && st.rosters.length === 4), "pasted roster wasn't saved and loaded");
+  expect(await page.evaluate(() => JSON.stringify(st.build.units.map(u => [u.id, u.ci, u.ups])) === JSON.stringify(st.rosters[0].units.map(u => [u.id, u.ci, u.ups]))), "pasted units differ from the original");
 
   log("a save with stale IDs loads with a notice instead of crashing");
   await page.evaluate(() => {

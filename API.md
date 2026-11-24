@@ -26,6 +26,8 @@ served by Cloudflare next to the app at sctmgdatadisc.com.
   That's the basis on which the data is published (Blizzard's trademark
   guidelines allow non-commercial fan use with credit).
 
+The site also has `/auth/*` and `/sync/*` routes for sign-in, roster sync and online games. Those belong to the app, need a signed-in session, and aren't part of this public API.
+
 ### Static means static
 
 There's no server, so there are **no query strings, no search, no filtering,

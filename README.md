@@ -15,6 +15,8 @@ A mobile-friendly field kit for **StarCraft: Tabletop Miniatures Game** — buil
 - **Live play tracker** — rounds, phases, Supply Pool, victory points, and card exhaust/ready states.
 - **Card reference** — searchable unit and faction cards for Terran, Zerg, and Protoss.
 - **Glossary** — a searchable list of game terms in plain English, and every keyword on a card is tappable to show what it means.
+- **Your rosters, anywhere** — export and import a roster file, or paste a roster's text back in. Sign in with Discord to sync saved rosters across devices and share them with a link.
+- **Online games** — host a game, send your opponent the code, and both phones show the same Round, Phase, score and each other's armies.
 - **Current costs** — includes the October 9, 2026 cost-table update.
 
 ## Data notes
@@ -37,7 +39,11 @@ If you spot an error, please [open an issue](../../issues).
 
 No install, no build step. Open the site in any modern browser. To run it offline, download `index.html` and open it locally.
 
-Saved crews are stored in your browser's local storage, so they stay on the device and browser where you made them. Clearing your site data will erase them.
+Saved crews are stored in your browser's local storage, so they stay on the device and browser where you made them. Clearing your site data will erase them, so use **Export file** for a backup, or sign in to keep them synced.
+
+### Privacy
+
+Signing in is optional; everything except syncing, sharing and online games works without an account. If you sign in with Discord, the site stores your Discord user ID, display name and avatar, plus the rosters and online games you save. No email address, no password. You can delete your account and everything synced to it from the Account screen.
 
 ## Disclaimer
 

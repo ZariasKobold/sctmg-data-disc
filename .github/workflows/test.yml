@@ -1,6 +1,6 @@
 # Runs the regression tests on every push and pull request.
 #
-# Note: GitHub Pages deploys straight from main and doesn't wait for this
+# Note: Cloudflare and GitHub Pages deploy straight from main and doesn't wait for this
 # workflow, so a red run here is a warning to fix fast, not a gate. To make it a
 # gate, work on branches and merge via pull requests once this goes green.
 
@@ -14,7 +14,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
 
@@ -26,13 +26,19 @@ jobs:
       - name: Logic and data checks
         run: node tests/logic.mjs
 
+      - name: Online-game rules
+        run: node tests/worker.mjs
+
       - name: API is in sync with index.html
         run: node scripts/build-api.mjs --check
 
-      - name: Install Playwright
+      - name: Install Playwright and Wrangler
         run: |
           npm ci
           npx playwright install --with-deps chromium
 
       - name: Headless click-through
         run: node tests/smoke.mjs
+
+      - name: Two-player online test (local Worker + D1)
+        run: node tests/online.mjs

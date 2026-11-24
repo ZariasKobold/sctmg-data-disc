@@ -13,15 +13,31 @@ The name refers to the early StarCraft mission (The Jacobs Installation) where R
 
 ## Architecture
 
-The whole app is **one self-contained file: `index.html`**. Markup, CSS and vanilla JS all live inline. There is no framework, bundler, build step or `package.json`.
+The whole app is **one self-contained file: `index.html`**. Markup, CSS and vanilla JS all live inline. There is no framework, bundler or build step. It still works fully offline and on the github.io mirror; online features switch on only when it's served by the Worker.
+
+The optional online half is a small **Cloudflare Worker** in `worker/` (plain JS, no dependencies) with a **D1** database (schema in `migrations/`). It only handles `/auth/*` and `/sync/*`; everything else is static files.
 
 - **External dependency:** Google Fonts only (Chakra Petch for display, Barlow for body), loaded via `<link>`. Everything else is inline.
 - **Data:** hardcoded JS arrays in the script: `UNITS`, `TAC` (tactical/faction cards), `MISSIONS`, `DEPLOYS`, `SCALES`, `GLOSSARY`. Abilities are built with an `A(phase, name, type, text)` helper. Unit records use short keys (`id`, `n`, `r`, `tags`, `gas`, `slots`, `res`, `ab`, `uq`, `unk`, …).
 - **Core logic:** `newBuild(race)`, `totals(build)` and `issues(build)` handle roster math and legality checks. Everything above the `/* ===================== UI HELPERS` marker is pure logic and can be tested in Node without a DOM.
 - **Views:** five tabs, with containers `#v-build`, `#v-setup`, `#v-play`, `#v-cards` and `#v-gloss`, switched by `nav button[data-v=…]`. The card detail modal closes with `#mClose`. Glossary definitions open in a second `<dialog id="gloss">` that stacks on top of the card modal (`#gClose`, `#gBack`).
-- **Storage:** `localStorage` under a `KEY` prefix (rosters, game state, `KEY+"-theme"`). Every read and write is wrapped in try/catch. Storage is per-origin, so data saved in the old Claude artifact or the offline file copy does **not** carry over to the live site. The same goes between the github.io mirror and sctmgdatadisc.com.
+- **Storage:** `localStorage` under a `KEY` prefix (rosters, game state, `KEY+"-theme"`). Every read and write is wrapped in try/catch. Storage is per-origin, so data saved in the old Claude artifact, the offline file copy or the github.io mirror does **not** carry over to the live site. Signed-in players also have their saved rosters in D1 (see Accounts and online play); the current build and solo games stay local only.
 - **Theming:** CSS custom properties on `:root`, with light and dark modes (system preference plus a manual `data-theme` override). Race accent colors come from `body[data-race="T|Z|P"]`, with Terran blue, Zerg purple and Protoss gold.
 - **Layout:** mobile-first (it's used at the table on a phone). Fixed bottom tab bar, safe-area insets, max width of 720px.
+
+### Accounts and online play (`worker/`)
+
+- **Sign-in:** Discord OAuth (`identify` scope only). `/auth/login` → Discord → `/auth/callback` exchanges the code with `DISCORD_CLIENT_SECRET`, upserts the user, and sets an HttpOnly session cookie (`sdd_s`, 180 days). Only the SHA-256 of the token is stored. We keep Discord ID, display name and avatar hash; no email.
+- **`/auth/dev?name=X`:** local testing login. Works only with `DEV_LOGIN=1` (from `--var` or `.dev.vars`, never set in production) **and** a localhost URL.
+- **CSRF:** every non-GET request must carry an `Origin` equal to the site's own; cookies are `SameSite=Lax`.
+- **Roster sync:** `/sync/rosters`. One row per roster, newest `updated` wins, deletes are tombstones (`st.tomb` on the client). Client side is `syncRosters()` / `mergeRosters()` (pure, tested). Syncs on sign-in, on save/delete, and when the tab regains focus (at most every 30 s).
+- **Share links:** `/sync/shares` makes an 8-character code; `/#share=CODE` opens a read-only preview anyone can import, no sign-in needed.
+- **Online games:** `/sync/games`. Host gets a 6-character code (no 0/O/1/I/L), guest joins with it. State JSON lives in `games.state` with a `version`; writes are compare-and-swap on the version (D1 has no interactive transactions). Clients poll every 3 s (`?v=N` returns `{same:true}` when nothing changed). Rules for ops are in `worker/game.js` (pure, tested):
+  - `side`: a player replaces **only their own** units and cards.
+  - `vp`: either player adjusts either score by a delta (so two quick taps can't overwrite each other).
+  - `step`: Next/Back carries the round/phase the player saw, so both tapping Next advances once.
+  - Phase/Round bookkeeping (activations reset, cards refresh, Supply snapshots) is done by **each client on its own side** when it sees the step change: `applyRemoteState()` in `index.html`.
+- **Account delete** (`DELETE /auth/account`) removes the user; `ON DELETE CASCADE` takes sessions, rosters, shares and games with it.
 
 ### Public API
 
@@ -31,9 +47,10 @@ The legal basis is Blizzard's trademark guidelines, which allow non-commercial f
 
 ### Features
 
-- **Build:** race, scale (Skirmish 1000/100, Standard 2000/200, custom Grand Offensive), faction card, tactical cards and units. Tracks minerals, gas, and Core/Elite/Support/Air/Hero slots. The legality check flags over-budget lists, slot overflow, wrong faction tags, duplicate Uniques, Zerg without exactly one Creep card, and upgrades that replace the same weapon. Supports multiple saved rosters and copying a roster as text.
-- **Setup:** priority calculation from both players' gas and minerals, plus the mission/deployment draft with full text.
+- **Build:** race, scale (Skirmish 1000/100, Standard 2000/200, custom Grand Offensive), faction card, tactical cards and units. Tracks minerals, gas, and Core/Elite/Support/Air/Hero slots. The legality check flags over-budget lists, slot overflow, wrong faction tags, duplicate Uniques, Zerg without exactly one Creep card, and upgrades that replace the same weapon. Supports multiple saved rosters and copying a roster as text. Rosters can be exported/imported as a Data Disc file (`exportData()`/`importData()`), pasted back in from "Copy as text" (`parseRosterText()`), and, when signed in, synced and shared by link.
+- **Setup:** priority calculation from both players' gas and minerals, plus the mission/deployment draft with full text. Signed-in players can host an online game (gets a code) or join one, and resume their recent online games on any device.
 - **Play:** round and phase tracking, Supply Pool and Available Supply (unlimited in the final round), VP for both sides with a game-end alert, exhaust/ready cards with auto-refresh each round, per-model casualty tracking that reduces Supply by profile, and the destroyed Supply your opponent scores.
+- **Online play:** both players see the same Round, Phase and VP, and each other's army (units, models left, deployed/activated, exhausted cards, destroyed Supply). A solo game on one device still works exactly as before.
 - **Cards:** reference for all units, tactical cards and missions, by race.
 - **Glossary:** searchable, filterable list of game terms. Terms inside card text, kind tags, weapon tables, stat labels, mission text and the Play phase reference are tappable and open a definition sheet. `linkTerms()` / `rt()` do the linking (escape first, then link; each term once per paragraph, case-sensitive).
 
@@ -58,30 +75,41 @@ The legal basis is Blizzard's trademark guidelines, which allow non-commercial f
 | Name: **SCTMG Data Disc** | "Data Disc" is the more defensible half if branding ever matters. Keep "SCTMG" loosely coupled. |
 | **Free, personal, unofficial** | Selling it would need licensing from Blizzard/Archon, or a game-agnostic engine. Dalton chose to keep it non-commercial. The README carries the disclaimer. |
 | **Single-file HTML, no build** | Keeps it trivially hostable, works offline from a saved copy, and is easy to wrap later. |
+| **Accounts: Discord sign-in, data in D1** | Nov 2026, Dalton's call (his friends already use Discord). Online features are optional; the app must keep working signed out, offline and on the github.io mirror. |
+| **Online sync by polling, not WebSockets** | Every 3 s while a game is open, against D1. Simple, survives phones sleeping, and well inside the free tier for a friends-sized group. Durable Objects + WebSockets is the upgrade path if it ever feels laggy. |
 | **Domain: sctmgdatadisc.com** | Nov 2026, Dalton's call after checking: "SCTMG" is a community abbreviation, not a registered Blizzard mark (other fan sites use it too), so it doesn't break the no-Blizzard-mark-in-a-domain rule. Keep the site non-commercial, unofficial and clearly credited, and never imply endorsement. |
 | **Hosting: Cloudflare Workers at sctmgdatadisc.com, public repo** | Nov 2026: moved from GitHub Pages (kept as a mirror) to a Workers static-assets deploy on Dalton's own domain. Trade-off accepted: the site and card data are fully public, with no login gating. |
 | **Regression test before every release** | Added after a bad edit (a deleted `const MISSIONS` declaration) blanked every tab. See Testing. |
 
 ## Testing
 
-Run `npm test` before every release. It runs three stages, cheapest first:
+Run `npm test` before every release. It runs five stages, cheapest first:
 
 1. **`tests/logic.mjs`** (plain Node, no install): compiles the whole inline script (syntax), evaluates the pure-logic half with a stubbed `localStorage`, and checks `totals()`/`issues()` against hand-checked rulebook cases (e.g. Raynor's Raiders + Barracks, Barracks Proxy, Factory, Orbital, Academy and Eng Bay gives 8 Core, 2 Elite, 3 Support), plus data integrity (unique IDs, references resolve, upgrade costs line up with compositions). Add a case here when you fix a rules bug.
-2. **`node scripts/build-api.mjs --check`**: `api/v1/` matches `index.html`.
-3. **`tests/smoke.mjs`** (Playwright, 400×850): for each race it builds a legal roster, saves it, runs Setup, plays a game to the end, and opens and closes every card. Any `pageerror` or console error fails the run. Google Fonts are stubbed so it runs offline. `node tests/smoke.mjs --headed` shows the browser; `VERBOSE=1` prints each step.
+   It also round-trips every unit, squad size and upgrade through Copy as text → Paste text, and checks file import, the sync merge and online round/phase bookkeeping.
+2. **`tests/worker.mjs`** (plain Node): the online-game op rules in `worker/game.js`.
+3. **`node scripts/build-api.mjs --check`**: `api/v1/` matches `index.html`.
+4. **`tests/smoke.mjs`** (Playwright, 400×850, offline file): for each race it builds a legal roster, saves it, runs Setup, plays a game to the end, and opens and closes every card. Any `pageerror` or console error fails the run. Google Fonts are stubbed so it runs offline. `node tests/smoke.mjs --headed` shows the browser; `VERBOSE=1` prints each step.
+   It also exports a Data Disc file, imports it back (twice, to check duplicates are skipped) and pastes roster text.
+5. **`tests/online.mjs`** (Playwright + `wrangler dev` on a throwaway local D1 with `DEV_LOGIN`): Alice on two devices and Bob. Roster sync and deletes, a share link, host/join by code, VP, deploys, activations, exhausts, Next from either player (and both at once), new-Round refresh, resume on a second device, ending a game and deleting an account.
 
-First-time setup: `npm install`, then `npx playwright install chromium`. `package.json` is dev tooling only; the app still needs no build.
+First-time setup: `npm install`, then `npx playwright install chromium`. `package.json` is dev tooling only (Playwright, Wrangler); the app still needs no build.
 
-**CI:** `.github/workflows/test.yml` runs the same three stages on every push and PR. Cloudflare and Pages both deploy from `main` without waiting for it, so a red run is a warning, not a gate.
+**Run it locally with sign-in:** `npm run dev` (applies migrations to a local D1, then `wrangler dev` with `DEV_LOGIN`). Open `http://localhost:8787/auth/dev?name=Alice`, and a second browser profile with `?name=Bob`.
+
+**CI:** `.github/workflows/test.yml` runs the same five stages on every push and PR. Cloudflare and Pages both deploy from `main` without waiting for it, so a red run is a warning, not a gate.
 
 **Gotcha:** the UI re-renders after every click, so element handles go stale. Use Playwright locators (they re-query) instead of caching handles. A `<details>` picker also closes on every re-render, so open it again before each pick.
 
 ## Deploying
 
-Commit to `main`. Run `npm test` first. Cloudflare Workers Builds redeploys sctmgdatadisc.com automatically (deploy command `npx wrangler deploy`, no build command), and GitHub Pages redeploys the mirror.
+Commit to `main`. Run `npm test` first. Cloudflare Workers Builds redeploys sctmgdatadisc.com automatically (no build command; deploy command `npx wrangler d1 migrations apply DB --remote && npx wrangler deploy`, so new files in `migrations/` apply first), and GitHub Pages redeploys the static mirror (no sign-in there).
 
-- **`wrangler.jsonc`**: Worker name and assets directory (the repo root). There's no Worker script; it's static files only. The custom domain is attached in the Cloudflare dashboard (Worker > Settings > Domains & Routes), not in this file.
-- **`.assetsignore`**: keeps dev files (`tests/`, `scripts/`, `*.md`, `package*.json`, `Docs/` …) off the live site. **Add new non-site files or folders here**, or they get published.
+- **`wrangler.jsonc`**: Worker name, `main` (`worker/index.js`), static assets from the repo root with `run_worker_first` for `/auth/*` and `/sync/*`, the D1 binding `DB`, and the public `DISCORD_CLIENT_ID`. The custom domain is attached in the dashboard (Worker > Settings > Domains & Routes).
+- **Secret `DISCORD_CLIENT_SECRET`**: set in the dashboard (Worker > Settings > Variables and Secrets). Never in git or `wrangler.jsonc`.
+- **Discord app:** Developer Portal > OAuth2 > Redirects must list `https://sctmgdatadisc.com/auth/callback` (and the workers.dev URL's `/auth/callback` if that's used).
+- **Schema changes:** add a new numbered file in `migrations/`; never edit an applied one.
+- **`.assetsignore`**: keeps dev files (`tests/`, `scripts/`, `worker/`, `migrations/`, `*.md`, `package*.json`, `Docs/` …) off the live site. **Add new non-site files or folders here**, or they get published.
 - **`_headers`**: sends `Access-Control-Allow-Origin: *` on `/api/*`, which GitHub Pages did by default and Cloudflare doesn't.
 
 ## Next steps
@@ -90,7 +118,7 @@ Rough priority order. Confirm with Dalton before starting any of them.
 
 1. ~~Commit the regression test~~ Done Nov 2026: `npm test` plus a GitHub Actions workflow (see Testing).
    - ~~Tolerate stale IDs~~ Done Nov 2026: `cleanState()` on load, plus `RENAMED` for planned renames. Roster import should run imported rosters through `cleanBuild()` too.
-2. **Roster export/import (JSON).** Rosters are trapped in each origin's localStorage. Export/import protects them and makes moving between web, offline and any future app possible.
+2. ~~Roster export/import~~ Done Nov 2026: Data Disc file export/import, paste text, plus Discord sign-in with roster sync, share links and online games.
 3. **Bundle fonts locally** (`fonts/` folder plus `@font-face`) so offline use doesn't fall back to system fonts.
 4. ~~Reconcile the in-app name~~ Done Oct 2026: title and header say SCTMG Data Disc. The localStorage `KEY` stays `sctmg-fieldkit-v1` on purpose, because renaming it would orphan everyone's saved rosters.
 5. **Fill in the stubs** as unreleased units get real cards, removing the `unk` tags.

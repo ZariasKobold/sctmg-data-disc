@@ -1,15 +1,19 @@
 {
   "name": "sctmg-data-disc",
   "private": true,
-  "description": "Dev tooling only. The app itself is index.html and needs no install.",
+  "description": "Dev tooling only. The app is index.html; worker/ is the Cloudflare Worker for sign-in and online play.",
   "type": "module",
   "scripts": {
-    "test": "node tests/logic.mjs && node scripts/build-api.mjs --check && node tests/smoke.mjs",
+    "test": "node tests/logic.mjs && node tests/worker.mjs && node scripts/build-api.mjs --check && node tests/smoke.mjs && node tests/online.mjs",
     "test:logic": "node tests/logic.mjs",
+    "test:worker": "node tests/worker.mjs",
     "test:smoke": "node tests/smoke.mjs",
-    "build:api": "node scripts/build-api.mjs"
+    "test:online": "node tests/online.mjs",
+    "build:api": "node scripts/build-api.mjs",
+    "dev": "wrangler d1 migrations apply DB --local && wrangler dev --var DEV_LOGIN:1"
   },
   "devDependencies": {
-    "playwright": "^1.56.0"
+    "playwright": "^1.56.0",
+    "wrangler": "^4.167.0"
   }
 }
