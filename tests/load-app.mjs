@@ -24,6 +24,6 @@ export function loadLogic() {
   const script = appScript();
   if (!script.includes(MARKER)) throw new Error("index.html: couldn't find the UI HELPERS marker");
   globalThis.localStorage = { getItem: () => null, setItem() {} };
-  const names = "UNITS,TAC,MISSIONS,DEPLOYS,SCALES,SLOT_TYPES,newBuild,limits,unitCost,totals,issues,curSupply,poolSupply,U,T,M,D";
+  const names = "UNITS,TAC,MISSIONS,DEPLOYS,SCALES,SLOT_TYPES,newBuild,limits,unitCost,totals,issues,curSupply,poolSupply,U,T,M,D,RENAMED,cleanBuild,cleanState,GLOSSARY,linkTerms,esc";
   return new Function(script.split(MARKER)[0] + `;return {${names}};`)();
 }

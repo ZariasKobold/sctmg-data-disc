@@ -1,0 +1,1675 @@
+{
+ "data": [
+  {
+   "id": "anti-evade",
+   "term": "ANTI-EVADE (X)",
+   "category": "keyword",
+   "definition": "The target suffers a −X Modifier to its Evade Rolls against this attack.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "ANTI-EVADE"
+   ],
+   "seeAlso": [
+    "evade-roll"
+   ]
+  },
+  {
+   "id": "bulky",
+   "term": "BULKY",
+   "category": "keyword",
+   "definition": "This weapon can't make a Ranged Attack while its Unit is Engaged.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "BULKY"
+   ],
+   "seeAlso": [
+    "engaged"
+   ]
+  },
+  {
+   "id": "burst-fire",
+   "term": "BURST FIRE Y″ (X)",
+   "category": "keyword",
+   "definition": "Against a target Within Y″ of the attacking model, the weapon's RoA goes up by X for that attack.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "BURST FIRE"
+   ],
+   "seeAlso": [
+    "roa"
+   ]
+  },
+  {
+   "id": "claim",
+   "term": "CLAIM / DROP",
+   "category": "mission",
+   "definition": "Artefact Hunt rules. A Unit CLAIMS a Mission Marker by putting it on its Unit Card, and can carry only one at a time. It must DROP the Marker if its Current Supply Value drops, before it resolves a PLACE effect, if it's Engaged with Enemies of greater combined Current Supply, or if it's Destroyed, removed or returned to Reserves. The opponent then sets the Marker Within 2″ of the Unit (or its last model).",
+   "rulesRef": "Artefact Hunt mission card",
+   "matches": [
+    "CLAIM",
+    "CLAIMS",
+    "CLAIMED",
+    "DROP",
+    "DROPS",
+    "DROPPED"
+   ],
+   "seeAlso": [
+    "mission-marker"
+   ]
+  },
+  {
+   "id": "concentrated-fire",
+   "term": "CONCENTRATED FIRE (X)",
+   "category": "keyword",
+   "definition": "An attack with this weapon can remove at most X models. Any Damage left after that is discarded, not recorded on a Damage Marker.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "CONCENTRATED FIRE"
+   ],
+   "seeAlso": []
+  },
+  {
+   "id": "critical-hit",
+   "term": "CRITICAL HIT (X)",
+   "category": "keyword",
+   "definition": "Move up to X dice from the Armour Pool straight into the Damage Pool, skipping the Armour Roll. It can't move more dice than are in the Armour Pool.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "CRITICAL HIT"
+   ],
+   "seeAlso": [
+    "dice-pools",
+    "dodge"
+   ]
+  },
+  {
+   "id": "buff",
+   "term": "BUFF [Characteristic] (X)",
+   "category": "keyword",
+   "definition": "The Unit improves a characteristic by X until the End of the Round. For a Target Number (Armour, Hit) that means lower and easier to roll; for a value (Speed, RoA) it means higher. Tracked with a blue Marker.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "BUFF",
+    "BUFFS"
+   ],
+   "seeAlso": [
+    "debuff",
+    "status"
+   ]
+  },
+  {
+   "id": "debuff",
+   "term": "DEBUFF [Characteristic] (X)",
+   "category": "keyword",
+   "definition": "The Unit worsens a characteristic by X until the End of the Round. A Target Number goes up (harder to roll); a value goes down (minimum 0). Tracked with a red Marker.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "DEBUFF",
+    "DEBUFFS"
+   ],
+   "seeAlso": [
+    "buff",
+    "status"
+   ]
+  },
+  {
+   "id": "displacement",
+   "term": "DISPLACEMENT",
+   "category": "keyword",
+   "definition": "A Leading Model may end a move overlapping this Token or model. If it does, the controlling player immediately sets the displaced piece in base contact with the Leading Model (or as close as possible).",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "DISPLACEMENT"
+   ],
+   "seeAlso": [
+    "leading-model"
+   ]
+  },
+  {
+   "id": "dodge",
+   "term": "DODGE (X)",
+   "category": "keyword",
+   "definition": "When this Unit is attacked, Surge and CRITICAL HIT move X fewer dice from the Armour Pool to the Damage Pool (minimum 0).",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "DODGE"
+   ],
+   "seeAlso": [
+    "surge",
+    "critical-hit"
+   ]
+  },
+  {
+   "id": "heal",
+   "term": "HEAL (X)",
+   "category": "keyword",
+   "definition": "Remove X points of Damage from the Unit's Damage Marker. It can't bring back Destroyed models (that's RESPAWN) and can't restore Shielded.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "HEAL"
+   ],
+   "seeAlso": [
+    "respawn",
+    "damage-marker"
+   ]
+  },
+  {
+   "id": "hits",
+   "term": "HITS X (Y)",
+   "category": "keyword",
+   "definition": "The Unit takes X automatic hits: put X dice straight into its Armour Pool with Damage Y and go to Armour Rolls. These hits never generate Surge.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "HITS"
+   ],
+   "seeAlso": [
+    "dice-pools"
+   ]
+  },
+  {
+   "id": "impact",
+   "term": "IMPACT (X) Y",
+   "category": "keyword",
+   "definition": "Right after a successful Charge, each model in the Fighting or Supporting Rank rolls X Impact dice at the Enemy Unit(s) it's fighting (split between them if several). Each result of Y or more puts one die in that Unit's Armour Pool, with Damage 1 and no Surge. HIDDEN Units are immune.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "IMPACT"
+   ],
+   "seeAlso": [
+    "charge",
+    "fighting-rank",
+    "hidden"
+   ]
+  },
+  {
+   "id": "indirect-fire",
+   "term": "INDIRECT FIRE",
+   "category": "keyword",
+   "definition": "This weapon may ignore Line of Sight when choosing and hitting a target (it still needs Range). A target that's out of Line of Sight gets an Evade Roll.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "INDIRECT FIRE"
+   ],
+   "seeAlso": [
+    "los",
+    "evade-roll"
+   ]
+  },
+  {
+   "id": "instant",
+   "term": "INSTANT",
+   "category": "keyword",
+   "definition": "Enemy Units can't use Reaction abilities in response to attacks made with this weapon.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "INSTANT"
+   ],
+   "seeAlso": [
+    "reaction"
+   ]
+  },
+  {
+   "id": "locked-in",
+   "term": "LOCKED IN (X)",
+   "category": "keyword",
+   "definition": "Ranged Attacks with this weapon get +X RoA against a target with the STATIONARY Status.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "LOCKED IN"
+   ],
+   "seeAlso": [
+    "stationary",
+    "roa"
+   ]
+  },
+  {
+   "id": "long-range",
+   "term": "LONG RANGE (X)",
+   "category": "keyword",
+   "definition": "The weapon's maximum Range becomes X″. Models firing beyond the normal Range (but Within X″) suffer −1 to Hit; roll them separately from the rest of the Batch.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "LONG RANGE"
+   ],
+   "seeAlso": [
+    "modifier"
+   ]
+  },
+  {
+   "id": "morph",
+   "term": "MORPH (Unit) X",
+   "category": "keyword",
+   "definition": "Needs enough Available Supply. Set one model of the named Unit in base contact with the active Unit, then remove X of the active Unit's models. The new Unit can't be set Within 1″ of an Enemy, and gets an Activation Marker: it can't activate for the rest of the Round.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "MORPH"
+   ],
+   "seeAlso": [
+    "available-supply"
+   ]
+  },
+  {
+   "id": "non-lethal",
+   "term": "NON-LETHAL DAMAGE (X)",
+   "category": "keyword",
+   "definition": "Add X to the Unit's Damage Marker but don't remove any models, even if that exceeds a model's HP. The next normal Damage counts the total and removes casualties as usual.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "NON-LETHAL DAMAGE"
+   ],
+   "seeAlso": [
+    "damage-marker"
+   ]
+  },
+  {
+   "id": "on-creep",
+   "term": "ON CREEP",
+   "category": "keyword",
+   "definition": "A Ground Zerg Unit (Friendly or Enemy) is ON CREEP while Within 6″ of a Creep Tumor Token or a model that's a Source of Creep. Some abilities and upgrades only work while ON CREEP.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "ON CREEP"
+   ],
+   "seeAlso": [
+    "creep-tumor"
+   ]
+  },
+  {
+   "id": "pierce",
+   "term": "PIERCE [Tag] X",
+   "category": "keyword",
+   "definition": "Against a Unit with the named Combat Tag, this weapon's Damage becomes X.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "PIERCE"
+   ],
+   "seeAlso": [
+    "combat-tags"
+   ]
+  },
+  {
+   "id": "pinpoint",
+   "term": "PINPOINT",
+   "category": "keyword",
+   "definition": "Ranged Attacks with this weapon may target Enemy Units that are Engaged, which is normally not allowed.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "PINPOINT"
+   ],
+   "seeAlso": [
+    "engaged"
+   ]
+  },
+  {
+   "id": "place",
+   "term": "PLACE (X)",
+   "category": "keyword",
+   "definition": "Pick up the Leading Model and set it Wholly Within X″ of where it started. It isn't moved along a path, so Gap Clearance and elevation don't matter. Then set the rest of the Unit In Coherency. It can't end Within Engagement Range of an Enemy, except in the Assault Phase (where the Unit becomes Engaged).",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "PLACE",
+    "PLACED"
+   ],
+   "seeAlso": [
+    "leading-model",
+    "coherency"
+   ]
+  },
+  {
+   "id": "precision",
+   "term": "PRECISION (X)",
+   "category": "keyword",
+   "definition": "After rolling to Hit, move up to X failed dice into the Armour Pool. They count as hits for everything, including Surge.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "PRECISION"
+   ],
+   "seeAlso": [
+    "dice-pools"
+   ]
+  },
+  {
+   "id": "repeatable",
+   "term": "REPEATABLE",
+   "category": "keyword",
+   "definition": "This ability ignores the once-per-Round limit. Use it as often as you can pay its cost and meet its trigger, even several times in one Activation.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "REPEATABLE",
+    "Repeatable"
+   ],
+   "seeAlso": [
+    "active"
+   ]
+  },
+  {
+   "id": "respawn",
+   "term": "RESPAWN (X)",
+   "category": "keyword",
+   "definition": "Return up to X Destroyed models to the Unit, each in base contact with a surviving model and not Within Engagement Range of an Enemy. It can't push the Unit into a higher Supply bracket.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "RESPAWN"
+   ],
+   "seeAlso": [
+    "heal",
+    "supply-value"
+   ]
+  },
+  {
+   "id": "sidearm",
+   "term": "SIDEARM",
+   "category": "keyword",
+   "definition": "Models may use this weapon on top of their normal weapon, ignoring the one-weapon-per-model rule. It's resolved as its own Batch, so it can pick a different target.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "SIDEARM"
+   ],
+   "seeAlso": [
+    "batch"
+   ]
+  },
+  {
+   "id": "specialist",
+   "term": "SPECIALIST",
+   "category": "keyword",
+   "definition": "Only one model in the Unit may carry this weapon or upgrade. Other upgrades apply to every model.",
+   "rulesRef": "Core Rules section 9.1.7",
+   "matches": [
+    "SPECIALIST",
+    "Specialist"
+   ],
+   "seeAlso": []
+  },
+  {
+   "id": "spillover",
+   "term": "SPILLOVER",
+   "category": "keyword",
+   "definition": "Template hits on models outside the Primary target Unit. Each extra Unit is its own Batch, with no RoA modifiers and no Surge, and it can hit Friendly Units too.",
+   "rulesRef": "Core Rules section 8.7.6",
+   "matches": [
+    "SPILLOVER"
+   ],
+   "seeAlso": [
+    "template"
+   ]
+  },
+  {
+   "id": "stay-in-play",
+   "term": "STAY IN PLAY",
+   "category": "keyword",
+   "definition": "This Token, Marker or effect survives Cleanup & Refresh and stays until something specifically removes it.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "STAY IN PLAY"
+   ],
+   "seeAlso": [
+    "token",
+    "status"
+   ]
+  },
+  {
+   "id": "summon",
+   "term": "SUMMON (Unit)",
+   "category": "keyword",
+   "definition": "Set the named Unit's Leading Model in base contact with the Parent Unit and the rest In Coherency, not Within Engagement Range of an Enemy or in the opponent's Zone of Influence. Needs enough Available Supply. It can't activate in the Phase it arrived; after that it activates right after its Parent.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "SUMMON",
+    "SUMMONED"
+   ],
+   "seeAlso": [
+    "available-supply",
+    "zone-of-influence"
+   ]
+  },
+  {
+   "id": "tough",
+   "term": "TOUGH (X)",
+   "category": "keyword",
+   "definition": "When this Unit makes Armour Rolls, turn up to X failures into successes.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "TOUGH"
+   ],
+   "seeAlso": [
+    "armour-roll"
+   ]
+  },
+  {
+   "id": "burrowed",
+   "term": "BURROWED",
+   "category": "status",
+   "definition": "A mode (Status). The Unit also gains HIDDEN, counts as Size 0, counts as Supply 0 for Disengage checks, and can't Control or Contest Mission Markers. It may only Deploy, Move, Disengage, Run, Hold or Close Ranks, and all of those except Hold remove BURROWED. It gets an Evade Roll against every attack. Other models may move through it but not end Within its Engagement Range. If Engaged in the Combat Phase, it must Close Ranks (which unburrows it) to attack.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "BURROWED"
+   ],
+   "seeAlso": [
+    "hidden",
+    "status"
+   ]
+  },
+  {
+   "id": "hidden",
+   "term": "HIDDEN",
+   "category": "status",
+   "definition": "Can't be targeted by Ranged Attacks or Line of Sight abilities unless the attacker is Within 4″, and isn't Visible beyond 4″. Immune to IMPACT. Gets an Evade Roll against every attack.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "HIDDEN"
+   ],
+   "seeAlso": [
+    "burrowed",
+    "evade-roll"
+   ]
+  },
+  {
+   "id": "siege-mode",
+   "term": "SIEGE MODE",
+   "category": "status",
+   "definition": "A mode (Status). The Unit can't Move, Disengage, Run, Charge or Close Ranks. Only its SIEGE MODE weapons work, and those work only in this mode. Lost if the Unit returns to Reserves.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "SIEGE MODE"
+   ],
+   "seeAlso": [
+    "status"
+   ]
+  },
+  {
+   "id": "stationary",
+   "term": "STATIONARY",
+   "category": "status",
+   "definition": "Every Unit gains this at the Start of the Round, and loses it as soon as any of its models moves, is moved or is PLACED.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "STATIONARY",
+    "Stationary"
+   ],
+   "seeAlso": [
+    "locked-in"
+   ]
+  },
+  {
+   "id": "shielded",
+   "term": "Shielded",
+   "category": "status",
+   "definition": "A Unit with a Shield value adds it to its first model's HP and is Shielded. It stops being Shielded once its Total Damage exceeds the Shield value or the first model is removed. HEAL can't restore it.",
+   "rulesRef": "Core Rules section 5.1",
+   "matches": [
+    "Shielded"
+   ],
+   "seeAlso": [
+    "shield"
+   ]
+  },
+  {
+   "id": "status",
+   "term": "Status",
+   "category": "status",
+   "definition": "A lasting condition or mode on a Unit (e.g. BURROWED, SIEGE MODE, BUFF). Statuses aren't cleared in Scoring & Cleanup unless a rule says so. Track modes with plastic Markers and other effects with blue (good) or red (bad) Markers.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "Status",
+    "Statuses"
+   ],
+   "seeAlso": []
+  },
+  {
+   "id": "access-point",
+   "term": "ACCESS POINT",
+   "category": "rules",
+   "definition": "The part of a terrain piece that connects elevation levels. Models move between levels through it.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "ACCESS POINT",
+    "ACCESS POINTS"
+   ],
+   "seeAlso": [
+    "elevation"
+   ]
+  },
+  {
+   "id": "activation",
+   "term": "Activation",
+   "category": "rules",
+   "definition": "In the Movement, Assault and Combat Phases, players take turns activating one Unit each. An activated Unit performs one action and gets an Activation Marker. (Mission Markers also have an \"Activated\" side; that's different.)",
+   "rulesRef": "Core Rules section 8.2",
+   "matches": [
+    "Activation",
+    "Activations",
+    "Activated",
+    "Activate"
+   ],
+   "seeAlso": [
+    "pass",
+    "activation-marker"
+   ]
+  },
+  {
+   "id": "activation-marker",
+   "term": "Activation Marker",
+   "category": "rules",
+   "definition": "Placed next to a Unit once it has acted this Phase, so it can't activate again.",
+   "rulesRef": "Core Rules section 8.2",
+   "matches": [
+    "Activation Marker",
+    "Activation Markers"
+   ],
+   "seeAlso": [
+    "activation"
+   ]
+  },
+  {
+   "id": "active",
+   "term": "Active ability",
+   "category": "rules",
+   "definition": "A deliberate ability. The Unit must be Activated, and you use it just before declaring an action or right after one finishes. Each named Active ability works once per Round per Unit (unless REPEATABLE), and its effects end at the End of the Round unless stated.",
+   "rulesRef": "Core Rules section 2.7.1",
+   "matches": [],
+   "seeAlso": [
+    "passive",
+    "reaction",
+    "repeatable"
+   ]
+  },
+  {
+   "id": "passive",
+   "term": "Passive ability",
+   "category": "rules",
+   "definition": "Always on while the Unit is on the battlefield. No decision needed. Off while in Reserves unless stated.",
+   "rulesRef": "Core Rules section 2.7.2",
+   "matches": [],
+   "seeAlso": [
+    "active",
+    "reaction"
+   ]
+  },
+  {
+   "id": "reaction",
+   "term": "Reaction ability",
+   "category": "rules",
+   "definition": "Used the moment its trigger happens (an attack, a Charge, a model Destroyed…), outside the normal turn order. Each player gets one Reaction per Activation, and each named Reaction works once per Round per Unit. If both players react to the same trigger, the Active Player goes first.",
+   "rulesRef": "Core Rules section 2.7.3",
+   "matches": [
+    "Reaction",
+    "Reactions"
+   ],
+   "seeAlso": [
+    "active",
+    "instant"
+   ]
+  },
+  {
+   "id": "available-supply",
+   "term": "Available Supply",
+   "category": "rules",
+   "definition": "Your Supply Pool minus the Current Supply Value of your Units on the battlefield. A Unit can only Deploy from Reserves if its Current Supply Value fits. No limit in the final Round.",
+   "rulesRef": "Core Rules section 8.3.2",
+   "matches": [
+    "Available Supply"
+   ],
+   "seeAlso": [
+    "supply-pool",
+    "current-supply"
+   ]
+  },
+  {
+   "id": "batch",
+   "term": "Batch",
+   "category": "rules",
+   "definition": "One group of attack dice resolved together (normally one weapon type against one target). SIDEARMS and Spillover are separate Batches.",
+   "rulesRef": "Core Rules section 8.7",
+   "matches": [
+    "Batch",
+    "Batches"
+   ],
+   "seeAlso": [
+    "sidearm"
+   ]
+  },
+  {
+   "id": "blocking-terrain",
+   "term": "Blocking Terrain",
+   "category": "rules",
+   "definition": "Any terrain with an Effective Size of 1 or more. It can block Line of Sight under the Cover rules.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "Blocking Terrain"
+   ],
+   "seeAlso": [
+    "los",
+    "effective-size"
+   ]
+  },
+  {
+   "id": "charge",
+   "term": "Charge",
+   "category": "rules",
+   "definition": "Assault Phase action. An Unengaged Ground Unit declares Ground targets (no Line of Sight needed), rolls a D6, and its Leading Model moves up to Speed plus the roll to end Engaged with them. Flying Units can't Charge or be Charged.",
+   "rulesRef": "Core Rules section 8.7.7",
+   "matches": [
+    "Charge",
+    "Charges",
+    "Charged",
+    "Charging"
+   ],
+   "seeAlso": [
+    "impact",
+    "engaged"
+   ]
+  },
+  {
+   "id": "close-combat",
+   "term": "Close Combat Attack",
+   "category": "rules",
+   "definition": "The Combat Phase attack. Only Engaged Units activate. Models in the Fighting and Supporting Ranks strike with their Combat Phase weapons.",
+   "rulesRef": "Core Rules section 8.8.1",
+   "matches": [
+    "Close Combat Attack",
+    "Close Combat Attacks",
+    "Close Combat"
+   ],
+   "seeAlso": [
+    "fighting-rank",
+    "close-ranks"
+   ]
+  },
+  {
+   "id": "close-ranks",
+   "term": "Close Ranks",
+   "category": "rules",
+   "definition": "Optional first step of a Close Combat Attack: move the Leading Model up to 3″ closer to the Enemies the Unit is Engaged with, then press models into base contact. It can't pull in new Enemy Units.",
+   "rulesRef": "Core Rules section 8.8",
+   "matches": [
+    "Close Ranks"
+   ],
+   "seeAlso": [
+    "close-combat"
+   ]
+  },
+  {
+   "id": "coherency",
+   "term": "Coherency",
+   "category": "rules",
+   "definition": "After any action that repositions a Unit, every model must be Wholly Within 3″ of the Leading Model, linked to it through a chain of its own models. Then the Unit is In Coherency. Casualties never break Coherency.",
+   "rulesRef": "Core Rules section 4.4",
+   "matches": [
+    "Coherency",
+    "In Coherency",
+    "Out of Coherency"
+   ],
+   "seeAlso": [
+    "leading-model",
+    "wholly-within"
+   ]
+  },
+  {
+   "id": "control",
+   "term": "Control and Contest",
+   "category": "rules",
+   "definition": "At the end of each Round, each player adds up the Current Supply of their Units Contesting a Mission Marker (on the battlefield, In Coherency, with a model Within 3″ and in Line of Sight of it on the same elevation). The higher total takes Control. Control is sticky: it stays until the opponent beats it, and ties change nothing. Flying, BURROWED and Reserve Units can't Contest.",
+   "rulesRef": "Core Rules section 8.9.1",
+   "matches": [
+    "Control",
+    "Controls",
+    "Controlled",
+    "Controlling",
+    "Contest",
+    "Contests",
+    "Contested",
+    "Contesting"
+   ],
+   "seeAlso": [
+    "mission-marker",
+    "current-supply"
+   ]
+  },
+  {
+   "id": "creep-tumor",
+   "term": "Creep Tumor",
+   "category": "rules",
+   "definition": "A Zerg Token that spreads creep: Ground Zerg Units Within 6″ of it are ON CREEP.",
+   "rulesRef": "Core Rules section 7.3.1",
+   "matches": [
+    "Creep Tumor",
+    "Creep Tumors"
+   ],
+   "seeAlso": [
+    "on-creep",
+    "token"
+   ]
+  },
+  {
+   "id": "current-supply",
+   "term": "Current Supply Value",
+   "category": "rules",
+   "definition": "A Unit's Supply right now, read from its Supply Profile for the models it has left. It drops as casualties push it into a lower bracket. Used for Deploying, Mission Marker Control and Tactical Mass.",
+   "rulesRef": "Core Rules section 6.1",
+   "matches": [
+    "Current Supply Value",
+    "Current Supply Values",
+    "Current Supply"
+   ],
+   "seeAlso": [
+    "supply-value",
+    "control"
+   ]
+  },
+  {
+   "id": "damage-marker",
+   "term": "Damage Marker",
+   "category": "rules",
+   "definition": "Records Damage a Unit has taken that wasn't enough to remove another model. It adds to the next Damage the Unit takes.",
+   "rulesRef": "Core Rules section 8.7.4",
+   "matches": [
+    "Damage Marker"
+   ],
+   "seeAlso": [
+    "heal"
+   ]
+  },
+  {
+   "id": "deploy",
+   "term": "Deploy",
+   "category": "rules",
+   "definition": "Movement Phase action: a Unit in Reserves enters from your Entry Edge, moving up to its Speed. Its Current Supply Value must fit your Available Supply, and it can't end in the opponent's Zone of Influence.",
+   "rulesRef": "Core Rules section 8.5.5",
+   "matches": [
+    "Deploy",
+    "Deploys",
+    "Deployed"
+   ],
+   "seeAlso": [
+    "reserves",
+    "available-supply",
+    "zone-of-influence"
+   ]
+  },
+  {
+   "id": "dice-pools",
+   "term": "Attack, Armour and Damage Pools",
+   "category": "rules",
+   "definition": "How attacks resolve. Roll the Attack Pool to Hit; hits move to the Armour Pool. Surge may move some straight to the Damage Pool. The defender rolls the rest against Armour, and failures go to the Damage Pool. An eligible Unit then makes an Evade Roll. Each die left deals the weapon's Damage.",
+   "rulesRef": "Core Rules section 8.7.4",
+   "matches": [
+    "Attack Pool",
+    "Armour Pool",
+    "Damage Pool"
+   ],
+   "seeAlso": [
+    "surge",
+    "armour-roll",
+    "evade-roll"
+   ]
+  },
+  {
+   "id": "disengage",
+   "term": "Disengage",
+   "category": "rules",
+   "definition": "Movement Phase action for an Engaged Unit: move away using normal Move rules. Models that can't end outside every Enemy's Engagement Range are Destroyed; if the Leading Model can't, the Disengage fails and it's removed. Next Assault Phase the Unit can't Ranged Attack or Charge, unless it has Tactical Mass.",
+   "rulesRef": "Core Rules section 8.5.4",
+   "matches": [
+    "Disengage",
+    "Disengages",
+    "Disengaging"
+   ],
+   "seeAlso": [
+    "engaged",
+    "tactical-mass"
+   ]
+  },
+  {
+   "id": "effective-size",
+   "term": "Effective Size",
+   "category": "rules",
+   "definition": "A model's Size plus the Size of the terrain it's standing on. It decides what blocks Line of Sight. Flying models count as taller than any terrain.",
+   "rulesRef": "Core Rules section 7.1.2",
+   "matches": [
+    "Effective Size"
+   ],
+   "seeAlso": [
+    "los",
+    "elevation"
+   ]
+  },
+  {
+   "id": "elevation",
+   "term": "Elevation levels",
+   "category": "rules",
+   "definition": "GROUND LEVEL is on the playmat, MID GROUND is on Size 1–2 terrain, and HIGH GROUND is on Size 3+ terrain. Models on HIGH GROUND and GROUND LEVEL can't Engage each other. MID GROUND can Engage either only across a shared ACCESS POINT.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "GROUND LEVEL",
+    "MID GROUND",
+    "HIGH GROUND"
+   ],
+   "seeAlso": [
+    "access-point",
+    "effective-size"
+   ]
+  },
+  {
+   "id": "engaged",
+   "term": "Engaged",
+   "category": "rules",
+   "definition": "A Ground Unit is Engaged when any of its models is Within 1″ of an Enemy Ground model, unless Size 2+ terrain or an elevation difference prevents it. Engaged Units can't Move (they Disengage or Hold) and have limits on Ranged Attacks. Flying Units are never Engaged.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "Engaged",
+    "Engage",
+    "Engages",
+    "Engagement"
+   ],
+   "seeAlso": [
+    "unengaged",
+    "engagement-range",
+    "disengage"
+   ]
+  },
+  {
+   "id": "engagement-range",
+   "term": "Engagement Range",
+   "category": "rules",
+   "definition": "1″ horizontally from a model's base. Melee weapons (Range E) only reach targets in it.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "Engagement Range"
+   ],
+   "seeAlso": [
+    "engaged"
+   ]
+  },
+  {
+   "id": "entry-edge",
+   "term": "Entry Edge",
+   "category": "rules",
+   "definition": "The table edge the Deployment Card gives you. Your Units Deploy from Reserves through it.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "Entry Edge"
+   ],
+   "seeAlso": [
+    "deploy",
+    "zone-of-influence"
+   ]
+  },
+  {
+   "id": "evade-roll",
+   "term": "Evade Roll",
+   "category": "rules",
+   "definition": "Only when a rule grants one, or when an Engaged Unit is hit by a Ranged Attack. The defender rolls the dice in the Damage Pool against the Unit's Evade. Each success cancels a die.",
+   "rulesRef": "Core Rules section 8.7.4",
+   "matches": [
+    "Evade Roll",
+    "Evade Rolls",
+    "Evade Check"
+   ],
+   "seeAlso": [
+    "evade",
+    "hidden",
+    "anti-evade"
+   ]
+  },
+  {
+   "id": "armour-roll",
+   "term": "Armour Roll",
+   "category": "rules",
+   "definition": "The defender rolls the dice in the Armour Pool against the Unit's Armour. Successes are discarded, and failures move to the Damage Pool.",
+   "rulesRef": "Core Rules section 8.7.4",
+   "matches": [
+    "Armour Roll",
+    "Armour Rolls"
+   ],
+   "seeAlso": [
+    "armour",
+    "dice-pools",
+    "tough"
+   ]
+  },
+  {
+   "id": "exhaust",
+   "term": "Ready and Exhausted",
+   "category": "rules",
+   "definition": "Faction and Tactical Cards start each Round Ready (face up). Exhaust one (flip it face down) to use its own ability, or to generate its resource (CP, BM or PE) to pay a cost elsewhere. Excess resource is lost. Exhausted cards refresh in Cleanup.",
+   "rulesRef": "Core Rules section 10.5",
+   "matches": [
+    "Exhaust",
+    "Exhausts",
+    "Exhausted",
+    "Exhausting",
+    "Ready"
+   ],
+   "seeAlso": [
+    "cp",
+    "bm",
+    "pe"
+   ]
+  },
+  {
+   "id": "fighting-rank",
+   "term": "Fighting and Supporting Ranks",
+   "category": "rules",
+   "definition": "The Fighting Rank is models Within 1″ of an Enemy. The Supporting Rank is models in base contact with a Fighting Rank model from their own Unit. Both strike in Close Combat and generate IMPACT dice.",
+   "rulesRef": "Core Rules section 8.8.1",
+   "matches": [
+    "Fighting Rank",
+    "Supporting Rank"
+   ],
+   "seeAlso": [
+    "close-combat",
+    "impact"
+   ]
+  },
+  {
+   "id": "first-player",
+   "term": "First Player Marker",
+   "category": "rules",
+   "definition": "Whoever holds it chooses who activates first each Phase. The first player to Pass in the Movement or Assault Phase takes it for the next Phase. At the end of the Round it goes to the player with fewer VP (Roll-Off if tied).",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "First Player Marker"
+   ],
+   "seeAlso": [
+    "pass",
+    "roll-off"
+   ]
+  },
+  {
+   "id": "fixed-addition",
+   "term": "Fixed Addition",
+   "category": "rules",
+   "definition": "\"D3+1\" means roll and add 1. It's a value, not a Modifier to a Target Number.",
+   "rulesRef": "Core Rules section 3.5",
+   "matches": [],
+   "seeAlso": [
+    "modifier"
+   ]
+  },
+  {
+   "id": "hold",
+   "term": "Hold",
+   "category": "rules",
+   "definition": "The Unit does nothing this Activation and gets an Activation Marker.",
+   "rulesRef": "Core Rules section 8.5.1",
+   "matches": [
+    "Hold"
+   ],
+   "seeAlso": [
+    "activation"
+   ]
+  },
+  {
+   "id": "impassable",
+   "term": "IMPASSABLE TERRAIN",
+   "category": "rules",
+   "definition": "Terrain with no ACCESS POINT to the next level. Models can't move through, onto or across it, or end on it. (Size 0 and 1 terrain can be moved through.)",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "IMPASSABLE TERRAIN",
+    "Impassable Terrain",
+    "Impassible Terrain"
+   ],
+   "seeAlso": [
+    "access-point"
+   ]
+  },
+  {
+   "id": "leading-model",
+   "term": "Leading Model",
+   "category": "rules",
+   "definition": "For any move, you pick one model as the Leading Model, move it (measuring its path), then set the rest In Coherency around it.",
+   "rulesRef": "Core Rules section 4.3",
+   "matches": [
+    "Leading Model",
+    "Leading Models"
+   ],
+   "seeAlso": [
+    "coherency"
+   ]
+  },
+  {
+   "id": "los",
+   "term": "Line of Sight",
+   "category": "rules",
+   "definition": "Traced top-down from any part of one base to any part of the other. Terrain blocks it only under the Cover rules (Full Cover, Direct Cover, Elevation Dead Zone). It's always mutual.",
+   "rulesRef": "Core Rules section 7.1",
+   "matches": [
+    "Line of Sight",
+    "LoS"
+   ],
+   "seeAlso": [
+    "visible",
+    "blocking-terrain",
+    "effective-size"
+   ]
+  },
+  {
+   "id": "mission-marker",
+   "term": "Mission Marker",
+   "category": "rules",
+   "definition": "Numbered Markers set out from the Deployment Card: 1 and 3 Red, 2 and 4 Blue, 5 Neutral. Each has an Activated and a Deactivated side. They're the main way to score.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "Mission Marker",
+    "Mission Markers"
+   ],
+   "seeAlso": [
+    "control",
+    "claim"
+   ]
+  },
+  {
+   "id": "modifier",
+   "term": "Modifier",
+   "category": "rules",
+   "definition": "Changes a roll's Target Number: +X makes it easier, −X harder. A Target Number never goes below 2+ or above 6+, a natural 6 always succeeds and a natural 1 always fails. Different named sources stack.",
+   "rulesRef": "Core Rules section 3.4",
+   "matches": [
+    "Modifier",
+    "Modifiers"
+   ],
+   "seeAlso": [
+    "fixed-addition"
+   ]
+  },
+  {
+   "id": "parent",
+   "term": "Parent Unit",
+   "category": "rules",
+   "definition": "The Unit that SUMMONED another Unit. The summoned Unit activates right after it.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "Parent Unit",
+    "Parent"
+   ],
+   "seeAlso": [
+    "summon"
+   ]
+  },
+  {
+   "id": "pass",
+   "term": "Pass",
+   "category": "rules",
+   "definition": "Instead of activating a Unit, a player may Pass, and must Pass with nothing left to activate. Once you've Passed you're done for that Phase. The first to Pass takes the First Player Marker for the next Phase.",
+   "rulesRef": "Core Rules section 8.2.1",
+   "matches": [
+    "Pass",
+    "Passes"
+   ],
+   "seeAlso": [
+    "first-player"
+   ]
+  },
+  {
+   "id": "ranged-attack",
+   "term": "Ranged Attack",
+   "category": "rules",
+   "definition": "Assault Phase action: an Unengaged Unit fires its Assault Phase weapons at a target in Range and Line of Sight. Engaged Units are restricted (see PINPOINT and BULKY).",
+   "rulesRef": "Core Rules section 8.7.3",
+   "matches": [
+    "Ranged Attack",
+    "Ranged Attacks"
+   ],
+   "seeAlso": [
+    "dice-pools",
+    "pinpoint",
+    "bulky"
+   ]
+  },
+  {
+   "id": "reserves",
+   "term": "Reserves",
+   "category": "rules",
+   "definition": "Every Unit starts the game off the table in Reserves. Units there can't be targeted, can't use abilities (unless stated), and don't count toward your Supply on the battlefield. Units still in Reserves at the end of the final Round count as Destroyed for scoring.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "Reserves"
+   ],
+   "seeAlso": [
+    "deploy"
+   ]
+  },
+  {
+   "id": "roll-off",
+   "term": "Roll-Off",
+   "category": "rules",
+   "definition": "Both players roll 2D6; the higher total wins, and ties roll again.",
+   "rulesRef": "Core Rules section 3.2",
+   "matches": [
+    "Roll-Off",
+    "Roll-Offs"
+   ],
+   "seeAlso": []
+  },
+  {
+   "id": "round",
+   "term": "Rounds and Phases",
+   "category": "rules",
+   "definition": "Each Round has four Phases: Movement, Assault, Combat, then Scoring & Cleanup. Effects \"until the End of the Round\" are cleared in Cleanup.",
+   "rulesRef": "Core Rules section 8.1",
+   "matches": [
+    "Movement Phase",
+    "Assault Phase",
+    "Combat Phase",
+    "Scoring & Cleanup Phase",
+    "Scoring and Cleanup Phase",
+    "End of the Round",
+    "Start of the Round"
+   ],
+   "seeAlso": []
+  },
+  {
+   "id": "run",
+   "term": "Run",
+   "category": "rules",
+   "definition": "Assault Phase action: an Unengaged Unit moves up to its Speed instead of attacking.",
+   "rulesRef": "Core Rules section 8.7.1",
+   "matches": [
+    "Run",
+    "Runs"
+   ],
+   "seeAlso": [
+    "speed"
+   ]
+  },
+  {
+   "id": "supply-pool",
+   "term": "Supply Pool",
+   "category": "rules",
+   "definition": "The total Current Supply you may have on the battlefield this Round. It starts at the Mission's value and grows each Round, and is unlimited in the final Round.",
+   "rulesRef": "Core Rules section 8.3.1",
+   "matches": [
+    "Supply Pool"
+   ],
+   "seeAlso": [
+    "available-supply"
+   ]
+  },
+  {
+   "id": "supply-value",
+   "term": "Supply Value",
+   "category": "rules",
+   "definition": "A Unit's Supply from its Supply Profile. Its starting Supply Value (from the composition you bought) is how many Army Slots it fills.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "Supply Value",
+    "Supply Values"
+   ],
+   "seeAlso": [
+    "current-supply",
+    "army-slot"
+   ]
+  },
+  {
+   "id": "surge",
+   "term": "Surge",
+   "category": "rules",
+   "definition": "Weapons with S Dice roll a Surge Die with their attack. If the target has the weapon's Surge Type tag, move that many dice from the Armour Pool straight to the Damage Pool, skipping Armour. Otherwise the Surge Die does nothing.",
+   "rulesRef": "Core Rules section 8.7.4",
+   "matches": [
+    "Surge",
+    "Surge Die",
+    "Surge Type"
+   ],
+   "seeAlso": [
+    "dice-pools",
+    "combat-tags",
+    "dodge"
+   ]
+  },
+  {
+   "id": "tactical-mass",
+   "term": "Tactical Mass",
+   "category": "rules",
+   "definition": "A Unit has Tactical Mass when its Current Supply Value is higher than the combined Current Supply of every Enemy Unit it's Engaged with. A Unit that Disengages with Tactical Mass may still Ranged Attack and Charge next Assault Phase.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "Tactical Mass"
+   ],
+   "seeAlso": [
+    "disengage"
+   ]
+  },
+  {
+   "id": "template",
+   "term": "Template (BT / FT)",
+   "category": "rules",
+   "definition": "Blast Template (BT) and Flamer Template (FT) weapons hit every model under the template at the target's elevation. Models outside the Primary target take Spillover.",
+   "rulesRef": "Core Rules section 8.7.6",
+   "matches": [
+    "Template",
+    "Templates",
+    "Blast Template",
+    "Flamer Template"
+   ],
+   "seeAlso": [
+    "spillover"
+   ]
+  },
+  {
+   "id": "token",
+   "term": "Token",
+   "category": "rules",
+   "definition": "A physical battlefield object (Creep Tumor, Corrosive Bile…). It's treated as Size 0 terrain: models move through it but can't end on it. Removed at the End of the Round unless stated.",
+   "rulesRef": "Core Rules section 7.3.1",
+   "matches": [
+    "Token",
+    "Tokens"
+   ],
+   "seeAlso": [
+    "stay-in-play"
+   ]
+  },
+  {
+   "id": "unengaged",
+   "term": "Unengaged",
+   "category": "rules",
+   "definition": "Not Within 1″ of any Enemy Ground model (or terrain prevents Engagement). Only Unengaged Units can Move, Run, Charge or fire freely. Flying Units are always Unengaged.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "Unengaged"
+   ],
+   "seeAlso": [
+    "engaged"
+   ]
+  },
+  {
+   "id": "unique",
+   "term": "Unique",
+   "category": "rules",
+   "definition": "Only one copy of this Unit or card may be in your army.",
+   "rulesRef": "Core Rules section 5.3",
+   "matches": [
+    "Unique"
+   ],
+   "seeAlso": []
+  },
+  {
+   "id": "visible",
+   "term": "Visible",
+   "category": "rules",
+   "definition": "A model is Visible to another if there's a valid Line of Sight between them. Only Visible models can be removed as casualties from an attack.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "Visible"
+   ],
+   "seeAlso": [
+    "los"
+   ]
+  },
+  {
+   "id": "vp",
+   "term": "Victory Points (VP)",
+   "category": "rules",
+   "definition": "Points scored from the Mission Card each Round. Most at the end wins; some Missions end early on a big enough lead.",
+   "rulesRef": "Core Rules section 8.9.2",
+   "matches": [
+    "VP",
+    "VPs",
+    "Victory Points"
+   ],
+   "seeAlso": [
+    "mission-marker"
+   ]
+  },
+  {
+   "id": "within",
+   "term": "Within",
+   "category": "rules",
+   "definition": "A model is Within a distance if any part of its base is in range. A Unit is Within if at least one model is.",
+   "rulesRef": "Core Rules section 4.2",
+   "matches": [
+    "Within"
+   ],
+   "seeAlso": [
+    "wholly-within"
+   ]
+  },
+  {
+   "id": "wholly-within",
+   "term": "Wholly Within",
+   "category": "rules",
+   "definition": "A model is Wholly Within a distance only if its entire base is in range. A Unit is Wholly Within only if every model is.",
+   "rulesRef": "Core Rules section 4.2",
+   "matches": [
+    "Wholly Within"
+   ],
+   "seeAlso": [
+    "within"
+   ]
+  },
+  {
+   "id": "zone-of-influence",
+   "term": "Zone of Influence",
+   "category": "rules",
+   "definition": "The 6″ strip in from each player's Entry Edge. Units arriving from Reserves (including by SUMMON or transport) can't end in the opponent's. It has no other effect.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "Zone of Influence"
+   ],
+   "seeAlso": [
+    "deploy",
+    "entry-edge"
+   ]
+  },
+  {
+   "id": "friendly",
+   "term": "Friendly and Enemy",
+   "category": "rules",
+   "definition": "Everything belonging to you (and teammates) is Friendly; everything of your opponent's is Enemy. You can't attack Friendly Units unless a rule says so.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [],
+   "seeAlso": []
+  },
+  {
+   "id": "army-slot",
+   "term": "Army Slots",
+   "category": "card",
+   "definition": "Core, Elite, Support, Air and Hero. Your Faction Card gives some, and Tactical Cards add more. A Unit fills slots of its type equal to its starting Supply Value. Unused slots are lost.",
+   "rulesRef": "Core Rules section 9.1.5",
+   "matches": [
+    "Army Slot",
+    "Army Slots"
+   ],
+   "seeAlso": [
+    "supply-value"
+   ]
+  },
+  {
+   "id": "combat-tags",
+   "term": "Combat Tags",
+   "category": "card",
+   "definition": "Armoured, Biological, Light, Mechanical, Psionic, Flying and Ground. Weapons and abilities check them: Target, Surge Type, PIERCE and so on. Ground (the tag) isn't the same as GROUND LEVEL (an elevation).",
+   "rulesRef": "Core Rules section 2.4.2",
+   "matches": [
+    "Combat Tag",
+    "Combat Tags",
+    "Armoured",
+    "Armored",
+    "Biological",
+    "Light",
+    "Mechanical",
+    "Psionic",
+    "Ground",
+    "GROUND"
+   ],
+   "seeAlso": [
+    "flying",
+    "surge",
+    "pierce"
+   ]
+  },
+  {
+   "id": "flying",
+   "term": "Flying",
+   "category": "card",
+   "definition": "A Combat Tag. Flying Units ignore terrain and elevation when moving, are never Engaged, can't Charge or be Charged, don't fight in the Combat Phase, and can't Control or Contest Mission Markers. For cover they count as taller than any terrain.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "Flying"
+   ],
+   "seeAlso": [
+    "combat-tags"
+   ]
+  },
+  {
+   "id": "faction-tags",
+   "term": "Faction Tags",
+   "category": "card",
+   "definition": "Race (Terran, Zerg, Protoss) and sub-faction tags (e.g. Raynor's Raiders). A Unit or Tactical Card is allowed only if every one of its tags is on your Faction Card.",
+   "rulesRef": "Core Rules Part 11",
+   "matches": [
+    "Faction Tag",
+    "Faction Tags"
+   ],
+   "seeAlso": [
+    "faction-card"
+   ]
+  },
+  {
+   "id": "faction-card",
+   "term": "Faction Card",
+   "category": "card",
+   "definition": "Every army has exactly one. It sets your Faction Tags, gives your starting Army Slots and resource, and has its own abilities.",
+   "rulesRef": "Core Rules section 5.4",
+   "matches": [
+    "Faction Card",
+    "Faction Cards"
+   ],
+   "seeAlso": [
+    "tactical-card",
+    "faction-tags"
+   ]
+  },
+  {
+   "id": "tactical-card",
+   "term": "Tactical Card",
+   "category": "card",
+   "definition": "Bought with Vespene Gas. Each adds Army Slots, provides a resource when Exhausted, and has abilities. Zerg also take exactly one Creep card.",
+   "rulesRef": "Core Rules section 5.3",
+   "matches": [
+    "Tactical Card",
+    "Tactical Cards"
+   ],
+   "seeAlso": [
+    "army-slot",
+    "exhaust"
+   ]
+  },
+  {
+   "id": "cp",
+   "term": "CP (Terran resource)",
+   "category": "card",
+   "definition": "Terran's resource for paying ability costs (e.g. \"1 CP\"). Generated by Exhausting a Ready Terran card.",
+   "rulesRef": "Core Rules section 10.5.1",
+   "matches": [
+    "CP"
+   ],
+   "seeAlso": [
+    "exhaust"
+   ]
+  },
+  {
+   "id": "bm",
+   "term": "BM (Zerg resource, Biomass)",
+   "category": "card",
+   "definition": "Zerg's resource for paying ability costs (e.g. \"1 BM\"). Generated by Exhausting a Ready Zerg card.",
+   "rulesRef": "Core Rules section 10.5.1",
+   "matches": [
+    "BM"
+   ],
+   "seeAlso": [
+    "exhaust"
+   ]
+  },
+  {
+   "id": "pe",
+   "term": "PE (Protoss resource)",
+   "category": "card",
+   "definition": "Protoss's resource for paying ability costs (e.g. \"1 PE\"). Generated by Exhausting a Ready Protoss card.",
+   "rulesRef": "Core Rules section 10.5.1",
+   "matches": [
+    "PE"
+   ],
+   "seeAlso": [
+    "exhaust"
+   ]
+  },
+  {
+   "id": "minerals",
+   "term": "Minerals and Vespene Gas",
+   "category": "card",
+   "definition": "Army-building budgets. Minerals buy Units and upgrades; Vespene Gas buys Tactical Cards. Skirmish is 1000 / 100 and Standard 2000 / 200.",
+   "rulesRef": "Core Rules section 9.1.3",
+   "matches": [
+    "Minerals",
+    "Vespene Gas"
+   ],
+   "seeAlso": [
+    "tactical-card"
+   ]
+  },
+  {
+   "id": "speed",
+   "term": "Speed",
+   "category": "card",
+   "definition": "How far (in inches) the Leading Model moves in a standard Move. With two values (e.g. 4/7), use the second if the Unit is down to one model or started with one. \"-\" means it can't move at all.",
+   "rulesRef": "Core Rules section 5.1",
+   "matches": [
+    "Speed",
+    "SPEED"
+   ],
+   "seeAlso": [
+    "run"
+   ]
+  },
+  {
+   "id": "armour",
+   "term": "Armour",
+   "category": "card",
+   "definition": "The Target Number the defender needs on a D6 to cancel a hit in the Armour Roll.",
+   "rulesRef": "Core Rules section 5.1",
+   "matches": [
+    "Armour"
+   ],
+   "seeAlso": [
+    "armour-roll"
+   ]
+  },
+  {
+   "id": "evade",
+   "term": "Evade",
+   "category": "card",
+   "definition": "The Target Number for Evade Rolls, which a Unit only gets when a rule grants one. \"-\" means it can never Evade.",
+   "rulesRef": "Core Rules section 5.1",
+   "matches": [
+    "Evade"
+   ],
+   "seeAlso": [
+    "evade-roll"
+   ]
+  },
+  {
+   "id": "hp",
+   "term": "Hit Points (HP)",
+   "category": "card",
+   "definition": "How much Damage one model takes before it's removed.",
+   "rulesRef": "Core Rules section 5.1",
+   "matches": [
+    "Hit Points",
+    "HP"
+   ],
+   "seeAlso": [
+    "damage-marker",
+    "shield"
+   ]
+  },
+  {
+   "id": "shield",
+   "term": "Shield",
+   "category": "card",
+   "definition": "Extra HP added to the Unit's first model. The Unit is Shielded until that's used up.",
+   "rulesRef": "Core Rules section 5.1",
+   "matches": [],
+   "seeAlso": [
+    "shielded"
+   ]
+  },
+  {
+   "id": "size",
+   "term": "Size",
+   "category": "card",
+   "definition": "A model's height category, used for Line of Sight and moving past terrain.",
+   "rulesRef": "Core Rules section 5.1",
+   "matches": [
+    "Size"
+   ],
+   "seeAlso": [
+    "effective-size"
+   ]
+  },
+  {
+   "id": "range",
+   "term": "Range (Rng)",
+   "category": "card",
+   "definition": "A weapon's maximum reach in inches. E means Engagement Range (melee). FT means a Flamer Template.",
+   "rulesRef": "Core Rules section 5.1",
+   "matches": [],
+   "seeAlso": [
+    "engagement-range",
+    "template",
+    "long-range"
+   ]
+  },
+  {
+   "id": "target",
+   "term": "Target",
+   "category": "card",
+   "definition": "What a weapon can shoot: Ground, Flying, or All.",
+   "rulesRef": "Core Rules section 5.1",
+   "matches": [],
+   "seeAlso": [
+    "combat-tags"
+   ]
+  },
+  {
+   "id": "roa",
+   "term": "RoA (Rate of Attack)",
+   "category": "card",
+   "definition": "Dice each firing model rolls. BT+X means a Blast Template plus X.",
+   "rulesRef": "Core Rules section 5.1",
+   "matches": [
+    "RoA"
+   ],
+   "seeAlso": [
+    "dice-pools",
+    "template"
+   ]
+  },
+  {
+   "id": "hit",
+   "term": "Hit",
+   "category": "card",
+   "definition": "The Target Number each attack die needs on a D6 to hit.",
+   "rulesRef": "Core Rules section 5.1",
+   "matches": [],
+   "seeAlso": [
+    "modifier"
+   ]
+  },
+  {
+   "id": "s-dice",
+   "term": "S Dice",
+   "category": "card",
+   "definition": "The Surge Die a weapon rolls (D3 or D6). No S Dice means no Surge.",
+   "rulesRef": "Core Rules section 5.1",
+   "matches": [],
+   "seeAlso": [
+    "surge"
+   ]
+  },
+  {
+   "id": "dmg",
+   "term": "Damage (Dmg)",
+   "category": "card",
+   "definition": "Damage each die left in the Damage Pool deals.",
+   "rulesRef": "Core Rules section 5.1",
+   "matches": [],
+   "seeAlso": [
+    "dice-pools",
+    "pierce"
+   ]
+  }
+ ],
+ "meta": {
+  "api": "v1",
+  "dataVersion": "54dd7232c3bd",
+  "costs": "Cost table 09.10.2026",
+  "cards": "Official card sheets, waves 1–3 (v1.09.26)",
+  "docs": "https://github.com/zariaskobold/sctmg-data-disc/blob/main/API.md",
+  "legal": "Unofficial, free fan tool. Not affiliated with, endorsed by, or sponsored by Blizzard Entertainment or Archon Studio. StarCraft® is a trademark or registered trademark of Blizzard Entertainment, Inc. in the U.S. and/or other countries. Card text and game data © Blizzard Entertainment, Inc. and © Archon Sp. z o.o., used for non-commercial reference.",
+  "count": 118
+ }
+}

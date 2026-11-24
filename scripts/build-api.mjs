@@ -22,7 +22,7 @@ const script = html.split("<script>")[1];
 const marker = "/* ===================== UI HELPERS";
 if (!script || !script.includes(marker)) throw new Error("index.html: couldn't find the inline script or the UI HELPERS marker");
 globalThis.localStorage = { getItem: () => null, setItem() {} };
-const D = new Function(script.split(marker)[0] + ";return {UNITS,TAC,MISSIONS,DEPLOYS,SCALES,LEGAL};")();
+const D = new Function(script.split(marker)[0] + ";return {UNITS,TAC,MISSIONS,DEPLOYS,SCALES,LEGAL,GLOSSARY};")();
 
 // ---------- reshape ----------
 const RACE = { T: "terran", Z: "zerg", P: "protoss" };
@@ -72,13 +72,19 @@ const missionSide = s => ({
 });
 const mission = m => ({ id: m.id, name: m.n, standard: missionSide(m.std), skirmish: missionSide(m.sk) });
 const deployment = d => ({ id: d.id, name: d.n, scale: SCALE[d.sc], description: d.d });
+const GL_CAT = { Keyword: "keyword", Status: "status", Rules: "rules", Card: "card", Mission: "mission" };
+const glossaryEntry = g => ({
+  id: g.id, term: g.n, category: GL_CAT[g.cat], definition: g.d,
+  rulesRef: /^\d/.test(g.ref) ? `Core Rules ${g.ref.includes(".") ? "section" : "Part"} ${g.ref}` : g.ref, matches: g.f, seeAlso: g.see,
+});
 const scales = Object.entries(D.SCALES).map(([k, s]) => ({ id: SCALE[k], name: s.n, minerals: s.min, gas: Math.floor(s.min / 10), custom: k === "go" }));
 
 const units = D.UNITS.map(unit), cards = D.TAC.map(card);
 const missions = D.MISSIONS.map(mission), deployments = D.DEPLOYS.map(deployment);
+const glossary = D.GLOSSARY.map(glossaryEntry);
 
 // ---------- envelope ----------
-const dataVersion = createHash("sha256").update(JSON.stringify({ units, cards, missions, deployments, scales })).digest("hex").slice(0, 12);
+const dataVersion = createHash("sha256").update(JSON.stringify({ units, cards, missions, deployments, scales, glossary })).digest("hex").slice(0, 12);
 const meta = {
   api: "v1", dataVersion, costs: "Cost table 09.10.2026", cards: "Official card sheets, waves 1–3 (v1.09.26)",
   docs: "https://github.com/zariaskobold/sctmg-data-disc/blob/main/API.md", legal: D.LEGAL,
@@ -88,18 +94,19 @@ const env = (data, extra) => ({ data, meta: extra ? { ...meta, ...extra } : meta
 const files = {
   "index.json": env({
     name: "SCTMG Data Disc API",
-    base: "https://zariaskobold.github.io/sctmg-data-disc/api/v1/",
+    base: "https://sctmgdatadisc.com/api/v1/",
     endpoints: [
       "index.json", "units.json", "units/{id}.json", "cards.json", "cards/{id}.json",
-      "missions.json", "missions/{id}.json", "deployments.json", "scales.json",
+      "missions.json", "missions/{id}.json", "deployments.json", "scales.json", "glossary.json",
     ],
-    counts: { units: units.length, cards: cards.length, missions: missions.length, deployments: deployments.length },
+    counts: { units: units.length, cards: cards.length, missions: missions.length, deployments: deployments.length, glossary: glossary.length },
   }),
   "units.json": env(units, { count: units.length }),
   "cards.json": env(cards, { count: cards.length }),
   "missions.json": env(missions, { count: missions.length }),
   "deployments.json": env(deployments, { count: deployments.length }),
   "scales.json": env(scales, { count: scales.length }),
+  "glossary.json": env(glossary, { count: glossary.length }),
 };
 for (const u of units) files[`units/${u.id}.json`] = env(u);
 for (const c of cards) files[`cards/${c.id}.json`] = env(c);

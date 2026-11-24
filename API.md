@@ -11,14 +11,15 @@ reasoning about what the build script ought to produce.
 
 A **static, read-only JSON API** for StarCraft: Tabletop Miniatures Game data
 (units, faction/tactical/creep cards, missions, deployments, army scales),
-served by GitHub Pages next to the app.
+served by Cloudflare next to the app at sctmgdatadisc.com.
 
-- **Base:** `https://zariaskobold.github.io/sctmg-data-disc/api/v1/`
+- **Base:** `https://sctmgdatadisc.com/api/v1/`
 - **Auth:** none. Plain `GET`s of `.json` files.
-- **CORS:** GitHub Pages sends `Access-Control-Allow-Origin: *`, so browser apps
-  on any origin can `fetch()` it directly. No proxy needed.
-- **Rate limit:** none of ours. GitHub's CDN serves it (soft limit about
-  100 GB/month for the whole site). Cache what you fetch anyway; the data only
+- **CORS:** `/api/*` responses send `Access-Control-Allow-Origin: *` (set in the
+  repo's `_headers` file), so browser apps on any origin can `fetch()` it
+  directly. No proxy needed.
+- **Rate limit:** none of ours. Cloudflare's CDN serves it. Cache what you
+  fetch anyway; the data only
   changes when a card wave or cost patch lands.
 - **Unofficial and non-commercial.** Every response carries `meta.legal`. If you
   build on this, keep that notice visible and keep your project non-commercial.
@@ -99,6 +100,7 @@ All paths are relative to the base.
 | `missions/{id}.json` | One mission. |
 | `deployments.json` | Every deployment card. |
 | `scales.json` | Skirmish / Standard / Grand Offensive mineral and gas limits. |
+| `glossary.json` | Game terms and keywords with short plain-English definitions. |
 
 IDs are the app's own (`marine`, `novastealth`, `zagswarm`, `fireinsky`).
 They're stable because saved rosters reference them. **An unknown ID is a
@@ -149,6 +151,12 @@ each `{ supply, supplyPerRound, gameLength, earlyWinLead, parameters, scoring, a
 **Deployment**: `id`, `name`, `scale` (`standard` / `skirmish`), `description`
 (the map described in words. There's no geometry data.)
 
+**Glossary entry**: `id`, `term` (as shown, e.g. `"IMPACT (X) Y"`), `category`
+(`keyword` / `status` / `rules` / `card` / `mission`), `definition` (a short
+summary in our own words, not the rulebook's text), `rulesRef` (where to read the
+official rule, e.g. `"Core Rules Part 11"`), `matches` (the exact, case-sensitive
+words the app links to this entry in card text) and `seeAlso` (related ids).
+
 **Scale**: `id`, `name`, `minerals`, `gas` (minerals ÷ 10), `custom` (true for
 Grand Offensive, where `minerals` is only the default).
 
@@ -179,11 +187,11 @@ Grand Offensive, where `minerals` is only the default).
 ## Quick checks from a shell
 
 ```bash
-curl -s "https://zariaskobold.github.io/sctmg-data-disc/api/v1/index.json"
+curl -s "https://sctmgdatadisc.com/api/v1/index.json"
 ```
 
 ```bash
-curl -s "https://zariaskobold.github.io/sctmg-data-disc/api/v1/units/zagara.json" | head -c 600
+curl -s "https://sctmgdatadisc.com/api/v1/units/zagara.json" | head -c 600
 ```
 
 ---

@@ -1,0 +1,4 @@
+# Cloudflare response headers (Workers static assets).
+# Let browser apps on any origin fetch() the API, as GitHub Pages did.
+/api/*
+  Access-Control-Allow-Origin: *

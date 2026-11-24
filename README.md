@@ -4,7 +4,7 @@
 
 A mobile-friendly field kit for **StarCraft: Tabletop Miniatures Game** — build crews, run setup, track games, and look up cards, all from a single page that works on your phone at the table.
 
-**Live site:** https://zariaskobold.github.io/sctmg-data-disc/
+**Live site:** https://sctmgdatadisc.com/ (mirror: https://zariaskobold.github.io/sctmg-data-disc/)
 
 ---
 
@@ -14,6 +14,7 @@ A mobile-friendly field kit for **StarCraft: Tabletop Miniatures Game** — buil
 - **Game setup** — priority, plus mission and deployment drafting.
 - **Live play tracker** — rounds, phases, Supply Pool, victory points, and card exhaust/ready states.
 - **Card reference** — searchable unit and faction cards for Terran, Zerg, and Protoss.
+- **Glossary** — a searchable list of game terms in plain English, and every keyword on a card is tappable to show what it means.
 - **Current costs** — includes the October 9, 2026 cost-table update.
 
 ## Data notes
@@ -25,7 +26,7 @@ If a future cost table lists units whose cards aren't out yet, they show a **No 
 ## API
 
 The card data is also available as a free, read-only JSON API at
-`https://zariaskobold.github.io/sctmg-data-disc/api/v1/`. It covers units,
+`https://sctmgdatadisc.com/api/v1/`. It covers units,
 faction and tactical cards, missions, deployments and scales, needs no key,
 and works cross-origin. See [API.md](API.md) for endpoints and record shapes.
 Please keep it non-commercial and keep the `meta.legal` notice visible.

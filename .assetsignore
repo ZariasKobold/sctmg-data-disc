@@ -1,0 +1,15 @@
+# Files Cloudflare should NOT publish (gitignore syntax).
+# The live site only needs index.html, api/ and _headers.
+.git
+.github
+.gitignore
+.assetsignore
+.wrangler
+node_modules
+Docs
+tests
+scripts
+package.json
+package-lock.json
+wrangler.jsonc
+*.md

@@ -100,6 +100,9 @@ try {
     await fireChange("#sOG", "999");
     await fireChange("#sOM", "9999");
     expect((await text("#v-setup")).includes("You take priority"), "priority banner missing");
+    await $("#v-setup button.gl").first().click(); // term links in the inline mission text
+    expect(await page.evaluate(() => document.querySelector("#gloss").open), "term link in Setup didn't open");
+    await $("#gClose").click();
     await $("#sStart").click();
     expect(await $("#v-play").isVisible(), "Start game didn't switch to Play");
 
@@ -160,10 +163,80 @@ try {
   await $("#themeBtn").click();
   expect(before !== await page.evaluate(() => getComputedStyle(document.body).backgroundColor), "theme toggle did nothing");
 
+  log("glossary: term links in a card open a definition on top of the card");
+  await nav("cards");
+  await $("#cQ").fill("");
+  await $('#v-cards button[data-cr="Z"]').click();
+  await $('#v-cards button[data-unit="zergling"]').click();
+  const terms = await $("#mBody button.gl").count();
+  expect(terms > 10, `only ${terms} glossary links on the Zergling card`);
+  await $('#mBody button.gl[data-gl="impact"]').click();
+  expect(await page.evaluate(() => document.querySelector("#gloss").open && document.querySelector("#modal").open), "definition sheet should open over the still-open card");
+  expect((await text("#gTitle")).startsWith("IMPACT"), "wrong term opened");
+  await $('#gBody button.gl[data-gl="charge"]').first().click();
+  expect((await text("#gTitle")) === "Charge" && await $("#gBack").isVisible(), "following a link inside a definition failed");
+  await $("#gBack").click();
+  expect((await text("#gTitle")).startsWith("IMPACT"), "Back didn't return to the previous term");
+  await $("#gClose").click();
+  expect(await modalOpen(), "closing the definition should leave the card open");
+  await $("#mClose").click();
+
+  log("glossary: weapon headers, stats and mission text link too");
+  await $('#v-cards button[data-cr="T"]').click();
+  await $('#v-cards button[data-unit="marine"]').click();
+  for (const id of ["roa", "surge", "armour", "speed"]) expect(await $(`#mBody button.gl[data-gl="${id}"]`).count() > 0, `no "${id}" link on the Marine card`);
+  await $("#mClose").click();
+  await $("#v-cards button[data-mis]").first().click();
+  expect(await $("#mBody button.gl").count() > 0, "mission text has no glossary links");
+  await $("#mClose").click();
+
+  log("glossary: tab, search, filters and every term opens");
+  await nav("gloss");
+  const total = await $("#v-gloss .gitem").count();
+  expect(total > 100, `only ${total} glossary entries listed`);
+  await $("#gQ").fill("engag");
+  expect(await page.evaluate(() => document.activeElement.id) === "gQ", "search box lost focus while typing");
+  expect((await $("#v-gloss .gitem h3").first().innerText()).startsWith("Engaged"), "best match isn't first");
+  await $("#gQ").fill("zzzz");
+  expect((await text("#gList")).includes("No matching terms"), "empty search state missing");
+  await $("#gQ").fill("");
+  await $('#v-gloss button[data-gc="Status"]').click();
+  const statuses = await $("#v-gloss .gitem").count();
+  expect(statuses > 3 && statuses < total, `Status filter shows ${statuses} of ${total}`);
+  await $('#v-gloss button[data-gc=""]').click();
+  const links = await $("#v-gloss button.gl").count();
+  for (let i = 0; i < links; i += 7) { // a spread of links, not all 300+
+    step = `glossary link ${i + 1}/${links}`;
+    await $("#v-gloss button.gl").nth(i).click();
+    expect((await $("#gBody").innerText()).length > 20, "definition sheet is empty");
+    await $("#gClose").click();
+  }
+
   log("saved rosters survive a reload");
   await page.reload();
   await nav("build");
   expect((await text("#v-build")).includes("Smoke P"), "rosters didn't persist");
+  expect(!(await modalOpen()), "a healthy save shouldn't trigger the saved-data notice");
+
+  log("a save with stale IDs loads with a notice instead of crashing");
+  await page.evaluate(() => {
+    const key = "sctmg-fieldkit-v1", s = JSON.parse(localStorage.getItem(key));
+    s.build.faction = "gone-faction";
+    s.build.units.push({ id: "gone-unit", ci: 0, ups: [] });
+    s.game = { mission: "supplydrop", deploy: "", scale: "std", round: 1, phase: 0, vp: [0, 0], over: false, log: [],
+      roster: s.build, units: [{ uid: 1, id: "gone-unit", ups: [], models: 1, max: 1, startSup: 1, status: "res" }], cards: [{ id: "gone-card", ready: true }] };
+    localStorage.setItem(key, JSON.stringify(s));
+  });
+  await page.reload();
+  expect(await modalOpen(), "stale-data notice didn't appear");
+  expect((await $("#mBody").innerText()).includes("gone-unit"), "notice doesn't name the dropped unit");
+  await $("#mClose").click();
+  for (const v of ["build", "setup", "play"]) {
+    await nav(v);
+    expect((await $(`#v-${v}`).innerHTML()).length > 100, `#v-${v} is empty after loading stale data`);
+  }
+  await page.reload();
+  expect(!(await modalOpen()), "the notice should only appear once (the cleaned save is written back)");
 } catch (e) {
   errors.push(e.message);
 } finally {

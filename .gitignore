@@ -3,3 +3,6 @@ Docs/
 
 # Future test tooling
 node_modules/
+
+# Wrangler local dev cache
+.wrangler/

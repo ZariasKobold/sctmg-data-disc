@@ -9,17 +9,17 @@ Context for Claude Code working in this repo. Read this before making changes.
 The name refers to the early StarCraft mission (The Jacobs Installation) where Raynor's crew steals a data disc from the Confederacy. A crew builder is, after all, a disc full of army data.
 
 - **Repo:** `zariaskobold/sctmg-data-disc` (public, all-lowercase name)
-- **Live site:** https://zariaskobold.github.io/sctmg-data-disc/ (GitHub Pages, deploys from `main` / root)
+- **Live site:** https://sctmgdatadisc.com/ (Cloudflare Workers static assets, auto-deploys from `main`). The old GitHub Pages URL, https://zariaskobold.github.io/sctmg-data-disc/, still deploys from `main` / root as a mirror.
 
 ## Architecture
 
 The whole app is **one self-contained file: `index.html`**. Markup, CSS and vanilla JS all live inline. There is no framework, bundler, build step or `package.json`.
 
 - **External dependency:** Google Fonts only (Chakra Petch for display, Barlow for body), loaded via `<link>`. Everything else is inline.
-- **Data:** hardcoded JS arrays in the script: `UNITS`, `TAC` (tactical/faction cards), `MISSIONS`, `DEPLOYS`, `SCALES`. Abilities are built with an `A(phase, name, type, text)` helper. Unit records use short keys (`id`, `n`, `r`, `tags`, `gas`, `slots`, `res`, `ab`, `uq`, `unk`, …).
+- **Data:** hardcoded JS arrays in the script: `UNITS`, `TAC` (tactical/faction cards), `MISSIONS`, `DEPLOYS`, `SCALES`, `GLOSSARY`. Abilities are built with an `A(phase, name, type, text)` helper. Unit records use short keys (`id`, `n`, `r`, `tags`, `gas`, `slots`, `res`, `ab`, `uq`, `unk`, …).
 - **Core logic:** `newBuild(race)`, `totals(build)` and `issues(build)` handle roster math and legality checks. Everything above the `/* ===================== UI HELPERS` marker is pure logic and can be tested in Node without a DOM.
-- **Views:** four tabs, with containers `#v-build`, `#v-setup`, `#v-play` and `#v-cards`, switched by `nav button[data-v=…]`. The card detail modal closes with `#mClose`.
-- **Storage:** `localStorage` under a `KEY` prefix (rosters, game state, `KEY+"-theme"`). Every read and write is wrapped in try/catch. Storage is per-origin, so data saved in the old Claude artifact or the offline file copy does **not** carry over to the GitHub Pages site.
+- **Views:** five tabs, with containers `#v-build`, `#v-setup`, `#v-play`, `#v-cards` and `#v-gloss`, switched by `nav button[data-v=…]`. The card detail modal closes with `#mClose`. Glossary definitions open in a second `<dialog id="gloss">` that stacks on top of the card modal (`#gClose`, `#gBack`).
+- **Storage:** `localStorage` under a `KEY` prefix (rosters, game state, `KEY+"-theme"`). Every read and write is wrapped in try/catch. Storage is per-origin, so data saved in the old Claude artifact or the offline file copy does **not** carry over to the live site. The same goes between the github.io mirror and sctmgdatadisc.com.
 - **Theming:** CSS custom properties on `:root`, with light and dark modes (system preference plus a manual `data-theme` override). Race accent colors come from `body[data-race="T|Z|P"]`, with Terran blue, Zerg purple and Protoss gold.
 - **Layout:** mobile-first (it's used at the table on a phone). Fixed bottom tab bar, safe-area insets, max width of 720px.
 
@@ -35,6 +35,7 @@ The legal basis is Blizzard's trademark guidelines, which allow non-commercial f
 - **Setup:** priority calculation from both players' gas and minerals, plus the mission/deployment draft with full text.
 - **Play:** round and phase tracking, Supply Pool and Available Supply (unlimited in the final round), VP for both sides with a game-end alert, exhaust/ready cards with auto-refresh each round, per-model casualty tracking that reduces Supply by profile, and the destroyed Supply your opponent scores.
 - **Cards:** reference for all units, tactical cards and missions, by race.
+- **Glossary:** searchable, filterable list of game terms. Terms inside card text, kind tags, weapon tables, stat labels, mission text and the Play phase reference are tappable and open a definition sheet. `linkTerms()` / `rt()` do the linking (escape first, then link; each term once per paragraph, case-sensitive).
 
 ## Data sources and provenance
 
@@ -45,6 +46,8 @@ The legal basis is Blizzard's trademark guidelines, which allow non-commercial f
 - **Unreleased units** are cost-only stubs (`unk: true`, no abilities). As of 31 Oct 2026, after W3, there are none; the stub code paths stay for future cost tables.
 - **Cocoon:** the official W2 sheet prints no BM value, so the app gives it `res:null` (no resource, can't be exhausted in Play). Confirmed against a physical card (Nov 2026): it supplies no BM.
 - **Missions without an early-win lead** (Artefact Hunt) use `lead:null`; UI code must guard for it.
+- **Glossary:** definitions are short summaries **in our own words** (not the rulebook's text), each citing its Core Rules section, mostly Part 11 ("Keyword Glossary and Definitions"). When a new keyword appears on a card, add a `G(...)` entry; `tests/logic.mjs` fails on any BOLD CAPS card word the glossary can't link.
+- **Renaming an ID:** saved rosters reference IDs. Add `{oldId:"newId"}` to `RENAMED` so rosters follow the rename. Unknown IDs are dropped on load by `cleanState()` and listed to the player, never crash the app.
 
 **Convention: be transparent about data quality.** Anything imported from an unofficial source, approximated, or missing card text carries a visible in-app tag (e.g. "imported from Command Center snapshot," "no card text"). Keep doing this for new data. Never silently present unverified stats as official.
 
@@ -55,7 +58,8 @@ The legal basis is Blizzard's trademark guidelines, which allow non-commercial f
 | Name: **SCTMG Data Disc** | "Data Disc" is the more defensible half if branding ever matters. Keep "SCTMG" loosely coupled. |
 | **Free, personal, unofficial** | Selling it would need licensing from Blizzard/Archon, or a game-agnostic engine. Dalton chose to keep it non-commercial. The README carries the disclaimer. |
 | **Single-file HTML, no build** | Keeps it trivially hostable, works offline from a saved copy, and is easy to wrap later. |
-| **Hosting: GitHub Pages, public repo** | Replaced an earlier Cloudflare Pages plan. No new domain purchased. Trade-off accepted: the site and card data are fully public, with no login gating. |
+| **Domain: sctmgdatadisc.com** | Nov 2026, Dalton's call after checking: "SCTMG" is a community abbreviation, not a registered Blizzard mark (other fan sites use it too), so it doesn't break the no-Blizzard-mark-in-a-domain rule. Keep the site non-commercial, unofficial and clearly credited, and never imply endorsement. |
+| **Hosting: Cloudflare Workers at sctmgdatadisc.com, public repo** | Nov 2026: moved from GitHub Pages (kept as a mirror) to a Workers static-assets deploy on Dalton's own domain. Trade-off accepted: the site and card data are fully public, with no login gating. |
 | **Regression test before every release** | Added after a bad edit (a deleted `const MISSIONS` declaration) blanked every tab. See Testing. |
 
 ## Testing
@@ -68,20 +72,24 @@ Run `npm test` before every release. It runs three stages, cheapest first:
 
 First-time setup: `npm install`, then `npx playwright install chromium`. `package.json` is dev tooling only; the app still needs no build.
 
-**CI:** `.github/workflows/test.yml` runs the same three stages on every push and PR. Pages deploys from `main` without waiting for it, so a red run is a warning, not a gate.
+**CI:** `.github/workflows/test.yml` runs the same three stages on every push and PR. Cloudflare and Pages both deploy from `main` without waiting for it, so a red run is a warning, not a gate.
 
 **Gotcha:** the UI re-renders after every click, so element handles go stale. Use Playwright locators (they re-query) instead of caching handles. A `<details>` picker also closes on every re-render, so open it again before each pick.
 
 ## Deploying
 
-Commit to `main`. GitHub Pages redeploys automatically within a minute or two. Run `npm test` first.
+Commit to `main`. Run `npm test` first. Cloudflare Workers Builds redeploys sctmgdatadisc.com automatically (deploy command `npx wrangler deploy`, no build command), and GitHub Pages redeploys the mirror.
+
+- **`wrangler.jsonc`**: Worker name and assets directory (the repo root). There's no Worker script; it's static files only. The custom domain is attached in the Cloudflare dashboard (Worker > Settings > Domains & Routes), not in this file.
+- **`.assetsignore`**: keeps dev files (`tests/`, `scripts/`, `*.md`, `package*.json`, `Docs/` …) off the live site. **Add new non-site files or folders here**, or they get published.
+- **`_headers`**: sends `Access-Control-Allow-Origin: *` on `/api/*`, which GitHub Pages did by default and Cloudflare doesn't.
 
 ## Next steps
 
 Rough priority order. Confirm with Dalton before starting any of them.
 
 1. ~~Commit the regression test~~ Done Nov 2026: `npm test` plus a GitHub Actions workflow (see Testing).
-   - **Next up: tolerate stale IDs.** `totals()` throws if a saved roster or game references a unit or faction ID that no longer exists, which blanks the Build tab. Sanitize on load (drop or flag unknown IDs) before roster import ships or any ID is renamed.
+   - ~~Tolerate stale IDs~~ Done Nov 2026: `cleanState()` on load, plus `RENAMED` for planned renames. Roster import should run imported rosters through `cleanBuild()` too.
 2. **Roster export/import (JSON).** Rosters are trapped in each origin's localStorage. Export/import protects them and makes moving between web, offline and any future app possible.
 3. **Bundle fonts locally** (`fonts/` folder plus `@font-face`) so offline use doesn't fall back to system fonts.
 4. ~~Reconcile the in-app name~~ Done Oct 2026: title and header say SCTMG Data Disc. The localStorage `KEY` stays `sctmg-fieldkit-v1` on purpose, because renaming it would orphan everyone's saved rosters.

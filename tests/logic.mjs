@@ -100,7 +100,99 @@ const build = (race, faction, tac = {}, units = []) => {
   eq("Advanced Medic Facilities units cost no pool Supply", L.poolSupply({ ...gu(9), ups: ["Advanced Medic Facilities"] }), 0);
 }
 
-// ---------- 3. data integrity ----------
+// ---------- 3. stale saved data ----------
+{
+  // A roster saved before an update that renamed or removed IDs must load
+  // cleanly: totals() and issues() used to throw on an unknown ID.
+  const stale = () => ({
+    build: { ...build("T", "gone-faction", { barracks: 1, "gone-card": 2 }, ["marine", "gone-unit", { id: "marine", ci: 7, ups: ["Bayonet", "Gone Upgrade"] }]), name: "Old" },
+    rosters: [{ ...build("Z", "zswarm", { acccreep: 1 }, ["zergling", "gone-unit"]), id: "r1", name: "Saved" }, null],
+    setup: { rosterId: "r-missing", mission: "gone-mission", deploy: "", oppGas: "", oppMin: "" },
+    game: null,
+  });
+  const s = stale();
+  const notes = L.cleanState(s);
+  check("stale roster: totals() no longer throws", (() => { try { L.totals(s.build); L.issues(s.build); return true; } catch { return false; } })());
+  eq("stale roster: unknown faction cleared", s.build.faction, "");
+  eq("stale roster: unknown card dropped, known kept", s.build.tac, { barracks: 1 });
+  eq("stale roster: unknown unit dropped", s.build.units.map(u => u.id), ["marine", "marine"]);
+  eq("stale roster: bad composition index reset", s.build.units[1].ci, 0);
+  eq("stale roster: unknown upgrade dropped", s.build.units[1].ups, ["Bayonet"]);
+  eq("saved rosters: junk entry dropped, unknown unit dropped", s.rosters.map(r => r.units.map(u => u.id)), [["zergling"]]);
+  eq("setup: missing roster and mission reset", [s.setup.rosterId, s.setup.mission], ["current", ""]);
+  eq("every removal is reported", notes.length, 5);
+  check("notes name the missing IDs", ["gone-faction", "gone-card", "gone-unit", "Gone Upgrade"].every(id => notes.some(n => n.includes(id))), JSON.stringify(notes));
+
+  const clean = { build: build("T", "rrf", { academy: 1 }, ["marine", "raynor"]), rosters: [], setup: {}, game: null };
+  eq("a healthy save produces no notes", L.cleanState(clean), []);
+
+  L.RENAMED["old-marine"] = "marine";
+  const renamed = { build: build("T", "rrf", {}, ["old-marine"]), rosters: [], setup: {}, game: null };
+  eq("RENAMED carries a roster across an ID rename", [L.cleanState(renamed), renamed.build.units[0].id], [[], "marine"]);
+  delete L.RENAMED["old-marine"];
+
+  const g = { build: L.newBuild("T"), rosters: [], setup: {}, game: { mission: "gone-mission", roster: L.newBuild("T"), units: [], cards: [], vp: [0, 0] } };
+  L.cleanState(g);
+  eq("a game whose mission vanished is cleared", g.game, null);
+  const g2 = { build: L.newBuild("T"), rosters: [], setup: {}, game: { mission: "supplydrop", roster: L.newBuild("T"), units: [{ id: "marine" }, { id: "gone-unit" }], cards: [{ id: "taf", ready: true }, { id: "gone-card" }], vp: [3, 1] } };
+  L.cleanState(g2);
+  eq("a game keeps known units and cards", [g2.game.units.map(u => u.id), g2.game.cards.map(c => c.id), g2.game.vp], [["marine"], ["taf"], [3, 1]]);
+}
+
+// ---------- 4. glossary ----------
+{
+  const ids = new Set(), forms = new Map();
+  for (const g of L.GLOSSARY) {
+    check(`glossary "${g.id}": unique id`, !ids.has(g.id));
+    ids.add(g.id);
+    check(`glossary "${g.id}": has a name, definition and rules reference`, g.n && g.d && g.ref);
+    check(`glossary "${g.id}": known category`, ["Keyword", "Status", "Rules", "Card", "Mission"].includes(g.cat), g.cat);
+    for (const f of g.f) {
+      check(`glossary form "${f}" belongs to one entry`, !forms.has(f), `${forms.get(f)} and ${g.id}`);
+      forms.set(f, g.id);
+    }
+  }
+  for (const g of L.GLOSSARY) for (const s of g.see) check(`glossary "${g.id}": see-also "${s}" exists`, ids.has(s));
+
+  const link = s => L.linkTerms(L.esc(s));
+  const linked = html => [...html.matchAll(/data-gl="([^"]+)">([^<]+)</g)].map(m => [m[1], m[2]]);
+  eq("linker: keyword with a value", linked(link("resolve the IMPACT (2) effect")), [["impact", "IMPACT"]]);
+  eq("linker: longest form wins", linked(link("set it Wholly Within 3″")), [["wholly-within", "Wholly Within"]]);
+  eq("linker: each term once per paragraph", linked(link("Within 6″ and Within 3″")).length, 1);
+  eq("linker: case-sensitive (lowercase prose isn't linked)", linked(link("the unit will run away")), []);
+  eq("linker: whole words only", linked(link("TYPE PEACE HPX")), []);
+  eq("linker: skips text inside existing tags", linked(L.linkTerms('<span title="Charge">x</span> Charge')), [["charge", "Charge"]]);
+  check("linker: output is still escaped", !link('<b>"Charge"</b>').includes("<b>"));
+}
+
+// ---------- 5. every card keyword has a glossary entry ----------
+{
+  // Keywords are printed in BOLD CAPS on cards and weapons. Any caps word the
+  // glossary can't link means a new keyword arrived (e.g. in a new wave) and
+  // needs an entry. A few caps words on cards aren't rules terms; list them here.
+  const NOT_TERMS = new Set([]); // none so far
+  const texts = [];
+  const weaponKw = w => w && w.kw && w.kw !== "-" && texts.push(w.kw);
+  for (const u of L.UNITS) {
+    (u.ab || []).forEach(a => texts.push(a.tx));
+    (u.wp || []).forEach(weaponKw);
+    (u.up || []).forEach(x => { if (x.tx) texts.push(x.tx); weaponKw(x.w); });
+  }
+  for (const t of L.TAC) (t.ab || []).forEach(a => texts.push(a.tx));
+  for (const m of L.MISSIONS) for (const v of [m.std, m.sk]) texts.push(v.params, v.score, v.extra || "");
+  const missing = new Map();
+  for (const text of texts) {
+    for (const [phrase] of String(text).matchAll(/\b[A-Z][A-Z'-]*[A-Z](?:\s+[A-Z][A-Z'-]*[A-Z])*\b/g)) {
+      const leftover = L.linkTerms(L.esc(phrase)).replace(/<button[^>]*>[^<]*<\/button>/g, " ");
+      for (const [w] of leftover.matchAll(/\b[A-Z][A-Z'-]*[A-Z]\b/g))
+        if (!NOT_TERMS.has(w) && !/^[A-Z]-?\d/.test(w)) missing.set(w, (missing.get(w) || 0) + 1);
+    }
+  }
+  check("every BOLD CAPS card keyword has a glossary entry", missing.size === 0,
+    `no glossary entry links: ${[...missing].map(([w, n]) => `${w} (${n}×)`).join(", ")}`);
+}
+
+// ---------- 6. data integrity ----------
 {
   const ids = new Map();
   for (const x of [...L.UNITS, ...L.TAC, ...L.MISSIONS, ...L.DEPLOYS]) {

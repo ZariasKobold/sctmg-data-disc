@@ -1,0 +1,12 @@
+// Cloudflare Workers deploy settings for sctmgdatadisc.com.
+// The site is static files only (no Worker script): Cloudflare serves the
+// repo root as assets. .assetsignore keeps dev files off the live site, and
+// _headers opens the API to browser apps on other origins (CORS).
+// The custom domain is attached in the Cloudflare dashboard, not here.
+{
+  "name": "sctmg-data-disc",
+  "compatibility_date": "2026-11-23",
+  "assets": {
+    "directory": "./"
+  }
+}

@@ -38,8 +38,8 @@ header.top .brand{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-tra
 header.top #title{overflow:hidden;text-overflow:ellipsis}
 header.top .race-mark{width:14px;height:22px;background:var(--acc);clip-path:polygon(0 0,100% 18%,100% 82%,0 100%)}
 main{padding:12px 12px 96px;max-width:720px;margin:0 auto}
-nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;display:grid;grid-template-columns:repeat(4,1fr);background:var(--panel);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
-nav.tabs button{background:none;border:0;padding:10px 0 12px;font-family:var(--display);font-weight:600;font-size:.95rem;color:var(--muted);position:relative}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;display:grid;grid-template-columns:repeat(5,1fr);background:var(--panel);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav.tabs button{background:none;border:0;padding:10px 0 12px;font-family:var(--display);font-weight:600;font-size:.9rem;color:var(--muted);position:relative}
 nav.tabs button[aria-current="true"]{color:var(--text)}
 nav.tabs button[aria-current="true"]::before{content:"";position:absolute;top:0;left:22%;right:22%;height:3px;background:var(--acc)}
 section.view{display:none}section.view.on{display:block}
@@ -138,6 +138,21 @@ dialog .mb{padding:12px 14px 24px;overflow:auto}
 .sgrid div{background:var(--panel2);border-radius:4px;text-align:center;padding:5px 2px}
 .sgrid b{display:block;font-family:var(--display);font-size:1.15rem}
 .sgrid small{font-size:.68rem;color:var(--muted)}
+/* glossary */
+.gl{display:inline;background:none;border:0;padding:0;margin:0;font:inherit;color:inherit;letter-spacing:inherit;text-align:inherit;cursor:help;text-decoration:underline dotted;text-decoration-color:var(--acc);text-decoration-thickness:1.5px;text-underline-offset:2px}
+.gl:hover,.gl:focus-visible{color:var(--acc)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chips button{border:1px solid var(--line);background:var(--panel2);border-radius:999px;padding:5px 11px;font-size:.85rem;font-weight:600}
+.chips button[aria-pressed="true"]{background:var(--acc);border-color:var(--acc);color:var(--accInk)}
+input[type=search]{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:9px 10px;min-height:42px}
+.gitem{padding:10px 0;border-top:1px solid var(--line)}
+.gitem:first-child{border-top:0}
+.gitem h3{font-size:1.02rem}
+.gitem h3 small,.gcat{font-family:var(--body);font-weight:500;color:var(--muted);font-size:.8rem;margin-left:6px}
+.gdef{margin:4px 0;font-size:.95rem}
+.gletter{font-family:var(--display);font-weight:700;color:var(--acc);margin:14px 0 0;font-size:.95rem}
+#gloss{max-height:75vh}
+#gloss .mh h3{font-size:1.1rem}
 .wt{overflow-x:auto;margin:4px 0 10px}
 .wt table{border-collapse:collapse;font-size:.85rem;min-width:520px;width:100%}
 .wt th,.wt td{padding:5px 6px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
@@ -160,14 +175,17 @@ dialog .mb{padding:12px 14px 24px;overflow:auto}
   <section class="view" id="v-setup"></section>
   <section class="view" id="v-play"></section>
   <section class="view" id="v-cards"></section>
+  <section class="view" id="v-gloss"></section>
 </main>
 <nav class="tabs" aria-label="Sections">
   <button data-v="build" aria-current="true">Build</button>
   <button data-v="setup">Setup</button>
   <button data-v="play">Play</button>
   <button data-v="cards">Cards</button>
+  <button data-v="gloss">Glossary</button>
 </nav>
 <dialog id="modal"><div class="mh"><h3 id="mTitle"></h3><button class="btn sm" id="mClose">Close</button></div><div class="mb" id="mBody"></div></dialog>
+<dialog id="gloss" aria-labelledby="gTitle"><div class="mh"><button class="btn sm" id="gBack" hidden aria-label="Back to the previous term">‹</button><h3 id="gTitle"></h3><button class="btn sm" id="gClose">Close</button></div><div class="mb" id="gBody"></div></dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -601,6 +619,140 @@ const PHASE_REF=[
  "<ul><li>All Engaged Units must activate; players alternate.</li><li>Close Ranks (optional, up to 3″, must end closer) → declare Fighting and Supporting Ranks → roll attacks → remove casualties by Engaged priority.</li></ul>",
  "<ul><li>Control: sum Supply within 3″ of each Marker; higher controls, ties are Contested.</li><li>Score VP per Mission Card, then End of Game check.</li><li>Resolve End of the Round effects, clean up tokens, refresh Exhausted cards.</li><li>Initiative: fewer VP takes the First Player Marker; tie is a Roll-Off.</li></ul>"];
 
+/* Glossary. Definitions are short summaries in our own words; the Core Rules
+   (mostly Part 11) are the authority, so every entry cites its section.
+   f: the exact, case-sensitive forms that become links in card text (first
+   use per paragraph). Leave f empty for terms that would be noise as links.
+   see: related entry ids. Add an entry whenever a new keyword appears on a card:
+   tests/logic.mjs fails on any BOLD CAPS card keyword without one. */
+const G=(id,n,cat,ref,d,f,see)=>({id,n,cat,ref,d,f:f===undefined?[n]:f,see:see||[]});
+const GLOSSARY=[
+ // ---- Keywords (BOLD CAPS on cards and weapons) ----
+ G("anti-evade","ANTI-EVADE (X)","Keyword","11","The target suffers a −X Modifier to its Evade Rolls against this attack.",["ANTI-EVADE"],["evade-roll"]),
+ G("bulky","BULKY","Keyword","11","This weapon can't make a Ranged Attack while its Unit is Engaged.",undefined,["engaged"]),
+ G("burst-fire","BURST FIRE Y″ (X)","Keyword","11","Against a target Within Y″ of the attacking model, the weapon's RoA goes up by X for that attack.",["BURST FIRE"],["roa"]),
+ G("claim","CLAIM / DROP","Mission","Artefact Hunt mission card","Artefact Hunt rules. A Unit CLAIMS a Mission Marker by putting it on its Unit Card, and can carry only one at a time. It must DROP the Marker if its Current Supply Value drops, before it resolves a PLACE effect, if it's Engaged with Enemies of greater combined Current Supply, or if it's Destroyed, removed or returned to Reserves. The opponent then sets the Marker Within 2″ of the Unit (or its last model).",["CLAIM","CLAIMS","CLAIMED","DROP","DROPS","DROPPED"],["mission-marker"]),
+ G("concentrated-fire","CONCENTRATED FIRE (X)","Keyword","11","An attack with this weapon can remove at most X models. Any Damage left after that is discarded, not recorded on a Damage Marker.",["CONCENTRATED FIRE"]),
+ G("critical-hit","CRITICAL HIT (X)","Keyword","11","Move up to X dice from the Armour Pool straight into the Damage Pool, skipping the Armour Roll. It can't move more dice than are in the Armour Pool.",["CRITICAL HIT"],["dice-pools","dodge"]),
+ G("buff","BUFF [Characteristic] (X)","Keyword","11","The Unit improves a characteristic by X until the End of the Round. For a Target Number (Armour, Hit) that means lower and easier to roll; for a value (Speed, RoA) it means higher. Tracked with a blue Marker.",["BUFF","BUFFS"],["debuff","status"]),
+ G("debuff","DEBUFF [Characteristic] (X)","Keyword","11","The Unit worsens a characteristic by X until the End of the Round. A Target Number goes up (harder to roll); a value goes down (minimum 0). Tracked with a red Marker.",["DEBUFF","DEBUFFS"],["buff","status"]),
+ G("displacement","DISPLACEMENT","Keyword","11","A Leading Model may end a move overlapping this Token or model. If it does, the controlling player immediately sets the displaced piece in base contact with the Leading Model (or as close as possible).",undefined,["leading-model"]),
+ G("dodge","DODGE (X)","Keyword","11","When this Unit is attacked, Surge and CRITICAL HIT move X fewer dice from the Armour Pool to the Damage Pool (minimum 0).",["DODGE"],["surge","critical-hit"]),
+ G("heal","HEAL (X)","Keyword","11","Remove X points of Damage from the Unit's Damage Marker. It can't bring back Destroyed models (that's RESPAWN) and can't restore Shielded.",["HEAL"],["respawn","damage-marker"]),
+ G("hits","HITS X (Y)","Keyword","11","The Unit takes X automatic hits: put X dice straight into its Armour Pool with Damage Y and go to Armour Rolls. These hits never generate Surge.",["HITS"],["dice-pools"]),
+ G("impact","IMPACT (X) Y","Keyword","11","Right after a successful Charge, each model in the Fighting or Supporting Rank rolls X Impact dice at the Enemy Unit(s) it's fighting (split between them if several). Each result of Y or more puts one die in that Unit's Armour Pool, with Damage 1 and no Surge. HIDDEN Units are immune.",["IMPACT"],["charge","fighting-rank","hidden"]),
+ G("indirect-fire","INDIRECT FIRE","Keyword","11","This weapon may ignore Line of Sight when choosing and hitting a target (it still needs Range). A target that's out of Line of Sight gets an Evade Roll.",undefined,["los","evade-roll"]),
+ G("instant","INSTANT","Keyword","11","Enemy Units can't use Reaction abilities in response to attacks made with this weapon.",undefined,["reaction"]),
+ G("locked-in","LOCKED IN (X)","Keyword","11","Ranged Attacks with this weapon get +X RoA against a target with the STATIONARY Status.",["LOCKED IN"],["stationary","roa"]),
+ G("long-range","LONG RANGE (X)","Keyword","11","The weapon's maximum Range becomes X″. Models firing beyond the normal Range (but Within X″) suffer −1 to Hit; roll them separately from the rest of the Batch.",["LONG RANGE"],["modifier"]),
+ G("morph","MORPH (Unit) X","Keyword","11","Needs enough Available Supply. Set one model of the named Unit in base contact with the active Unit, then remove X of the active Unit's models. The new Unit can't be set Within 1″ of an Enemy, and gets an Activation Marker: it can't activate for the rest of the Round.",["MORPH"],["available-supply"]),
+ G("non-lethal","NON-LETHAL DAMAGE (X)","Keyword","11","Add X to the Unit's Damage Marker but don't remove any models, even if that exceeds a model's HP. The next normal Damage counts the total and removes casualties as usual.",["NON-LETHAL DAMAGE"],["damage-marker"]),
+ G("on-creep","ON CREEP","Keyword","11","A Ground Zerg Unit (Friendly or Enemy) is ON CREEP while Within 6″ of a Creep Tumor Token or a model that's a Source of Creep. Some abilities and upgrades only work while ON CREEP.",undefined,["creep-tumor"]),
+ G("pierce","PIERCE [Tag] X","Keyword","11","Against a Unit with the named Combat Tag, this weapon's Damage becomes X.",["PIERCE"],["combat-tags"]),
+ G("pinpoint","PINPOINT","Keyword","11","Ranged Attacks with this weapon may target Enemy Units that are Engaged, which is normally not allowed.",undefined,["engaged"]),
+ G("place","PLACE (X)","Keyword","11","Pick up the Leading Model and set it Wholly Within X″ of where it started. It isn't moved along a path, so Gap Clearance and elevation don't matter. Then set the rest of the Unit In Coherency. It can't end Within Engagement Range of an Enemy, except in the Assault Phase (where the Unit becomes Engaged).",["PLACE","PLACED"],["leading-model","coherency"]),
+ G("precision","PRECISION (X)","Keyword","11","After rolling to Hit, move up to X failed dice into the Armour Pool. They count as hits for everything, including Surge.",["PRECISION"],["dice-pools"]),
+ G("repeatable","REPEATABLE","Keyword","11","This ability ignores the once-per-Round limit. Use it as often as you can pay its cost and meet its trigger, even several times in one Activation.",["REPEATABLE","Repeatable"],["active"]),
+ G("respawn","RESPAWN (X)","Keyword","11","Return up to X Destroyed models to the Unit, each in base contact with a surviving model and not Within Engagement Range of an Enemy. It can't push the Unit into a higher Supply bracket.",["RESPAWN"],["heal","supply-value"]),
+ G("sidearm","SIDEARM","Keyword","11","Models may use this weapon on top of their normal weapon, ignoring the one-weapon-per-model rule. It's resolved as its own Batch, so it can pick a different target.",undefined,["batch"]),
+ G("specialist","SPECIALIST","Keyword","9.1.7","Only one model in the Unit may carry this weapon or upgrade. Other upgrades apply to every model.",["SPECIALIST","Specialist"]),
+ G("spillover","SPILLOVER","Keyword","8.7.6","Template hits on models outside the Primary target Unit. Each extra Unit is its own Batch, with no RoA modifiers and no Surge, and it can hit Friendly Units too.",undefined,["template"]),
+ G("stay-in-play","STAY IN PLAY","Keyword","11","This Token, Marker or effect survives Cleanup & Refresh and stays until something specifically removes it.",undefined,["token","status"]),
+ G("summon","SUMMON (Unit)","Keyword","11","Set the named Unit's Leading Model in base contact with the Parent Unit and the rest In Coherency, not Within Engagement Range of an Enemy or in the opponent's Zone of Influence. Needs enough Available Supply. It can't activate in the Phase it arrived; after that it activates right after its Parent.",["SUMMON","SUMMONED"],["available-supply","zone-of-influence"]),
+ G("tough","TOUGH (X)","Keyword","11","When this Unit makes Armour Rolls, turn up to X failures into successes.",["TOUGH"],["armour-roll"]),
+ // ---- Statuses ----
+ G("burrowed","BURROWED","Status","11","A mode (Status). The Unit also gains HIDDEN, counts as Size 0, counts as Supply 0 for Disengage checks, and can't Control or Contest Mission Markers. It may only Deploy, Move, Disengage, Run, Hold or Close Ranks, and all of those except Hold remove BURROWED. It gets an Evade Roll against every attack. Other models may move through it but not end Within its Engagement Range. If Engaged in the Combat Phase, it must Close Ranks (which unburrows it) to attack.",["BURROWED"],["hidden","status"]),
+ G("hidden","HIDDEN","Status","11","Can't be targeted by Ranged Attacks or Line of Sight abilities unless the attacker is Within 4″, and isn't Visible beyond 4″. Immune to IMPACT. Gets an Evade Roll against every attack.",undefined,["burrowed","evade-roll"]),
+ G("siege-mode","SIEGE MODE","Status","11","A mode (Status). The Unit can't Move, Disengage, Run, Charge or Close Ranks. Only its SIEGE MODE weapons work, and those work only in this mode. Lost if the Unit returns to Reserves.",undefined,["status"]),
+ G("stationary","STATIONARY","Status","11","Every Unit gains this at the Start of the Round, and loses it as soon as any of its models moves, is moved or is PLACED.",["STATIONARY","Stationary"],["locked-in"]),
+ G("shielded","Shielded","Status","5.1","A Unit with a Shield value adds it to its first model's HP and is Shielded. It stops being Shielded once its Total Damage exceeds the Shield value or the first model is removed. HEAL can't restore it.",["Shielded"],["shield"]),
+ G("status","Status","Status","11","A lasting condition or mode on a Unit (e.g. BURROWED, SIEGE MODE, BUFF). Statuses aren't cleared in Scoring & Cleanup unless a rule says so. Track modes with plastic Markers and other effects with blue (good) or red (bad) Markers.",["Status","Statuses"]),
+ // ---- Rules terms ----
+ G("access-point","ACCESS POINT","Rules","11","The part of a terrain piece that connects elevation levels. Models move between levels through it.",["ACCESS POINT","ACCESS POINTS"],["elevation"]),
+ G("activation","Activation","Rules","8.2","In the Movement, Assault and Combat Phases, players take turns activating one Unit each. An activated Unit performs one action and gets an Activation Marker. (Mission Markers also have an \"Activated\" side; that's different.)",["Activation","Activations","Activated","Activate"],["pass","activation-marker"]),
+ G("activation-marker","Activation Marker","Rules","8.2","Placed next to a Unit once it has acted this Phase, so it can't activate again.",["Activation Marker","Activation Markers"],["activation"]),
+ G("active","Active ability","Rules","2.7.1","A deliberate ability. The Unit must be Activated, and you use it just before declaring an action or right after one finishes. Each named Active ability works once per Round per Unit (unless REPEATABLE), and its effects end at the End of the Round unless stated.",[],["passive","reaction","repeatable"]),
+ G("passive","Passive ability","Rules","2.7.2","Always on while the Unit is on the battlefield. No decision needed. Off while in Reserves unless stated.",[],["active","reaction"]),
+ G("reaction","Reaction ability","Rules","2.7.3","Used the moment its trigger happens (an attack, a Charge, a model Destroyed…), outside the normal turn order. Each player gets one Reaction per Activation, and each named Reaction works once per Round per Unit. If both players react to the same trigger, the Active Player goes first.",["Reaction","Reactions"],["active","instant"]),
+ G("available-supply","Available Supply","Rules","8.3.2","Your Supply Pool minus the Current Supply Value of your Units on the battlefield. A Unit can only Deploy from Reserves if its Current Supply Value fits. No limit in the final Round.",undefined,["supply-pool","current-supply"]),
+ G("batch","Batch","Rules","8.7","One group of attack dice resolved together (normally one weapon type against one target). SIDEARMS and Spillover are separate Batches.",["Batch","Batches"],["sidearm"]),
+ G("blocking-terrain","Blocking Terrain","Rules","11","Any terrain with an Effective Size of 1 or more. It can block Line of Sight under the Cover rules.",undefined,["los","effective-size"]),
+ G("charge","Charge","Rules","8.7.7","Assault Phase action. An Unengaged Ground Unit declares Ground targets (no Line of Sight needed), rolls a D6, and its Leading Model moves up to Speed plus the roll to end Engaged with them. Flying Units can't Charge or be Charged.",["Charge","Charges","Charged","Charging"],["impact","engaged"]),
+ G("close-combat","Close Combat Attack","Rules","8.8.1","The Combat Phase attack. Only Engaged Units activate. Models in the Fighting and Supporting Ranks strike with their Combat Phase weapons.",["Close Combat Attack","Close Combat Attacks","Close Combat"],["fighting-rank","close-ranks"]),
+ G("close-ranks","Close Ranks","Rules","8.8","Optional first step of a Close Combat Attack: move the Leading Model up to 3″ closer to the Enemies the Unit is Engaged with, then press models into base contact. It can't pull in new Enemy Units.",undefined,["close-combat"]),
+ G("coherency","Coherency","Rules","4.4","After any action that repositions a Unit, every model must be Wholly Within 3″ of the Leading Model, linked to it through a chain of its own models. Then the Unit is In Coherency. Casualties never break Coherency.",["Coherency","In Coherency","Out of Coherency"],["leading-model","wholly-within"]),
+ G("control","Control and Contest","Rules","8.9.1","At the end of each Round, each player adds up the Current Supply of their Units Contesting a Mission Marker (on the battlefield, In Coherency, with a model Within 3″ and in Line of Sight of it on the same elevation). The higher total takes Control. Control is sticky: it stays until the opponent beats it, and ties change nothing. Flying, BURROWED and Reserve Units can't Contest.",["Control","Controls","Controlled","Controlling","Contest","Contests","Contested","Contesting"],["mission-marker","current-supply"]),
+ G("creep-tumor","Creep Tumor","Rules","7.3.1","A Zerg Token that spreads creep: Ground Zerg Units Within 6″ of it are ON CREEP.",["Creep Tumor","Creep Tumors"],["on-creep","token"]),
+ G("current-supply","Current Supply Value","Rules","6.1","A Unit's Supply right now, read from its Supply Profile for the models it has left. It drops as casualties push it into a lower bracket. Used for Deploying, Mission Marker Control and Tactical Mass.",["Current Supply Value","Current Supply Values","Current Supply"],["supply-value","control"]),
+ G("damage-marker","Damage Marker","Rules","8.7.4","Records Damage a Unit has taken that wasn't enough to remove another model. It adds to the next Damage the Unit takes.",["Damage Marker"],["heal"]),
+ G("deploy","Deploy","Rules","8.5.5","Movement Phase action: a Unit in Reserves enters from your Entry Edge, moving up to its Speed. Its Current Supply Value must fit your Available Supply, and it can't end in the opponent's Zone of Influence.",["Deploy","Deploys","Deployed"],["reserves","available-supply","zone-of-influence"]),
+ G("dice-pools","Attack, Armour and Damage Pools","Rules","8.7.4","How attacks resolve. Roll the Attack Pool to Hit; hits move to the Armour Pool. Surge may move some straight to the Damage Pool. The defender rolls the rest against Armour, and failures go to the Damage Pool. An eligible Unit then makes an Evade Roll. Each die left deals the weapon's Damage.",["Attack Pool","Armour Pool","Damage Pool"],["surge","armour-roll","evade-roll"]),
+ G("disengage","Disengage","Rules","8.5.4","Movement Phase action for an Engaged Unit: move away using normal Move rules. Models that can't end outside every Enemy's Engagement Range are Destroyed; if the Leading Model can't, the Disengage fails and it's removed. Next Assault Phase the Unit can't Ranged Attack or Charge, unless it has Tactical Mass.",["Disengage","Disengages","Disengaging"],["engaged","tactical-mass"]),
+ G("effective-size","Effective Size","Rules","7.1.2","A model's Size plus the Size of the terrain it's standing on. It decides what blocks Line of Sight. Flying models count as taller than any terrain.",undefined,["los","elevation"]),
+ G("elevation","Elevation levels","Rules","11","GROUND LEVEL is on the playmat, MID GROUND is on Size 1–2 terrain, and HIGH GROUND is on Size 3+ terrain. Models on HIGH GROUND and GROUND LEVEL can't Engage each other. MID GROUND can Engage either only across a shared ACCESS POINT.",["GROUND LEVEL","MID GROUND","HIGH GROUND"],["access-point","effective-size"]),
+ G("engaged","Engaged","Rules","11","A Ground Unit is Engaged when any of its models is Within 1″ of an Enemy Ground model, unless Size 2+ terrain or an elevation difference prevents it. Engaged Units can't Move (they Disengage or Hold) and have limits on Ranged Attacks. Flying Units are never Engaged.",["Engaged","Engage","Engages","Engagement"],["unengaged","engagement-range","disengage"]),
+ G("engagement-range","Engagement Range","Rules","11","1″ horizontally from a model's base. Melee weapons (Range E) only reach targets in it.",undefined,["engaged"]),
+ G("entry-edge","Entry Edge","Rules","11","The table edge the Deployment Card gives you. Your Units Deploy from Reserves through it.",["Entry Edge"],["deploy","zone-of-influence"]),
+ G("evade-roll","Evade Roll","Rules","8.7.4","Only when a rule grants one, or when an Engaged Unit is hit by a Ranged Attack. The defender rolls the dice in the Damage Pool against the Unit's Evade. Each success cancels a die.",["Evade Roll","Evade Rolls","Evade Check"],["evade","hidden","anti-evade"]),
+ G("armour-roll","Armour Roll","Rules","8.7.4","The defender rolls the dice in the Armour Pool against the Unit's Armour. Successes are discarded, and failures move to the Damage Pool.",["Armour Roll","Armour Rolls"],["armour","dice-pools","tough"]),
+ G("exhaust","Ready and Exhausted","Rules","10.5","Faction and Tactical Cards start each Round Ready (face up). Exhaust one (flip it face down) to use its own ability, or to generate its resource (CP, BM or PE) to pay a cost elsewhere. Excess resource is lost. Exhausted cards refresh in Cleanup.",["Exhaust","Exhausts","Exhausted","Exhausting","Ready"],["cp","bm","pe"]),
+ G("fighting-rank","Fighting and Supporting Ranks","Rules","8.8.1","The Fighting Rank is models Within 1″ of an Enemy. The Supporting Rank is models in base contact with a Fighting Rank model from their own Unit. Both strike in Close Combat and generate IMPACT dice.",["Fighting Rank","Supporting Rank"],["close-combat","impact"]),
+ G("first-player","First Player Marker","Rules","11","Whoever holds it chooses who activates first each Phase. The first player to Pass in the Movement or Assault Phase takes it for the next Phase. At the end of the Round it goes to the player with fewer VP (Roll-Off if tied).",["First Player Marker"],["pass","roll-off"]),
+ G("fixed-addition","Fixed Addition","Rules","3.5","\"D3+1\" means roll and add 1. It's a value, not a Modifier to a Target Number.",[],["modifier"]),
+ G("hold","Hold","Rules","8.5.1","The Unit does nothing this Activation and gets an Activation Marker.",["Hold"],["activation"]),
+ G("impassable","IMPASSABLE TERRAIN","Rules","11","Terrain with no ACCESS POINT to the next level. Models can't move through, onto or across it, or end on it. (Size 0 and 1 terrain can be moved through.)",["IMPASSABLE TERRAIN","Impassable Terrain","Impassible Terrain"],["access-point"]),
+ G("leading-model","Leading Model","Rules","4.3","For any move, you pick one model as the Leading Model, move it (measuring its path), then set the rest In Coherency around it.",["Leading Model","Leading Models"],["coherency"]),
+ G("los","Line of Sight","Rules","7.1","Traced top-down from any part of one base to any part of the other. Terrain blocks it only under the Cover rules (Full Cover, Direct Cover, Elevation Dead Zone). It's always mutual.",["Line of Sight","LoS"],["visible","blocking-terrain","effective-size"]),
+ G("mission-marker","Mission Marker","Rules","11","Numbered Markers set out from the Deployment Card: 1 and 3 Red, 2 and 4 Blue, 5 Neutral. Each has an Activated and a Deactivated side. They're the main way to score.",["Mission Marker","Mission Markers"],["control","claim"]),
+ G("modifier","Modifier","Rules","3.4","Changes a roll's Target Number: +X makes it easier, −X harder. A Target Number never goes below 2+ or above 6+, a natural 6 always succeeds and a natural 1 always fails. Different named sources stack.",["Modifier","Modifiers"],["fixed-addition"]),
+ G("parent","Parent Unit","Rules","11","The Unit that SUMMONED another Unit. The summoned Unit activates right after it.",["Parent Unit","Parent"],["summon"]),
+ G("pass","Pass","Rules","8.2.1","Instead of activating a Unit, a player may Pass, and must Pass with nothing left to activate. Once you've Passed you're done for that Phase. The first to Pass takes the First Player Marker for the next Phase.",["Pass","Passes"],["first-player"]),
+ G("ranged-attack","Ranged Attack","Rules","8.7.3","Assault Phase action: an Unengaged Unit fires its Assault Phase weapons at a target in Range and Line of Sight. Engaged Units are restricted (see PINPOINT and BULKY).",["Ranged Attack","Ranged Attacks"],["dice-pools","pinpoint","bulky"]),
+ G("reserves","Reserves","Rules","11","Every Unit starts the game off the table in Reserves. Units there can't be targeted, can't use abilities (unless stated), and don't count toward your Supply on the battlefield. Units still in Reserves at the end of the final Round count as Destroyed for scoring.",["Reserves"],["deploy"]),
+ G("roll-off","Roll-Off","Rules","3.2","Both players roll 2D6; the higher total wins, and ties roll again.",["Roll-Off","Roll-Offs"]),
+ G("round","Rounds and Phases","Rules","8.1","Each Round has four Phases: Movement, Assault, Combat, then Scoring & Cleanup. Effects \"until the End of the Round\" are cleared in Cleanup.",["Movement Phase","Assault Phase","Combat Phase","Scoring & Cleanup Phase","Scoring and Cleanup Phase","End of the Round","Start of the Round"]),
+ G("run","Run","Rules","8.7.1","Assault Phase action: an Unengaged Unit moves up to its Speed instead of attacking.",["Run","Runs"],["speed"]),
+ G("supply-pool","Supply Pool","Rules","8.3.1","The total Current Supply you may have on the battlefield this Round. It starts at the Mission's value and grows each Round, and is unlimited in the final Round.",undefined,["available-supply"]),
+ G("supply-value","Supply Value","Rules","11","A Unit's Supply from its Supply Profile. Its starting Supply Value (from the composition you bought) is how many Army Slots it fills.",["Supply Value","Supply Values"],["current-supply","army-slot"]),
+ G("surge","Surge","Rules","8.7.4","Weapons with S Dice roll a Surge Die with their attack. If the target has the weapon's Surge Type tag, move that many dice from the Armour Pool straight to the Damage Pool, skipping Armour. Otherwise the Surge Die does nothing.",["Surge","Surge Die","Surge Type"],["dice-pools","combat-tags","dodge"]),
+ G("tactical-mass","Tactical Mass","Rules","11","A Unit has Tactical Mass when its Current Supply Value is higher than the combined Current Supply of every Enemy Unit it's Engaged with. A Unit that Disengages with Tactical Mass may still Ranged Attack and Charge next Assault Phase.",undefined,["disengage"]),
+ G("template","Template (BT / FT)","Rules","8.7.6","Blast Template (BT) and Flamer Template (FT) weapons hit every model under the template at the target's elevation. Models outside the Primary target take Spillover.",["Template","Templates","Blast Template","Flamer Template"],["spillover"]),
+ G("token","Token","Rules","7.3.1","A physical battlefield object (Creep Tumor, Corrosive Bile…). It's treated as Size 0 terrain: models move through it but can't end on it. Removed at the End of the Round unless stated.",["Token","Tokens"],["stay-in-play"]),
+ G("unengaged","Unengaged","Rules","11","Not Within 1″ of any Enemy Ground model (or terrain prevents Engagement). Only Unengaged Units can Move, Run, Charge or fire freely. Flying Units are always Unengaged.",undefined,["engaged"]),
+ G("unique","Unique","Rules","5.3","Only one copy of this Unit or card may be in your army.",["Unique"]),
+ G("visible","Visible","Rules","11","A model is Visible to another if there's a valid Line of Sight between them. Only Visible models can be removed as casualties from an attack.",undefined,["los"]),
+ G("vp","Victory Points (VP)","Rules","8.9.2","Points scored from the Mission Card each Round. Most at the end wins; some Missions end early on a big enough lead.",["VP","VPs","Victory Points"],["mission-marker"]),
+ G("within","Within","Rules","4.2","A model is Within a distance if any part of its base is in range. A Unit is Within if at least one model is.",["Within"],["wholly-within"]),
+ G("wholly-within","Wholly Within","Rules","4.2","A model is Wholly Within a distance only if its entire base is in range. A Unit is Wholly Within only if every model is.",["Wholly Within"],["within"]),
+ G("zone-of-influence","Zone of Influence","Rules","11","The 6″ strip in from each player's Entry Edge. Units arriving from Reserves (including by SUMMON or transport) can't end in the opponent's. It has no other effect.",["Zone of Influence"],["deploy","entry-edge"]),
+ G("friendly","Friendly and Enemy","Rules","11","Everything belonging to you (and teammates) is Friendly; everything of your opponent's is Enemy. You can't attack Friendly Units unless a rule says so.",[]),
+ // ---- Cards, stats and building ----
+ G("army-slot","Army Slots","Card","9.1.5","Core, Elite, Support, Air and Hero. Your Faction Card gives some, and Tactical Cards add more. A Unit fills slots of its type equal to its starting Supply Value. Unused slots are lost.",["Army Slot","Army Slots"],["supply-value"]),
+ G("combat-tags","Combat Tags","Card","2.4.2","Armoured, Biological, Light, Mechanical, Psionic, Flying and Ground. Weapons and abilities check them: Target, Surge Type, PIERCE and so on. Ground (the tag) isn't the same as GROUND LEVEL (an elevation).",["Combat Tag","Combat Tags","Armoured","Armored","Biological","Light","Mechanical","Psionic","Ground","GROUND"],["flying","surge","pierce"]),
+ G("flying","Flying","Card","11","A Combat Tag. Flying Units ignore terrain and elevation when moving, are never Engaged, can't Charge or be Charged, don't fight in the Combat Phase, and can't Control or Contest Mission Markers. For cover they count as taller than any terrain.",["Flying"],["combat-tags"]),
+ G("faction-tags","Faction Tags","Card","11","Race (Terran, Zerg, Protoss) and sub-faction tags (e.g. Raynor's Raiders). A Unit or Tactical Card is allowed only if every one of its tags is on your Faction Card.",["Faction Tag","Faction Tags"],["faction-card"]),
+ G("faction-card","Faction Card","Card","5.4","Every army has exactly one. It sets your Faction Tags, gives your starting Army Slots and resource, and has its own abilities.",["Faction Card","Faction Cards"],["tactical-card","faction-tags"]),
+ G("tactical-card","Tactical Card","Card","5.3","Bought with Vespene Gas. Each adds Army Slots, provides a resource when Exhausted, and has abilities. Zerg also take exactly one Creep card.",["Tactical Card","Tactical Cards"],["army-slot","exhaust"]),
+ G("cp","CP (Terran resource)","Card","10.5.1","Terran's resource for paying ability costs (e.g. \"1 CP\"). Generated by Exhausting a Ready Terran card.",["CP"],["exhaust"]),
+ G("bm","BM (Zerg resource, Biomass)","Card","10.5.1","Zerg's resource for paying ability costs (e.g. \"1 BM\"). Generated by Exhausting a Ready Zerg card.",["BM"],["exhaust"]),
+ G("pe","PE (Protoss resource)","Card","10.5.1","Protoss's resource for paying ability costs (e.g. \"1 PE\"). Generated by Exhausting a Ready Protoss card.",["PE"],["exhaust"]),
+ G("minerals","Minerals and Vespene Gas","Card","9.1.3","Army-building budgets. Minerals buy Units and upgrades; Vespene Gas buys Tactical Cards. Skirmish is 1000 / 100 and Standard 2000 / 200.",["Minerals","Vespene Gas"],["tactical-card"]),
+ G("speed","Speed","Card","5.1","How far (in inches) the Leading Model moves in a standard Move. With two values (e.g. 4/7), use the second if the Unit is down to one model or started with one. \"-\" means it can't move at all.",["Speed","SPEED"],["run"]),
+ G("armour","Armour","Card","5.1","The Target Number the defender needs on a D6 to cancel a hit in the Armour Roll.",["Armour"],["armour-roll"]),
+ G("evade","Evade","Card","5.1","The Target Number for Evade Rolls, which a Unit only gets when a rule grants one. \"-\" means it can never Evade.",["Evade"],["evade-roll"]),
+ G("hp","Hit Points (HP)","Card","5.1","How much Damage one model takes before it's removed.",["Hit Points","HP"],["damage-marker","shield"]),
+ G("shield","Shield","Card","5.1","Extra HP added to the Unit's first model. The Unit is Shielded until that's used up.",[],["shielded"]),
+ G("size","Size","Card","5.1","A model's height category, used for Line of Sight and moving past terrain.",["Size"],["effective-size"]),
+ G("range","Range (Rng)","Card","5.1","A weapon's maximum reach in inches. E means Engagement Range (melee). FT means a Flamer Template.",[],["engagement-range","template","long-range"]),
+ G("target","Target","Card","5.1","What a weapon can shoot: Ground, Flying, or All.",[],["combat-tags"]),
+ G("roa","RoA (Rate of Attack)","Card","5.1","Dice each firing model rolls. BT+X means a Blast Template plus X.",["RoA"],["dice-pools","template"]),
+ G("hit","Hit","Card","5.1","The Target Number each attack die needs on a D6 to hit.",[],["modifier"]),
+ G("s-dice","S Dice","Card","5.1","The Surge Die a weapon rolls (D3 or D6). No S Dice means no Surge.",[],["surge"]),
+ G("dmg","Damage (Dmg)","Card","5.1","Damage each die left in the Damage Pool deals.",[],["dice-pools","pierce"]),
+];
+const GL=id=>GLOSSARY.find(g=>g.id===id);
+const GL_CATS={Keyword:"Keywords",Status:"Statuses",Rules:"Rules terms",Card:"Cards and stats",Mission:"Mission terms"};
+
 /* ===================== STATE ===================== */
 const KEY="sctmg-fieldkit-v1";
 let S0={build:null,rosters:[],game:null,setup:{rosterId:"current",mission:"",deploy:"",oppGas:"",oppMin:""}};
@@ -612,6 +764,50 @@ if(!st.build)st.build=newBuild("T");
 const U=id=>UNITS.find(u=>u.id===id), T=id=>TAC.find(t=>t.id===id), M=id=>MISSIONS.find(m=>m.id===id), D=id=>DEPLOYS.find(d=>d.id===id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 let uidc=Date.now();
+
+/* Saved data can outlive the cards it points at: a later wave may rename or
+   remove an ID. Clean it on load so one stale ID can't crash a view, and tell
+   the player what was dropped. When renaming an ID, add {oldId:"newId"} to
+   RENAMED so existing rosters follow the rename instead of losing the entry. */
+const RENAMED={};
+const fixId=id=>RENAMED[id]||id;
+const arr=v=>Array.isArray(v)?v:[];
+function cleanBuild(b,notes,where){
+  if(!RACES[b.race])b.race="T";
+  if(!SCALES[b.scale])b.scale="std";
+  b.tac=b.tac&&typeof b.tac==="object"?b.tac:{};b.tacSlots=b.tacSlots&&typeof b.tacSlots==="object"?b.tacSlots:{};
+  if(b.faction){b.faction=fixId(b.faction);const f=T(b.faction);if(!f||f.type!=="Faction"||f.r!==b.race){notes.push(`${where}: faction card "${b.faction}"`);b.faction=""}}
+  const tac={};Object.entries(b.tac).forEach(([id,q])=>{const t=T(fixId(id));if(t&&t.type!=="Faction"&&t.r===b.race){if(+q>0)tac[t.id]=(tac[t.id]||0)+(+q)}else notes.push(`${where}: card "${id}"`)});b.tac=tac;
+  b.units=arr(b.units).filter(bu=>{if(!bu||typeof bu!=="object")return false;const u=U(fixId(bu.id));
+    if(!u||u.sum||u.r!==b.race){notes.push(`${where}: unit "${bu.id}"`);return false}
+    bu.id=u.id;if(!(Number.isInteger(bu.ci)&&bu.ci>=0&&bu.ci<u.comps.length))bu.ci=0;
+    bu.ups=arr(bu.ups).filter(n=>{if(u.up.some(x=>x.n===n))return true;notes.push(`${where}: upgrade "${n}" on ${u.n}`);return false});return true});
+  b.missions=arr(b.missions).map(fixId).filter(id=>M(id));b.deps=arr(b.deps).map(fixId).filter(id=>D(id));
+  if(typeof b.name!=="string")b.name="Army";
+  return b;
+}
+function cleanState(s){
+  const notes=[];
+  if(!s.build||typeof s.build!=="object")s.build=newBuild("T");
+  cleanBuild(s.build,notes,`Current roster "${s.build.name}"`);
+  s.rosters=arr(s.rosters).filter(r=>r&&typeof r==="object").map(r=>cleanBuild(r,notes,`Saved roster "${r.name}"`));
+  s.setup=Object.assign({},S0.setup,s.setup);
+  if(s.setup.mission&&!M(s.setup.mission))s.setup.mission="";
+  if(s.setup.deploy&&!D(s.setup.deploy))s.setup.deploy="";
+  if(s.setup.rosterId!=="current"&&!s.rosters.some(r=>r.id===s.setup.rosterId))s.setup.rosterId="current";
+  const g=s.game;
+  if(g&&(typeof g!=="object"||!M(fixId(g.mission))||!g.roster)){notes.push(`Game in progress: its mission no longer exists, so the game was cleared`);s.game=null}
+  else if(g){
+    g.mission=fixId(g.mission);if(g.deploy&&!D(fixId(g.deploy)))g.deploy="";else if(g.deploy)g.deploy=fixId(g.deploy);
+    cleanBuild(g.roster,[],"");
+    g.units=arr(g.units).filter(u=>{const ud=u&&U(fixId(u.id));if(!ud){notes.push(`Game in progress: unit "${u&&u.id}"`);return false}u.id=ud.id;u.ups=arr(u.ups);return true});
+    g.cards=arr(g.cards).filter(c=>{const t=c&&T(fixId(c.id));if(!t){notes.push(`Game in progress: card "${c&&c.id}"`);return false}c.id=t.id;return true});
+    if(!Array.isArray(g.vp)||g.vp.length!==2)g.vp=[0,0];
+  }
+  return notes;
+}
+const loadNotes=cleanState(st);
+if(loadNotes.length)save();
 
 /* ===================== CALCS ===================== */
 function limits(b){const min=b.scale==="go"?(+b.goMin||2001):SCALES[b.scale].min;return {min,gas:Math.floor(min/10)}}
@@ -643,21 +839,44 @@ function issues(b){
 function curSupply(gu){const u=U(gu.id);if(gu.models<=0)return 0;if(!u.prof)return gu.startSup;const p=u.prof.find(p=>gu.models>=p[0]&&gu.models<=p[1]);return p?p[2]:gu.startSup}
 function poolSupply(gu){ if(gu.ups&&gu.ups.includes("Advanced Medic Facilities"))return 0; return curSupply(gu)}
 
+/* ===================== GLOSSARY LINKS ===================== */
+/* Turn glossary terms in already-escaped HTML into tappable buttons. Matching
+   is case-sensitive (cards capitalise rules terms), longest form first, on
+   whole words only, and each term is linked once per call so a paragraph
+   isn't a sea of underlines. Text inside tags or existing buttons is skipped. */
+const glb=(id,label)=>`<button type="button" class="gl" data-gl="${id}">${label}</button>`;
+function glMatcher(extra){
+  const forms=[];GLOSSARY.forEach(g=>g.f.forEach(f=>forms.push([f,g.id])));(extra||[]).forEach(x=>forms.push(x));
+  forms.sort((a,b)=>b[0].length-a[0].length);
+  const reEsc=s=>s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+  return {map:new Map(forms),re:new RegExp("(^|[^A-Za-z0-9])("+forms.map(x=>reEsc(x[0])).join("|")+")(?![A-Za-z0-9])","g")};
+}
+const GL_TEXT=glMatcher(), GL_KIND=glMatcher([["Active","active"],["Passive","passive"]]);
+function linkTerms(html,opt){
+  opt=opt||{};const M=opt.kind?GL_KIND:GL_TEXT,seen=new Set(opt.skip?[opt.skip]:[]);let inBtn=0;
+  return String(html).split(/(<[^>]*>)/).map(part=>{
+    if(part[0]==="<"){if(/^<button\b/i.test(part))inBtn++;else if(/^<\/button/i.test(part))inBtn--;return part}
+    if(inBtn)return part;
+    return part.replace(M.re,(m,pre,term)=>{const id=M.map.get(term);if(seen.has(id))return m;seen.add(id);return pre+glb(id,term)});
+  }).join("");
+}
+const rt=s=>linkTerms(esc(s)); // rules text: escape, then link terms
+
 /* ===================== UI HELPERS ===================== */
 const $=s=>document.querySelector(s);
 function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove("on"),1600)}
 function setRace(r){document.body.dataset.race=r}
-function kindTag(k){return k?`<span class="kind">${esc(k)}</span>`:""}
+function kindTag(k){return k?`<span class="kind">${linkTerms(esc(k),{kind:true})}</span>`:""}
 function openModal(title,html){$("#mTitle").textContent=title;$("#mBody").innerHTML=html;const d=$("#modal");if(!d.open)d.showModal();$("#mBody").scrollTop=0}
 $("#mClose").onclick=()=>$("#modal").close();
 $("#modal").addEventListener("click",e=>{if(e.target.id==="modal")$("#modal").close()});
-function weaponTable(ws){if(!ws.length)return"";return `<div class="wt"><table><thead><tr><th>Weapon</th><th>Rng</th><th>Target</th><th>RoA</th><th>Hit</th><th>Surge</th><th>S Dice</th><th>Dmg</th><th>Keywords</th></tr></thead><tbody>${ws.map(w=>`<tr><td><b>${esc(w.n)}</b>${w.rep?`<br><span class="note">replaces ${esc(w.rep)}</span>`:""}</td><td>${w.rng}</td><td>${w.t}</td><td>${w.roa}</td><td>${w.hit}</td><td>${esc(w.su)}</td><td>${w.sd}</td><td>${w.dmg}</td><td class="kw">${esc(w.kw)}</td></tr>`).join("")}</tbody></table></div>`}
-function abilityBlock(abs){const order=["Any","Movement","Assault","Combat"];return order.map(ph=>{const l=abs.filter(a=>a.ph===ph);if(!l.length)return"";return `<div class="phh">${ph==="Any"?"Any phase":ph+" phase"}</div>`+l.map(a=>`<div class="ab"><b>${esc(a.n)}</b>${kindTag(a.k)} ${esc(a.tx)}</div>`).join("")}).join("")}
+function weaponTable(ws){if(!ws.length)return"";return `<div class="wt"><table><thead><tr><th>Weapon</th><th>${glb("range","Rng")}</th><th>${glb("target","Target")}</th><th>${glb("roa","RoA")}</th><th>${glb("hit","Hit")}</th><th>${glb("surge","Surge")}</th><th>${glb("s-dice","S Dice")}</th><th>${glb("dmg","Dmg")}</th><th>Keywords</th></tr></thead><tbody>${ws.map(w=>`<tr><td><b>${esc(w.n)}</b>${w.rep?`<br><span class="note">replaces ${esc(w.rep)}</span>`:""}</td><td>${w.rng}</td><td>${w.t}</td><td>${w.roa}</td><td>${w.hit}</td><td>${esc(w.su)}</td><td>${w.sd}</td><td>${w.dmg}</td><td class="kw">${rt(w.kw)}</td></tr>`).join("")}</tbody></table></div>`}
+function abilityBlock(abs){const order=["Any","Movement","Assault","Combat"];return order.map(ph=>{const l=abs.filter(a=>a.ph===ph);if(!l.length)return"";return `<div class="phh">${ph==="Any"?"Any phase":ph+" phase"}</div>`+l.map(a=>`<div class="ab"><b>${esc(a.n)}</b>${kindTag(a.k)} ${rt(a.tx)}</div>`).join("")}).join("")}
 function unitCardHTML(u,chosenUps){
   if(u.unk)return `<p class="note">This unit is in the 09.10.2026 cost table, but its card hasn't been released in the files you have, so stats and abilities aren't available here. Slot is a guess (<b>${u.slot}</b>) and any sub-faction tag is unknown; set the slot in the builder once you see the card.</p><div class="phh">Compositions</div>${u.comps.map(c=>`<div class="ab">${c[0]} model${c[0]>1?"s":""}: <b>${c[1]}</b> minerals, Supply ${c[2]}</div>`).join("")}<div class="phh">Upgrades</div>${u.up.map(x=>`<div class="ab"><b>${esc(x.n)}</b> ${x.rep?"(replaces "+esc(x.rep)+") ":""}— ${x.c.join(" / ")}</div>`).join("")||"<div class='note'>None</div>"}`;
-  const s=u.st,labels=["Shield","Speed","Armour","Evade","HP","Size"];
-  let h=`<div class="sgrid">${s.map((v,i)=>`<div><b>${v}</b><small>${labels[i]}</small></div>`).join("")}</div>`;
-  h+=`<div class="note">${esc(u.tags.join(" · "))} &nbsp;|&nbsp; ${esc(u.ct)} &nbsp;|&nbsp; ${u.slot==="—"?"Summoned (no cost, no slot)":u.slot+" slot"} ${u.role&&u.role!=="—"?" &nbsp;|&nbsp; "+esc(u.role):""} &nbsp;|&nbsp; ${u.base}${u.uq?" &nbsp;|&nbsp; Unique":""}</div>`;
+  const s=u.st,labels=["Shield","Speed","Armour","Evade","HP","Size"],lid=["shield","speed","armour","evade","hp","size"];
+  let h=`<div class="sgrid">${s.map((v,i)=>`<div><b>${v}</b><small>${glb(lid[i],labels[i])}</small></div>`).join("")}</div>`;
+  h+=`<div class="note">${esc(u.tags.join(" · "))} &nbsp;|&nbsp; ${rt(u.ct)} &nbsp;|&nbsp; ${u.slot==="—"?"Summoned (no cost, no slot)":u.slot+" slot"} ${u.role&&u.role!=="—"?" &nbsp;|&nbsp; "+esc(u.role):""} &nbsp;|&nbsp; ${u.base}${u.uq?" &nbsp;|&nbsp; Unique":""}</div>`;
   h+=`<div class="note" style="margin-top:4px">Supply by models: ${u.prof.map(p=>`${p[0]===p[1]?p[0]:p[0]+"–"+p[1]}→${p[2]}`).join(", ")}</div>`;
   if(!u.sum)h+=`<div class="note">Buy at: ${u.comps.map(c=>`${c[0]} models ${c[1]}m`).join(" · ")}</div>`;
   if(u.src==="cc")h+=`<div class="note" style="margin-top:4px">Data imported from Co-op Command's Command Center snapshot (16 Sep 2026), not from your printed card. Base size approximate.</div>`;
@@ -667,12 +886,12 @@ function unitCardHTML(u,chosenUps){
   if(chosenUps){chosenUps.forEach(n=>{const up=u.up.find(x=>x.n===n);if(up&&up.w){if(up.rep&&!up.spec){ws=ws.filter(w=>w.n!==up.rep)}ws.push(Object.assign({},up.w,{rep:up.spec&&up.rep?up.rep+" (one model)":(up.spec?null:null)}))}})}
   const byPh=["Assault","Combat"].map(ph=>{const l=ws.filter(w=>w.ph===ph);return l.length?`<div class="phh">${ph} weapons</div>`+weaponTable(l):""}).join("");
   h+=byPh;
-  if(chosenUps&&chosenUps.length){const ab=chosenUps.map(n=>u.up.find(x=>x.n===n)).filter(x=>x&&x.tx);if(ab.length)h+=`<div class="phh">Taken upgrades</div>`+ab.map(a=>`<div class="ab"><b>${esc(a.n)}</b>${kindTag(a.k)} <span class="note">(${a.ph})</span> ${esc(a.tx)}</div>`).join("")}
-  if(u.up.length){h+=`<div class="phh">All upgrades</div>`+u.up.map(x=>`<div class="ab"><b>${esc(x.n)}</b> <span class="cost">${x.c.join(" / ")}</span>${x.spec?' <span class="tag">Specialist</span>':""}${kindTag(x.k)} <span class="note">(${x.ph})</span> ${x.tx?esc(x.tx):""}${x.w?weaponTable([Object.assign({},x.w,{rep:x.rep})]):""}</div>`).join("")}
+  if(chosenUps&&chosenUps.length){const ab=chosenUps.map(n=>u.up.find(x=>x.n===n)).filter(x=>x&&x.tx);if(ab.length)h+=`<div class="phh">Taken upgrades</div>`+ab.map(a=>`<div class="ab"><b>${esc(a.n)}</b>${kindTag(a.k)} <span class="note">(${a.ph})</span> ${rt(a.tx)}</div>`).join("")}
+  if(u.up.length){h+=`<div class="phh">All upgrades</div>`+u.up.map(x=>`<div class="ab"><b>${esc(x.n)}</b> <span class="cost">${x.c.join(" / ")}</span>${x.spec?' <span class="tag">Specialist</span>':""}${kindTag(x.k)} <span class="note">(${x.ph})</span> ${x.tx?rt(x.tx):""}${x.w?weaponTable([Object.assign({},x.w,{rep:x.rep})]):""}</div>`).join("")}
   return h;
 }
 function tacCardHTML(t){
-  let h=`<div class="note">${t.type} card · ${esc(t.tags.join(" · "))}${t.uq?" · Unique":""} · ${t.gas} Vespene Gas${t.res?` · provides ${t.res[1]} ${t.res[0]}`:""}</div>`;
+  let h=`<div class="note">${linkTerms(`${t.type} card · ${esc(t.tags.join(" · "))}${t.uq?" · Unique":""} · ${t.gas} Vespene Gas${t.res?` · provides ${t.res[1]} ${t.res[0]}`:""}`)}</div>`;
   const sl=Object.entries(t.slots).filter(e=>e[1]).map(e=>`${e[1]}× ${e[0]}`).join(", ");
   h+=`<div class="ab"><b>Army slots:</b> ${sl||(t.unk?"not in your PDFs":"none")}</div>`;
   if(t.src==="cc")h+=`<p class="note">Imported from Co-op Command's Command Center snapshot (16 Sep 2026).</p>`;
@@ -681,7 +900,7 @@ function tacCardHTML(t){
 }
 function showUnit(id,ups){const u=U(id);openModal(u.n,unitCardHTML(u,ups))}
 function showTac(id){const t=T(id);openModal(t.n,tacCardHTML(t))}
-function missionHTML(m,scale){const v=m[scale==="sk"?"sk":"std"];return `<div class="note">${scale==="sk"?"Skirmish":"Standard"} · starting Supply ${v.sup}, +${v.esc} per Round · ${v.len} Rounds · ${v.lead?`ends early on a ${v.lead}+ VP lead`:"no early-win VP lead"}</div><div class="phh">Mission parameters</div><div class="ab">${esc(v.params)}</div><div class="phh">Scoring</div><div class="ab">${esc(v.score)}</div>${v.extra?`<div class="phh">Additional</div><div class="ab">${esc(v.extra)}</div>`:""}`}
+function missionHTML(m,scale){const v=m[scale==="sk"?"sk":"std"];return `<div class="note">${scale==="sk"?"Skirmish":"Standard"} · starting Supply ${v.sup}, +${v.esc} per Round · ${v.len} Rounds · ${v.lead?`ends early on a ${v.lead}+ VP lead`:"no early-win VP lead"}</div><div class="phh">Mission parameters</div><div class="ab">${rt(v.params)}</div><div class="phh">Scoring</div><div class="ab">${rt(v.score)}</div>${v.extra?`<div class="phh">Additional</div><div class="ab">${rt(v.extra)}</div>`:""}`}
 
 /* ===================== BUILD VIEW ===================== */
 function renderBuild(){
@@ -816,7 +1035,7 @@ function renderPlay(){
   <div class="stat"><div class="n">${P===Infinity?"∞":P}</div><div class="k">Supply Pool</div></div></div>`;
   h+=`<div class="panel"><h2>${esc(M(g.mission).n)} <small>${g.deploy?esc(D(g.deploy).n):""}</small></h2>
   <div class="phases">${PHASES.map((p,i)=>`<div class="${i===g.phase?"on":""}">${p.replace(" & Cleanup","")}</div>`).join("")}</div>
-  <div class="ref">${PHASE_REF[g.phase]}</div>
+  <div class="ref">${linkTerms(PHASE_REF[g.phase])}</div>
   <div class="row" style="margin-top:8px"><button class="btn" id="pPrev" ${g.round===1&&g.phase===0?"disabled":""}>Back</button><button class="btn pri grow" id="pNext" ${g.over?"disabled":""}>${g.phase===3?(g.round>=mv.len?"Finish game":"End Round "+g.round):"Next: "+PHASES[g.phase+1]}</button><button class="link" id="pMis" style="margin-left:6px">Mission card</button></div>
   ${g.round>=mv.len?`<div class="banner">Final Round: Supply Pool is unlimited. All remaining Reserves may deploy.</div>`:""}</div>`;
   h+=`<div class="panel"><h2>Victory Points <small>${mv.lead?`game ends on a ${mv.lead}+ lead`:"no early-win lead"}</small></h2><div class="vp">
@@ -879,14 +1098,53 @@ $("#v-cards").addEventListener("click",e=>{const el=e.target.closest("button");i
   else if(ds.mis){const x=M(ds.mis);openModal(x.n,missionHTML(x,"std")+"<hr style='border:0;border-top:1px solid var(--line);margin:12px 0'>"+missionHTML(x,"sk"))}});
 $("#v-cards").addEventListener("input",e=>{if(e.target.id==="cQ"){cardFilter.q=e.target.value;const pos=e.target.selectionStart;renderCards();const i=$("#cQ");i.focus();i.setSelectionRange(pos,pos)}});
 
+/* ===================== GLOSSARY VIEW ===================== */
+const refText=g=>/^\d/.test(g.ref)?`Core Rules ${g.ref.includes(".")?"section":"Part"} ${g.ref}`:esc(g.ref);
+let glossStack=[];
+function glossBody(g){return `<div class="gcat" style="margin:0">${GL_CATS[g.cat]}</div><p class="gdef">${linkTerms(esc(g.d),{skip:g.id})}</p><div class="note">${refText(g)}</div>${g.see.length?`<div class="note" style="margin-top:6px">See also: ${g.see.map(id=>glb(id,esc(GL(id).n))).join(", ")}</div>`:""}`}
+function openGloss(id){const g=GL(id);if(!g)return;const d=$("#gloss");
+  if(d.open&&d.dataset.id&&d.dataset.id!==id)glossStack.push(d.dataset.id);
+  d.dataset.id=id;$("#gTitle").textContent=g.n;$("#gBody").innerHTML=glossBody(g);$("#gBack").hidden=!glossStack.length;
+  if(!d.open)d.showModal();$("#gBody").scrollTop=0}
+// Capture phase, so a term link never also triggers the view or card it sits in.
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("button.gl");if(!b)return;e.preventDefault();e.stopPropagation();openGloss(b.dataset.gl)},true);
+$("#gClose").onclick=()=>$("#gloss").close();
+$("#gBack").onclick=()=>{const prev=glossStack.pop();const d=$("#gloss");d.dataset.id="";if(prev)openGloss(prev)};
+$("#gloss").addEventListener("click",e=>{if(e.target.id==="gloss")$("#gloss").close()});
+$("#gloss").addEventListener("close",()=>{glossStack=[];$("#gloss").dataset.id=""});
+
+let glossFilter={q:"",cat:""};
+function glossMatches(){
+  const q=glossFilter.q.trim().toLowerCase();
+  let l=GLOSSARY.filter(g=>!glossFilter.cat||g.cat===glossFilter.cat);
+  if(!q)return l.slice().sort((a,b)=>a.n.localeCompare(b.n,"en",{sensitivity:"base"}));
+  const rank=g=>{const n=g.n.toLowerCase();if(n.startsWith(q))return 0;if(n.includes(q))return 1;if(g.f.some(f=>f.toLowerCase().includes(q)))return 2;if(g.d.toLowerCase().includes(q))return 3;return 9};
+  return l.map(g=>[rank(g),g]).filter(x=>x[0]<9).sort((a,b)=>a[0]-b[0]||a[1].n.localeCompare(b[1].n)).map(x=>x[1]);
+}
+function renderGlossList(){
+  const l=glossMatches(),grouped=!glossFilter.q.trim();let h="",last="";
+  l.forEach(g=>{const letter=g.n[0].toUpperCase();if(grouped&&letter!==last){h+=`<div class="gletter">${letter}</div>`;last=letter}
+    h+=`<div class="gitem" id="gl-${g.id}"><h3>${esc(g.n)}<small>${GL_CATS[g.cat]}</small></h3><p class="gdef">${linkTerms(esc(g.d),{skip:g.id})}</p><div class="note">${refText(g)}</div></div>`});
+  $("#gList").innerHTML=`<h2>${l.length} term${l.length===1?"":"s"}</h2>`+(h||'<p class="note">No matching terms. Try a shorter search.</p>');
+}
+function renderGloss(){
+  $("#v-gloss").innerHTML=`<div class="panel"><label class="f" for="gQ">Search the glossary</label><input type="search" id="gQ" value="${esc(glossFilter.q)}" placeholder="e.g. Engaged, PIERCE, Surge" autocomplete="off" spellcheck="false">
+  <div class="chips" role="group" aria-label="Filter by type">${[["","All"],...Object.entries(GL_CATS)].map(([k,v])=>`<button data-gc="${k}" aria-pressed="${glossFilter.cat===k}">${v}</button>`).join("")}</div>
+  <p class="note" style="margin-bottom:0">Plain-English summaries for quick reference at the table. The Core Rules are the final word, so each entry says where to look. Tip: tap any dotted-underlined term on a card to see its meaning.</p></div><div class="panel" id="gList"></div>`;
+  renderGlossList();
+}
+$("#v-gloss").addEventListener("input",e=>{if(e.target.id==="gQ"){glossFilter.q=e.target.value;renderGlossList()}});
+$("#v-gloss").addEventListener("click",e=>{const b=e.target.closest("button[data-gc]");if(!b)return;glossFilter.cat=b.dataset.gc;const q=$("#gQ").value;renderGloss();if(q)$("#gQ").focus()});
+
 /* ===================== NAV ===================== */
-const TITLES={build:"Army builder",setup:"Game setup",play:"Battle tracker",cards:"Card reference"};
+const TITLES={build:"Army builder",setup:"Game setup",play:"Battle tracker",cards:"Card reference",gloss:"Glossary"};
 function show(v){document.querySelectorAll("nav.tabs button").forEach(b=>b.setAttribute("aria-current",b.dataset.v===v?"true":"false"));document.querySelectorAll("section.view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));$("#title").textContent=TITLES[v];
-  ({build:renderBuild,setup:renderSetup,play:renderPlay,cards:renderCards})[v]();window.scrollTo(0,0)}
+  ({build:renderBuild,setup:renderSetup,play:renderPlay,cards:renderCards,gloss:renderGloss})[v]();window.scrollTo(0,0)}
 document.querySelectorAll("nav.tabs button").forEach(b=>b.onclick=()=>show(b.dataset.v));
 $("#themeBtn").onclick=()=>{const r=document.documentElement;const dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme: dark)").matches;r.dataset.theme=dark?"light":"dark";try{localStorage.setItem(KEY+"-theme",r.dataset.theme)}catch(e){}};
 try{const th=localStorage.getItem(KEY+"-theme");if(th)document.documentElement.dataset.theme=th}catch(e){}
 show(st.game?"play":"build");
+if(loadNotes.length)openModal("Saved data updated",`<p>Some of your saved data pointed at cards that are no longer in the app, probably because a card was renamed or removed in an update. They've been taken out so everything else keeps working:</p><ul>${loadNotes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul><p class="note">Check these rosters against the current cards.</p>`);
 </script>
 </body>
 </html>
