@@ -128,7 +128,15 @@ async function auth(req, env, url, path) {
         grant_type: "authorization_code", code, redirect_uri: redirectUri,
       }),
     });
-    if (!tokenRes.ok) return back("Discord sign-in failed");
+    if (!tokenRes.ok) {
+      // Discord's reply holds only an error code (e.g. invalid_client), never a
+      // secret, so it's safe to log and to show. 429 = Discord rate limiting.
+      const body = (await tokenRes.text()).slice(0, 300);
+      console.log("discord token exchange failed", tokenRes.status, body);
+      let reason = String(tokenRes.status);
+      try { reason = JSON.parse(body).error || reason; } catch {}
+      return back(`Discord sign-in failed (${reason})`);
+    }
     const { access_token } = await tokenRes.json();
     const meRes = await fetch("https://discord.com/api/users/@me", { headers: { authorization: `Bearer ${access_token}` } });
     if (!meRes.ok) return back("Couldn't read your Discord profile");
