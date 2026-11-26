@@ -121,13 +121,18 @@ Field names are camelCase.
   unit to be legal. `["Terran"]` fits any Terran faction;
   `["Terran","Nova Covert Ops"]` needs the Nova Covert Ops faction.
 - `status`: `"official"` (from an official card sheet or Archon's online card database;
-  Wave 4 cards come from the database and have `combatRole` and `base` null)
+  Wave 4 cards come from the database and have `combatRole` null, and `base` null
+  except where `baseSource` names another source)
   or `"cost-only"` (in the cost
   table, no card yet: stats, abilities and weapons will be empty or null)
 - `summoned`: true for units that are set by an ability (Auto-Turret, Pylon,
   Omega Worm…). They have no cost, no `armySlot` and empty `compositions`.
 - `unique`, `armySlot` (`Core` / `Elite` / `Support` / `Air` / `Hero`),
   `combatRole`, `base`
+- `baseSource: string | null`: set only when `base` comes from somewhere other
+  than the unit's card source. Today that's four Wave 4 units (Firebat, Stukov,
+  Infested Marine, Reaver), whose bases come from v1.10.26 card photos that may
+  be pre-release.
 - `stats: { shield, speed, armour, evade, hitPoints, size }` (see traps)
 - `combatTags: string[]`: `Biological`, `Armoured`, `Ground`, `Flying`…
 - `supplyByModels: [{ min, max, supply }]`: current Supply Value by models alive

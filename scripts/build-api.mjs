@@ -42,7 +42,7 @@ function unit(u) {
     id: u.id, name: u.n, race: RACE[u.r], factionTags: u.tags,
     status: u.unk ? "cost-only" : "official",
     summoned: !!u.sum, unique: !!u.uq,
-    armySlot: u.sum ? null : u.slot, combatRole: u.role || null, base: u.base || null,
+    armySlot: u.sum ? null : u.slot, combatRole: u.role || null, base: u.base || null, baseSource: u.baseSrc || null,
     stats: u.st ? { shield: dash(shield), speed: dash(speed), armour: dash(armour), evade: dash(evade), hitPoints: dash(hitPoints), size: dash(size) } : null,
     combatTags: list(u.ct),
     supplyByModels: (u.prof || []).map(([min, max, supply]) => ({ min, max, supply })),
@@ -87,7 +87,7 @@ const glossary = D.GLOSSARY.map(glossaryEntry);
 // ---------- envelope ----------
 const dataVersion = createHash("sha256").update(JSON.stringify({ units, cards, missions, deployments, scales, glossary })).digest("hex").slice(0, 12);
 const meta = {
-  api: "v1", dataVersion, costs: "Cost table 09.10.2026", cards: "Official card sheets, waves 1–3 (v1.09.26); Wave 4 from Archon's official online card database (sc.starcraft-tmg.com)",
+  api: "v1", dataVersion, costs: "Cost table 09.10.2026", cards: "Official card sheets, waves 1–3 (v1.09.26); Wave 4 from Archon's official online card database (sc.starcraft-tmg.com); four Wave 4 bases from v1.10.26 card photos (see units' baseSource)",
   docs: "https://github.com/zariaskobold/sctmg-data-disc/blob/main/API.md", legal: D.LEGAL,
 };
 const env = (data, extra) => ({ data, meta: extra ? { ...meta, ...extra } : meta });
