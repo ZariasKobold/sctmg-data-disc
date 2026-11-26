@@ -295,6 +295,11 @@ const build = (race, faction, tac = {}, units = []) => {
   has("import: unknown unit reported", r.notes, "gone_unit");
   r = L.importData(clone(file), [clone(a)]);
   eq("import: identical roster skipped", [r.skipped, r.rosters.map((x) => x.name)], [1, ["Zed"]]);
+  eq("import: the skipped roster is offered back as a dupe", r.dupes.map((x) => x.name), ["Alpha"]);
+  const copies = L.asNewCopies([r.dupes[0], r.dupes[0]], [a, z]);
+  check("import: dupes saved as new get fresh ids and distinct names", copies.every((c) => c.id !== "rA") && copies[0].id !== copies[1].id && JSON.stringify(copies.map((c) => c.name)) === JSON.stringify(["Alpha (2)", "Alpha (3)"]));
+  const one = clone(L.exportData(st, a));
+  eq("export one: just that roster, no current build", [one.rosters.map((x) => x.name), one.current], [["Alpha"], undefined]);
   const a2 = clone(a); a2.name = "Alpha v2";
   r = L.importData([a2], [clone(a)]);
   check("import: same id but different content gets a fresh id", r.rosters.length === 1 && r.rosters[0].id !== "rA" && r.rosters[0].name === "Alpha v2");
@@ -328,6 +333,20 @@ const build = (race, faction, tac = {}, units = []) => {
   eq("sync: edited elsewhere after my delete: comes back", [m.rosters.map((x) => x.name), m.drop], [["edited"], []]);
   m = L.mergeRosters([], { c: 10 }, []);
   eq("sync: delete of a never-synced roster still sent (harmless)", m.drop, ["c"]);
+}
+
+// ---------- 8b. save as new ----------
+{
+  const saved = [{ name: "Raiders" }, { name: "Raiders (2)" }, { name: "Swarm" }];
+  eq("save as: unused name kept", L.freeRosterName("2000 list", saved), "2000 list");
+  eq("save as: taken name gets the next number", L.freeRosterName("Raiders", saved), "Raiders (3)");
+  eq("save as: numbered name counts from its base", L.freeRosterName("Raiders (2)", saved), "Raiders (3)");
+  eq("save as: blank name falls back", L.freeRosterName("  ", []), "New army");
+  const b = L.newBuild("T"); b.units = [{ id: "marine", ci: 0, ups: [] }];
+  const c = L.copyAsNew(b, " Raiders 2000 ");
+  check("save as: copy gets a new id and the new name", c.id !== b.id && c.name === "Raiders 2000" && c.updated > 0);
+  c.units.push({ id: "marine", ci: 0, ups: [] });
+  eq("save as: copy is deep (original untouched)", b.units.length, 1);
 }
 
 // ---------- 9. online game bookkeeping ----------

@@ -1010,18 +1010,27 @@ const rt=s=>linkTerms(esc(s)); // rules text: escape, then link terms
    tests/logic.mjs can check all of it in Node. */
 const DISC_FORMAT="sctmg-data-disc";
 const newRosterId=()=>"r"+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+// "Save as new": a name no saved roster already uses ("Raiders" -> "Raiders (2)" -> "Raiders (3)").
+function freeRosterName(name,rosters){name=String(name||"").trim()||"New army";const taken=new Set((rosters||[]).map(r=>r.name));if(!taken.has(name))return name;
+  const base=name.replace(/ \(\d+\)$/,"");let n=2;while(taken.has(`${base} (${n})`))n++;return `${base} (${n})`}
+// A deep copy of the build with its own id, so saving it never overwrites the original.
+function copyAsNew(b,name){const c=JSON.parse(JSON.stringify(b));c.id=newRosterId();c.name=String(name||"").trim().slice(0,80)||"New army";c.updated=Date.now();return c}
 function rosterText(b){const t=totals(b),L=limits(b);let s=`${b.name}\n${RACES[b.race]} — ${b.faction?T(b.faction).n:"(no faction)"} — ${SCALES[b.scale].n}\nMinerals ${t.min}/${L.min} · Vespene ${t.gas}/${L.gas} · Supply ${b.units.reduce((a,bu)=>a+U(bu.id).comps[bu.ci][2],0)}\n\nUNITS\n`;
   b.units.forEach(bu=>{const u=U(bu.id);s+=`- ${u.n} ×${u.comps[bu.ci][0]} (Supply ${u.comps[bu.ci][2]}, ${unitCost(bu)} min)${bu.ups&&bu.ups.length?" — "+bu.ups.join(", "):""}\n`});
   s+=`\nTACTICAL CARDS\n`;Object.entries(b.tac).forEach(([id,q])=>{if(q)s+=`- ${T(id).n}${q>1?" ×"+q:""} (${T(id).gas*q} gas)\n`});
   s+=`\nMISSIONS: ${b.missions.map(id=>M(id).n).join(", ")||"—"}\nDEPLOYMENTS: ${b.deps.map(id=>D(id).n).join(", ")||"—"}\n\nBuilt with SCTMG Data Disc\n`;return s}
 
-function exportData(s){
-  return {format:DISC_FORMAT,kind:"rosters",version:1,exported:new Date().toISOString(),
-    rosters:JSON.parse(JSON.stringify(s.rosters)),current:JSON.parse(JSON.stringify(s.build))};
+// With `only`, the file holds just that roster; without it, every saved roster plus the current build.
+function exportData(s,only){
+  const d={format:DISC_FORMAT,kind:"rosters",version:1,exported:new Date().toISOString()};
+  if(only)d.rosters=[JSON.parse(JSON.stringify(only))];
+  else{d.rosters=JSON.parse(JSON.stringify(s.rosters));d.current=JSON.parse(JSON.stringify(s.build))}
+  return d;
 }
 // Accepts a Data Disc file, a bare roster, or an array of rosters. Returns the
-// rosters to add (already cleaned, with fresh IDs where they'd clash) plus
-// notes about anything dropped. Never throws on bad input.
+// rosters to add (already cleaned, with fresh IDs where they'd clash), the
+// ones identical to a saved roster (`dupes`, so the player can still import
+// them as copies) and notes about anything dropped. Never throws on bad input.
 function importData(data,existing){
   const notes=[],out=[];let list=[];
   if(Array.isArray(data))list=data;
@@ -1030,21 +1039,25 @@ function importData(data,existing){
     else if(data.race&&Array.isArray(data.units))list=[data];
     if(data.current&&typeof data.current==="object"&&Array.isArray(data.current.units)&&data.current.units.length&&!list.some(r=>r&&r.id===data.current.id))list.push(data.current);
   }
-  if(!list.length)return {rosters:[],notes:["That file doesn't contain any SCTMG Data Disc rosters."],skipped:0};
+  if(!list.length)return {rosters:[],notes:["That file doesn't contain any SCTMG Data Disc rosters."],skipped:0,dupes:[]};
   const strip=r=>{const c=Object.assign({},r);delete c.updated;c.units=arr(c.units).map(u=>{const x=Object.assign({},u);delete x.uid;delete x.slot;return x});return JSON.stringify(c)}; // uid is per-device, slot is filled in on import
-  const have=new Map(arr(existing).map(r=>[r.id,r]));let skipped=0;
+  const have=new Map(arr(existing).map(r=>[r.id,r])),dupes=[];
   list.forEach(raw=>{
     if(!raw||typeof raw!=="object"||!Array.isArray(raw.units))return;
     const r=cleanBuild(JSON.parse(JSON.stringify(raw)),notes,`Imported roster "${typeof raw.name==="string"?raw.name:"Army"}"`);
     r.name=r.name.slice(0,80)||"Imported army";if(!SCALES[r.scale])r.scale="std";if(typeof r.goMin!=="number")r.goMin=2500;
     r.units.forEach(bu=>{bu.uid=++uidc;if(!bu.slot)bu.slot=U(bu.id).slot});
     const same=typeof r.id==="string"&&have.get(r.id);
-    if(same&&strip(same)===strip(r)){skipped++;return}
+    if(same&&strip(same)===strip(r)){dupes.push(r);return}
     if(typeof r.id!=="string"||!/^[A-Za-z0-9_-]{1,40}$/.test(r.id)||have.has(r.id)||out.some(x=>x.id===r.id))r.id=newRosterId();
     r.updated=Date.now();out.push(r);
   });
-  return {rosters:out,notes,skipped};
+  return {rosters:out,notes,skipped:dupes.length,dupes};
 }
+// Turn rosters that are already saved into new ones: fresh IDs, and names
+// that don't collide with `rosters` or with each other.
+function asNewCopies(list,rosters){const taken=arr(rosters).slice();
+  return arr(list).map(r=>{const c=copyAsNew(r,freeRosterName(r.name,taken));taken.push(c);return c})}
 
 // Rebuild a roster from the text that "Copy as text" makes. Lenient: bullet
 // style, case and the × sign don't matter, and anything it can't match is
@@ -1232,7 +1245,7 @@ function renderBuild(){
   // issues
   const is=issues(b);
   h+=`<div class="panel"><h2>Roster check</h2><ul class="issues">${is.length?is.map(x=>`<li>${esc(x)}</li>`).join(""):'<li class="ok">Roster is legal.</li>'}</ul></div>`;
-  h+=`<div class="panel"><div class="row"><button class="btn pri" id="bSave">Save roster</button><button class="btn" id="bCopy">Copy as text</button><button class="btn" id="bNew">New roster</button></div>
+  h+=`<div class="panel"><div class="row"><button class="btn pri" id="bSave">Save roster</button>${st.rosters.some(r=>r.id===b.id)?`<button class="btn" id="bSaveAs">Save as new</button>`:""}<button class="btn" id="bCopy">Copy as text</button><button class="btn" id="bNew">New roster</button></div>
   <div class="row" style="margin-top:8px"><button class="btn sm" id="bExport">Export file</button><button class="btn sm" id="bImport">Import file</button><button class="btn sm" id="bPaste">Paste text</button><input type="file" id="bFile" accept=".json,.disc,application/json" hidden></div>
   <p class="note">${net.user?"Saved rosters sync to your account.":net.available?"Sign in (top right) to sync saved rosters across devices.":"Export a file to move rosters to another device."}</p>
   ${st.rosters.length?`<div class="grp">Saved rosters</div>`+st.rosters.map(r=>`<div class="item"><div class="hd"><div class="grow"><b>${esc(r.name)}</b><div class="meta">${RACES[r.race]} · ${SCALES[r.scale].n} · ${totals(r).min} minerals</div></div><button class="btn sm" data-rload="${r.id}">Load</button>${net.user?`<button class="btn sm" data-rshare="${r.id}">Share</button>`:""}<button class="btn sm danger" data-rdel="${r.id}" aria-label="Delete ${esc(r.name)}">✕</button></div></div>`).join(""):""}</div>`;
@@ -1246,11 +1259,13 @@ function onBuildClick(e){
   else if(ds.tq){const id=ds.tq,d=+ds.d;const q=Math.max(0,(b.tac[id]||0)+d);if(T(id).uq&&q>1)return;if(q)b.tac[id]=q;else delete b.tac[id]}
   else if(ds.urm!==undefined){b.units.splice(+ds.urm,1)}
   else if(ds.uadd){const u=U(ds.uadd);b.units.push({uid:++uidc,id:u.id,ci:0,ups:[],slot:u.slot});toast(u.n+" added")}
-  else if(el.id==="bExport"){exportRosters();return}
+  else if(el.id==="bExport"){openExport();return}
   else if(el.id==="bImport"){$("#bFile").click();return}
   else if(el.id==="bPaste"){openPaste();return}
   else if(ds.rshare){shareRoster(st.rosters.find(r=>r.id===ds.rshare));return}
   else if(el.id==="bSave"){b.updated=Date.now();const copy=JSON.parse(JSON.stringify(b));pushRoster(copy);const i=st.rosters.findIndex(r=>r.id===b.id);if(i>=0)st.rosters[i]=copy;else st.rosters.push(copy);toast("Roster saved")}
+  else if(el.id==="bSaveAs"){const sug=freeRosterName(b.name,st.rosters),name=prompt("Save as a new roster named:",sug);if(name===null)return;
+    const copy=copyAsNew(b,name.trim()||sug);st.rosters.push(JSON.parse(JSON.stringify(copy)));pushRoster(copy);st.build=copy;toast(`Saved as “${copy.name}”`)}
   else if(el.id==="bCopy"){const txt=rosterText(b);(navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>toast("Roster copied")).catch(()=>openModal("Roster text",`<pre style="white-space:pre-wrap;font:14px/1.4 var(--body)">${esc(txt)}</pre>`));return}
   else if(el.id==="bNew"){st.build=newBuild(b.race);toast("New roster started")}
   else if(ds.rload){st.build=JSON.parse(JSON.stringify(st.rosters.find(r=>r.id===ds.rload)));toast("Roster loaded")}
@@ -1480,7 +1495,7 @@ $("#mBody").addEventListener("click",async e=>{
     if(a==="sync"){await syncRosters(true);openAccount()}
     else if(a==="logout"){await api("POST","/auth/logout");net.user=null;net.games=null;renderAcctBtn();$("#modal").close();toast("Signed out");rerenderCurrent()}
     else if(a==="delete"){if(!confirm("Delete your account and everything synced to it? This can't be undone."))return;await api("DELETE","/auth/account");net.user=null;net.games=null;if(st.game&&st.game.online){st.game=null;save()}renderAcctBtn();$("#modal").close();toast("Account deleted");rerenderCurrent()}
-    else if(el.dataset.shareImport!==undefined){const r=importData(shareCache,st.rosters);st.rosters.push(...r.rosters);r.rosters.forEach(pushRoster);save();$("#modal").close();toast(r.rosters.length?"Roster imported":"You already have this roster");if(r.rosters[0]){st.build=JSON.parse(JSON.stringify(r.rosters[0]));show("build")}}
+    else if(el.dataset.shareImport!==undefined){finishImport(importData(shareCache,st.rosters),{load:true})}
   }catch(err){toast(err.message)}
 });
 
@@ -1520,16 +1535,43 @@ async function openShare(code){
 }
 
 // ---- import / export ----
-function exportRosters(){
-  const blob=new Blob([JSON.stringify(exportData(st),null,1)],{type:"application/json"});
-  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`sctmg-rosters-${new Date().toISOString().slice(0,10)}.json`;
-  document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);toast("Rosters exported");
+// Asks first: just the roster on screen (the usual case) or every saved roster.
+function openExport(){
+  if(!st.rosters.length){exportRosters("one");return}
+  openModal("Export file",`<p class="note">Save a Data Disc file to back up rosters or move them to another device.</p>
+  <div class="row"><button class="btn pri" data-export="one">This roster: ${esc(st.build.name)}</button><button class="btn" data-export="all">All saved rosters (${st.rosters.length})</button></div>`);
 }
-function finishImport(r){
-  st.rosters.push(...r.rosters);r.rosters.forEach(pushRoster);save();renderBuild();
-  const msg=`${r.rosters.length} roster${r.rosters.length===1?"":"s"} imported${r.skipped?`, ${r.skipped} already here`:""}.`;
-  if(r.notes.length)openModal("Import",`<p>${msg}</p><p>Some entries didn't match the current cards and were left out:</p><ul>${r.notes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul>`);else toast(msg);
+function exportRosters(which){
+  const one=which==="one",slug=one?(st.build.name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||"roster"):"rosters";
+  const blob=new Blob([JSON.stringify(exportData(st,one?st.build:null),null,1)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`sctmg-${slug}-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);
+  if($("#modal").open)$("#modal").close();toast(one?"Roster exported":"Rosters exported");
 }
+// Rosters already saved here aren't added silently: list them and offer to
+// import them as new copies. opts.load loads the first imported roster (share links).
+let pendingImport=null;
+function finishImport(r,opts){
+  opts=opts||{};
+  if(r.dupes&&r.dupes.length&&!r.decided){
+    pendingImport={r,opts};const n=r.dupes.length;
+    openModal("Already saved",`<p>${n===1?"This roster appears":`These ${n} rosters appear`} to be saved here already:</p><ul>${r.dupes.map(d=>`<li>${esc(d.name)}</li>`).join("")}</ul><p>Save ${n===1?"it":"them"} as new roster${n===1?"":"s"} anyway?</p>${r.rosters.length?`<p class="note">${r.rosters.length} other roster${r.rosters.length===1?"":"s"} in the file will be imported either way.</p>`:""}
+    <div class="row"><button class="btn pri" data-dupes="new">Save as new</button><button class="btn" data-dupes="skip">Skip ${n===1?"it":"them"}</button></div>`);
+    return;
+  }
+  st.rosters.push(...r.rosters);r.rosters.forEach(pushRoster);
+  if(opts.load&&r.rosters[0]){st.build=JSON.parse(JSON.stringify(r.rosters[0]));save();show("build")}else{save();renderBuild()}
+  const msg=r.rosters.length?`${r.rosters.length} roster${r.rosters.length===1?"":"s"} imported${r.skipped?`, ${r.skipped} skipped`:""}.`:"Nothing new imported.";
+  if(r.notes.length)openModal("Import",`<p>${msg}</p><p>Some entries didn't match the current cards and were left out:</p><ul>${r.notes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul>`);
+  else{if($("#modal").open)$("#modal").close();toast(msg)}
+}
+$("#mBody").addEventListener("click",e=>{
+  const el=e.target.closest("[data-export],[data-dupes]");if(!el)return;
+  if(el.dataset.export){exportRosters(el.dataset.export);return}
+  if(!pendingImport)return;const {r,opts}=pendingImport;pendingImport=null;r.decided=true;
+  if(el.dataset.dupes==="new"){r.rosters.push(...asNewCopies(r.dupes,st.rosters.concat(r.rosters)));r.skipped=0}
+  finishImport(r,opts);
+});
 function importFile(file){
   const fr=new FileReader();
   fr.onload=()=>{let data;try{data=JSON.parse(fr.result)}catch(e){openModal("Import",`<p>That file isn't a Data Disc roster file. Export one from the Build tab's saved rosters.</p>`);return}

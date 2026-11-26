@@ -92,6 +92,16 @@ try {
     await $("#bSave").click();
     expect((await text("#v-build")).includes(`Smoke ${race}`), "saved roster isn't listed");
 
+    // Save as new: the prompt is accepted with its default name, so a "(2)" copy appears
+    // and later saves go to the copy, leaving the original alone.
+    const savedCount = () => page.locator("#v-build button[data-rload]").count();
+    const before = await savedCount();
+    await $("#bSaveAs").click();
+    expect((await savedCount()) === before + 1, "Save as new didn't add a roster");
+    expect((await page.inputValue("#bName")) === `Smoke ${race} (2)`, "Save as new didn't switch to the copy");
+    await $("#bSave").click();
+    expect((await savedCount()) === before + 1, "Save after Save as new made another roster");
+
     // ---------- Setup ----------
     log(`${race}: setup`);
     await nav("setup");
@@ -220,23 +230,38 @@ try {
   expect(!(await $("#acctBtn").isVisible()), "the offline file has no server, so no Sign in button");
 
   log("export a Data Disc file, wipe rosters, import it back");
-  const [download] = await Promise.all([page.waitForEvent("download"), $("#bExport").click()]);
+  // Export asks first: this roster (the primary button) or all saved rosters.
+  await $("#bExport").click();
+  expect(await modalOpen(), "Export didn't ask which rosters to export");
+  const [single] = await Promise.all([page.waitForEvent("download"), $('[data-export="one"]').click()]);
+  const oneFile = JSON.parse(await (await import("node:fs/promises")).readFile(await single.path(), "utf8"));
+  expect(oneFile.rosters.length === 1 && !oneFile.current, "'This roster' exported more than one roster");
+  await $("#bExport").click();
+  const [download] = await Promise.all([page.waitForEvent("download"), $('[data-export="all"]').click()]);
   const file = await download.path();
+  const savedN = await page.evaluate(() => st.rosters.length); // one per race, plus each race's "Save as new" copy
   await page.evaluate(() => { st.rosters = []; save(); renderBuild(); });
   expect(!(await text("#v-build")).includes("Smoke T"), "rosters weren't cleared");
   await $("#bFile").setInputFiles(file);
-  await page.waitForFunction(() => st.rosters.length === 3);
+  await page.waitForFunction((n) => st.rosters.length === n, savedN);
   expect((await text("#v-build")).includes("Smoke T"), "imported rosters don't show");
+  // Importing it again: the app lists the rosters it already has and asks.
   await $("#bFile").setInputFiles(file);
-  await page.waitForFunction(() => document.querySelector("#toast").textContent.includes("already here"));
-  expect(await page.evaluate(() => st.rosters.length) === 3, "importing the same file twice duplicated rosters");
+  await page.waitForSelector('[data-dupes="skip"]');
+  expect((await text("#mBody")).includes("Smoke T"), "the already-saved prompt doesn't name the rosters");
+  await $('[data-dupes="skip"]').click();
+  expect(await page.evaluate(() => st.rosters.length) === savedN, "skipping already-saved rosters still added them");
+  await $("#bFile").setInputFiles(file);
+  await $('[data-dupes="new"]').click();
+  expect(await page.evaluate((n) => st.rosters.length === n * 2 && new Set(st.rosters.map(r => r.id)).size === n * 2, savedN), "'Save as new' didn't add copies with their own IDs");
+  await page.evaluate((n) => { st.rosters = st.rosters.slice(0, n); save(); renderBuild(); }, savedN); // back to one set for the paste check
 
   log("paste roster text");
   const pasted = await page.evaluate(() => rosterText(st.rosters[0]).replace(/^.*\n/, "Pasted army\n"));
   await $("#bPaste").click();
   await $("#pasteTxt").fill(pasted);
   await $("#pasteGo").click();
-  expect(await page.evaluate(() => st.build.name === "Pasted army" && st.rosters.length === 4), "pasted roster wasn't saved and loaded");
+  expect(await page.evaluate((n) => st.build.name === "Pasted army" && st.rosters.length === n + 1, savedN), "pasted roster wasn't saved and loaded");
   expect(await page.evaluate(() => JSON.stringify(st.build.units.map(u => [u.id, u.ci, u.ups])) === JSON.stringify(st.rosters[0].units.map(u => [u.id, u.ci, u.ups]))), "pasted units differ from the original");
 
   log("a save with stale IDs loads with a notice instead of crashing");
