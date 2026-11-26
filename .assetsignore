@@ -1,5 +1,6 @@
 # Files Cloudflare should NOT publish (gitignore syntax).
-# The live site only needs index.html, api/ and _headers.
+# The live site only needs index.html, api/, _headers and the installable-app
+# files (manifest.webmanifest, sw.js, icons/).
 .git
 .github
 .gitignore

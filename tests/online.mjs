@@ -48,7 +48,9 @@ try {
 
   browser = await chromium.launch({ headless: !HEADED });
   async function player(name) {
-    const context = await browser.newContext({ viewport: { width: 400, height: 850 } });
+    // Service workers off here: the installable-app check below covers sw.js on
+    // its own, and this keeps the stubbed fonts above in charge of every request.
+    const context = await browser.newContext({ viewport: { width: 400, height: 850 }, serviceWorkers: "block" });
     const page = await context.newPage();
     await page.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.fulfill({ status: 200, contentType: "text/css", body: "" }));
     page.on("pageerror", (e) => errors.push(`${name} pageerror: ${e.message}`));
@@ -191,6 +193,26 @@ try {
   await bob.until(() => !net.user, null, "signed out after delete");
   const me = await (await bob.page.request.get(`${BASE}/auth/me`)).json();
   expect(me.user === null, "session survived account delete");
+
+  log("installable app: manifest, icons, service worker, offline start");
+  {
+    const man = await (await fetch(`${BASE}/manifest.webmanifest`)).json();
+    expect(man.start_url && man.display === "standalone", "manifest is missing start_url or standalone");
+    for (const i of man.icons) expect((await fetch(new URL(i.src, BASE + "/"))).ok, `manifest icon ${i.src} is missing`);
+    const ctx = await browser.newContext({ viewport: { width: 400, height: 850 } });
+    const page = await ctx.newPage();
+    page.on("pageerror", (e) => errors.push(`pwa pageerror: ${e.message}`));
+    await page.goto(BASE + "/");
+    await page.evaluate(() => navigator.serviceWorker.ready);
+    await page.reload(); // now controlled by the service worker, which saves the page
+    await page.waitForFunction(() => navigator.serviceWorker.controller);
+    await ctx.setOffline(true);
+    await page.reload();
+    expect((await page.locator("#v-build").innerText()).length > 50, "app doesn't open offline");
+    expect(await page.evaluate(() => typeof UNITS !== "undefined" && UNITS.length > 0), "app script didn't run offline");
+    await ctx.setOffline(false);
+    await ctx.close();
+  }
 } catch (e) {
   errors.push(e.message);
 } finally {
@@ -203,4 +225,4 @@ if (errors.length) {
   console.error(`online: FAILED\n  ${errors.join("\n  ")}`);
   process.exit(1);
 }
-console.log("online: sync, share, host/join and live play OK");
+console.log("online: sync, share, host/join, live play and offline install OK");

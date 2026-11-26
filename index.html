@@ -6,6 +6,13 @@
 <title>SCTMG Data Disc</title>
 <meta name="description" content="Unofficial companion for StarCraft: Tabletop Miniatures Game: army builder, game setup, battle tracker and card reference.">
 <meta name="apple-mobile-web-app-title" content="Data Disc">
+<meta name="theme-color" content="#E8EDF3">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -1696,10 +1703,15 @@ const TITLES={build:"Army builder",setup:"Game setup",play:"Battle tracker",card
 function show(v){document.querySelectorAll("nav.tabs button").forEach(b=>b.setAttribute("aria-current",b.dataset.v===v?"true":"false"));document.querySelectorAll("section.view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));$("#title").textContent=TITLES[v];
   ({build:renderBuild,setup:renderSetup,play:renderPlay,cards:renderCards,gloss:renderGloss})[v]();window.scrollTo(0,0)}
 document.querySelectorAll("nav.tabs button").forEach(b=>b.onclick=()=>show(b.dataset.v));
-$("#themeBtn").onclick=()=>{const r=document.documentElement;const dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme: dark)").matches;r.dataset.theme=dark?"light":"dark";try{localStorage.setItem(KEY+"-theme",r.dataset.theme)}catch(e){}};
+// Phone status bar / installed-app title bar colour follows the page background.
+function syncThemeColor(){const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=getComputedStyle(document.documentElement).getPropertyValue("--bg").trim()||m.content}
+$("#themeBtn").onclick=()=>{const r=document.documentElement;const dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme: dark)").matches;r.dataset.theme=dark?"light":"dark";try{localStorage.setItem(KEY+"-theme",r.dataset.theme)}catch(e){}syncThemeColor()};
 try{const th=localStorage.getItem(KEY+"-theme");if(th)document.documentElement.dataset.theme=th}catch(e){}
+syncThemeColor();try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",syncThemeColor)}catch(e){}
 show(st.game?"play":"build");
 netInit();
+// Installable app + offline start (sw.js). Not on the offline file copy: service workers need http(s).
+if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol))window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
 if(loadNotes.length)openModal("Saved data updated",`<p>Some of your saved data pointed at cards that are no longer in the app, probably because a card was renamed or removed in an update. They've been taken out so everything else keeps working:</p><ul>${loadNotes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul><p class="note">Check these rosters against the current cards.</p>`);
 </script>
 </body>

@@ -37,7 +37,7 @@ If you spot an error, please [open an issue](../../issues).
 
 ## Usage
 
-No install, no build step. Open the site in any modern browser. To run it offline, download `index.html` and open it locally.
+No install, no build step. Open the site in any modern browser. On a phone you can install it like an app: **Add to Home Screen** (iPhone: Share menu; Android Chrome: menu, then *Install app*). Once installed it opens even with no signal, showing the last version you loaded. To run it offline on a computer, you can also download `index.html` and open it locally.
 
 Saved crews are stored in your browser's local storage, so they stay on the device and browser where you made them. Clearing your site data will erase them, so use **Export file** for a backup, or sign in to keep them synced.
 

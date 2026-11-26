@@ -24,6 +24,7 @@ The optional online half is a small **Cloudflare Worker** in `worker/` (plain JS
 - **Storage:** `localStorage` under a `KEY` prefix (rosters, game state, `KEY+"-theme"`). Every read and write is wrapped in try/catch. Storage is per-origin, so data saved in the old Claude artifact, the offline file copy or the github.io mirror does **not** carry over to the live site. Signed-in players also have their saved rosters in D1 (see Accounts and online play); the current build and solo games stay local only.
 - **Theming:** CSS custom properties on `:root`, with light and dark modes (system preference plus a manual `data-theme` override). Race accent colors come from `body[data-race="T|Z|P"]`, with Terran blue, Zerg purple and Protoss gold.
 - **Layout:** mobile-first (it's used at the table on a phone). Fixed bottom tab bar, safe-area insets, max width of 720px.
+- **Installable app (PWA):** `manifest.webmanifest`, `sw.js` and `icons/` sit next to `index.html`, all with relative paths so the github.io mirror works too. The service worker registers only over http(s), never on the offline file copy. The app page is network-first (fresh whenever there's signal, the saved copy after 4 s or offline), icons are precached, and Google Fonts are cache-first once seen. It never touches `/auth/*`, `/sync/*` or `/api/*`. Bump `VERSION` in `sw.js` only when its `PRECACHE` list changes. Icons are drawn in `scripts/build-icons.mjs` (`node scripts/build-icons.mjs` re-renders them). The `theme-color` meta follows the light/dark toggle (`syncThemeColor()`).
 
 ### Accounts and online play (`worker/`)
 
@@ -92,7 +93,7 @@ Run `npm test` before every release. It runs five stages, cheapest first:
 3. **`node scripts/build-api.mjs --check`**: `api/v1/` matches `index.html`.
 4. **`tests/smoke.mjs`** (Playwright, 400×850, offline file): for each race it builds a legal roster, saves it, runs Setup, plays a game to the end, and opens and closes every card. Any `pageerror` or console error fails the run. Google Fonts are stubbed so it runs offline. `node tests/smoke.mjs --headed` shows the browser; `VERBOSE=1` prints each step.
    It also uses Save as new, exports a single roster and then all of them, imports the file back (then again, once skipping the already-saved rosters and once saving them as new) and pastes roster text.
-5. **`tests/online.mjs`** (Playwright + `wrangler dev` on a throwaway local D1 with `DEV_LOGIN`): Alice on two devices and Bob. Roster sync and deletes, a share link, host/join by code, VP, deploys, activations, exhausts, Next from either player (and both at once), new-Round refresh, resume on a second device, ending a game and deleting an account.
+5. **`tests/online.mjs`** (Playwright + `wrangler dev` on a throwaway local D1 with `DEV_LOGIN`): Alice on two devices and Bob. Roster sync and deletes, a share link, host/join by code, VP, deploys, activations, exhausts, Next from either player (and both at once), new-Round refresh, resume on a second device, ending a game and deleting an account. Player contexts block service workers; a separate check loads the manifest and icons, lets `sw.js` install, then reloads offline and expects the app to open.
 
 First-time setup: `npm install`, then `npx playwright install chromium`. `package.json` is dev tooling only (Playwright, Wrangler); the app still needs no build.
 
@@ -118,14 +119,14 @@ Commit to `main`. Run `npm test` first. Cloudflare Workers Builds redeploys sctm
 Rough priority order. Confirm with Dalton before starting any of them.
 
 1. ~~Commit the regression test~~ Done Nov 2026: `npm test` plus a GitHub Actions workflow (see Testing).
-   - ~~Tolerate stale IDs~~ Done Nov 2026: `cleanState()` on load, plus `RENAMED` for planned renames. Roster import should run imported rosters through `cleanBuild()` too.
+   - ~~Tolerate stale IDs~~ Done Nov 2026: `cleanState()` on load, plus `RENAMED` for planned renames. File import, sync and share links all go through `cleanBuild()` too.
 2. ~~Roster export/import~~ Done Nov 2026: Data Disc file export/import, paste text, plus Discord sign-in with roster sync, share links and online games.
-3. **Bundle fonts locally** (`fonts/` folder plus `@font-face`) so offline use doesn't fall back to system fonts.
+3. **Bundle fonts locally** (`fonts/` folder plus `@font-face`) so offline use doesn't fall back to system fonts. Partly covered since Nov 2026: the installed app's service worker keeps the fonts after the first online visit. Still useful for the downloaded file copy and a first visit made offline.
 4. ~~Reconcile the in-app name~~ Done Oct 2026: title and header say SCTMG Data Disc. The localStorage `KEY` stays `sctmg-fieldkit-v1` on purpose, because renaming it would orphan everyone's saved rosters.
 5. **Fill in the stubs** as unreleased units get real cards, removing the `unk` tags.
 6. **Consider splitting data out of `index.html`** (e.g. `data/*.json`) if the file gets unwieldy. This is a trade-off against the single-file offline copy, so discuss it first.
 7. **Optional Data Disc theming ideas (not yet decided):** `.disc` roster exports or "Data Disc #" share links, a Confederate terminal flavor ("ACCESSING…", "DECRYPTION COMPLETE"), unit "dossiers," and an empty-roster easter egg.
-8. ~~Possible Android APK~~ Not needed for now (Nov 2026): Dalton is happy with Add to Home Screen. If it returns, a Capacitor wrapper (`index.html` in `www/`) is the lightest route and needs items 2 and 3 first, plus `@capacitor/app` back-button handling.
+8. ~~Possible Android APK~~ Not needed for now (Nov 2026): Dalton is happy with Add to Home Screen, and the site is now an installable PWA that opens offline. If an APK returns, a Capacitor wrapper (`index.html` in `www/`) is the lightest route and needs item 3 first, plus `@capacitor/app` back-button handling.
 
 ## Working with Dalton
 
