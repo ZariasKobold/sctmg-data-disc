@@ -6,10 +6,10 @@
 <title>SCTMG Data Disc</title>
 <meta name="description" content="Unofficial companion for StarCraft: Tabletop Miniatures Game: army builder, game setup, battle tracker and card reference.">
 <meta name="apple-mobile-web-app-title" content="Data Disc">
-<meta name="theme-color" content="#E8EDF3">
+<meta name="theme-color" content="#0E1A2B">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/favicon-64.png" type="image/png" sizes="64x64">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -27,10 +27,7 @@
   padding-top:env(safe-area-inset-top,0px);
   padding-bottom:env(safe-area-inset-bottom,0px);
 }
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){--bg:#0E1A2B;--panel:#162740;--panel2:#1C3150;--line:#2B4468;--text:#E3EBF5;--muted:#8DA2BE;--T:#4A95E6;--Z:#AE6BE0;--P:#E3B23C;--bad:#F07164;--ok:#48C27E;--warn:#E8B04C}
-}
-:root[data-theme="dark"]{--bg:#0E1A2B;--panel:#162740;--panel2:#1C3150;--line:#2B4468;--text:#E3EBF5;--muted:#8DA2BE;--T:#4A95E6;--Z:#AE6BE0;--P:#E3B23C;--bad:#F07164;--ok:#48C27E;--warn:#E8B04C}
+:root:not([data-theme="light"]){--bg:#0E1A2B;--panel:#162740;--panel2:#1C3150;--line:#2B4468;--text:#E3EBF5;--muted:#8DA2BE;--T:#4A95E6;--Z:#AE6BE0;--P:#E3B23C;--bad:#F07164;--ok:#48C27E;--warn:#E8B04C}
 body[data-race="T"]{--acc:var(--T);--accInk:#fff}
 body[data-race="Z"]{--acc:var(--Z);--accInk:#fff}
 body[data-race="P"]{--acc:var(--P);--accInk:#1B1404}
@@ -206,21 +203,7 @@ body{
     linear-gradient(90deg,rgba(19,33,58,.045) 1px,transparent 1px) 0 0/22px 22px;
   background:var(--space),var(--bg);background-attachment:fixed;
 }
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]) body{
-    --glow:color-mix(in srgb,var(--acc) 38%,transparent);
-    --tint:color-mix(in srgb,var(--acc) 12%,var(--panel));
-    --space:
-      radial-gradient(1px 1px at 23px 41px,#fffa,transparent),radial-gradient(1px 1px at 141px 17px,#fff8,transparent),
-      radial-gradient(1.5px 1.5px at 87px 133px,#fff9,transparent),radial-gradient(1px 1px at 190px 102px,#fff6,transparent),
-      radial-gradient(1px 1px at 52px 188px,#fff7,transparent),radial-gradient(1.5px 1.5px at 166px 211px,#cfe3ffaa,transparent),
-      radial-gradient(ellipse 90% 55% at 15% -5%,color-mix(in srgb,var(--acc) 30%,transparent),transparent 70%),
-      radial-gradient(ellipse 70% 45% at 100% 45%,rgba(174,107,224,.13),transparent 70%),
-      radial-gradient(ellipse 80% 40% at 30% 105%,rgba(74,149,230,.14),transparent 70%);
-    background-size:230px 230px,230px 230px,230px 230px,230px 230px,230px 230px,230px 230px,auto,auto,auto;
-  }
-}
-:root[data-theme="dark"] body{
+:root:not([data-theme="light"]) body{
   --glow:color-mix(in srgb,var(--acc) 38%,transparent);
   --tint:color-mix(in srgb,var(--acc) 12%,var(--panel));
   --space:
@@ -1799,9 +1782,9 @@ function show(v){document.querySelectorAll("nav.tabs button").forEach(b=>b.setAt
 document.querySelectorAll("nav.tabs button").forEach(b=>b.onclick=()=>show(b.dataset.v));
 // Phone status bar / installed-app title bar colour follows the page background.
 function syncThemeColor(){const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=getComputedStyle(document.documentElement).getPropertyValue("--bg").trim()||m.content}
-$("#themeBtn").onclick=()=>{const r=document.documentElement;const dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme: dark)").matches;r.dataset.theme=dark?"light":"dark";try{localStorage.setItem(KEY+"-theme",r.dataset.theme)}catch(e){}syncThemeColor()};
+$("#themeBtn").onclick=()=>{const r=document.documentElement;const dark=r.dataset.theme!=="light";r.dataset.theme=dark?"light":"dark";try{localStorage.setItem(KEY+"-theme",r.dataset.theme)}catch(e){}syncThemeColor()};
 try{const th=localStorage.getItem(KEY+"-theme");if(th)document.documentElement.dataset.theme=th}catch(e){}
-syncThemeColor();try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",syncThemeColor)}catch(e){}
+syncThemeColor();
 show(st.game?"play":"build");
 netInit();
 // Installable app + offline start (sw.js). Not on the offline file copy: service workers need http(s).
