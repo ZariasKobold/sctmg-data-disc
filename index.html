@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="icons/favicon-64.png" type="image/png" sizes="64x64">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -40,8 +40,8 @@ body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font:16px/1
 button,select,input{font:inherit;color:inherit}
 h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;letter-spacing:.01em}
 header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:3px solid var(--acc);padding:10px 14px 8px;display:flex;align-items:center;gap:10px}
-header.top h1{font-size:1.15rem;flex:1;display:flex;align-items:baseline;gap:8px;min-width:0;white-space:nowrap}
-header.top .brand{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--acc)}
+header.top h1{font-size:1.15rem;flex:1;display:flex;align-items:center;gap:8px;min-width:0;white-space:nowrap}
+header.top .brand{height:34px;width:auto;flex:none;align-self:center}
 header.top #title{overflow:hidden;text-overflow:ellipsis}
 header.top .race-mark{width:14px;height:22px;background:var(--acc);clip-path:polygon(0 0,100% 18%,100% 82%,0 100%)}
 main{padding:12px 12px 96px;max-width:720px;margin:0 auto}
@@ -191,7 +191,7 @@ input[type=search]{width:100%;background:var(--panel2);border:1px solid var(--li
 </style>
 </head>
 <body data-race="T">
-<header class="top"><div class="race-mark" aria-hidden="true"></div><h1><span class="brand">SCTMG Data Disc</span><span id="title">Army builder</span></h1><button class="btn sm" id="acctBtn" hidden>Sign in</button><button class="btn sm" id="themeBtn" aria-label="Toggle light or dark theme">◐</button></header>
+<header class="top"><div class="race-mark" aria-hidden="true"></div><h1><img class="brand" src="icons/logo.webp" alt="SCTMG Data Disc" width="125" height="40"><span id="title">Army builder</span></h1><button class="btn sm" id="acctBtn" hidden>Sign in</button><button class="btn sm" id="themeBtn" aria-label="Toggle light or dark theme">◐</button></header>
 <main>
   <section class="view on" id="v-build"></section>
   <section class="view" id="v-setup"></section>

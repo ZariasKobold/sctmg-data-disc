@@ -10,10 +10,10 @@
 //
 // Bump VERSION when the PRECACHE list changes. Changes to index.html don't
 // need a bump: the page is fetched fresh whenever there's a connection.
-const VERSION = "v1";
+const VERSION = "v2";
 const CACHE = "sdd-" + VERSION;
 const FONTS = "sdd-fonts";
-const PRECACHE = ["./", "manifest.webmanifest", "icons/icon.svg", "icons/icon-192.png", "icons/icon-512.png", "icons/maskable-512.png", "icons/apple-touch-icon.png"];
+const PRECACHE = ["./", "manifest.webmanifest", "icons/favicon-64.png", "icons/logo.webp", "icons/icon-192.png", "icons/icon-512.png", "icons/maskable-512.png", "icons/apple-touch-icon.png"];
 const NET_TIMEOUT = 4000;
 
 self.addEventListener("install", (e) => {

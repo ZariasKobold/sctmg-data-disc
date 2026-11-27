@@ -1,6 +1,7 @@
 # Files Cloudflare should NOT publish (gitignore syntax).
 # The live site only needs index.html, api/, _headers and the installable-app
-# files (manifest.webmanifest, sw.js, icons/).
+# files (manifest.webmanifest, sw.js, icons/). art/ holds the full-size source
+# images that scripts/build-icons.mjs shrinks into icons/.
 .git
 .github
 .gitignore
@@ -10,6 +11,7 @@ node_modules
 Docs
 tests
 scripts
+art
 package.json
 package-lock.json
 wrangler.jsonc
