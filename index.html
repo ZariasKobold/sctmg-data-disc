@@ -316,11 +316,58 @@ dialog .mh h3{text-transform:uppercase;letter-spacing:.05em}
 .sr .nm,.sr .meta{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sr.cur .nm{color:var(--acc)}
 .sr .tag{margin-right:6px}
-/* Wide-screen status panel: borderless gauges with big numbers. */
-.status .meters{grid-template-columns:1fr 1fr;gap:14px}
-.status .meter{background:none;border:0;padding:0 0 2px}
-.status .meter .n{font-size:1.65rem}
+/* Ring gauges (wide status panel): a segmented 270° arc, open at the
+   bottom where the label sits, like the ring in the Data Disc logo. */
+.gauges{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px}
+.gauge{text-align:center;min-width:0}
+.dial{position:relative;width:118px;max-width:100%;aspect-ratio:1;margin:0 auto;filter:drop-shadow(0 0 6px var(--glow))}
+.ring{position:absolute;inset:0;border-radius:50%;
+  background:conic-gradient(from -135deg,var(--acc) calc(var(--p) * .75%),color-mix(in srgb,var(--line) 85%,transparent) 0 75%,transparent 0);
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 11px),#000 calc(100% - 10px)),repeating-conic-gradient(from -135deg,#000 0 5.2deg,transparent 0 6.75deg);
+  -webkit-mask-composite:source-in;
+  mask:radial-gradient(farthest-side,transparent calc(100% - 11px),#000 calc(100% - 10px)) intersect,repeating-conic-gradient(from -135deg,#000 0 5.2deg,transparent 0 6.75deg)}
+.gauge.over .ring{background:conic-gradient(from -135deg,var(--bad) 0 75%,transparent 0)}
+.gv{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-bottom:6px}
+.gv b{font:700 1.8rem/1 var(--display)}
+.gv span{font:600 .78rem var(--display);color:var(--muted);margin-top:2px}
+.gauge.over .gv b{color:var(--bad)}
+.gk{position:absolute;left:0;right:0;bottom:4px;font:700 .6rem var(--display);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.gleft{font-size:.8rem;color:var(--muted);margin-top:2px}
+.gauge.over .gleft{color:var(--bad);font-weight:600}
 .status .grp{margin-top:14px}
+/* Slot pips: one per slot; lit = used, red = over the limit. */
+.pips{display:flex;flex-wrap:wrap;justify-content:center;gap:2px;min-height:5px;margin:1px 0 3px}
+.pips i{width:6px;height:5px;background:color-mix(in srgb,var(--muted) 35%,transparent)}
+.pips i.on{background:var(--acc);box-shadow:0 0 5px var(--glow)}
+.pips i.x{background:var(--bad)}
+/* Upgrades as toggle chips that light up when taken. */
+.ups.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.ups.chips label{display:inline-flex;align-items:center;gap:6px;padding:4px 9px 4px 7px;border:1px solid var(--line);border-radius:2px;background:color-mix(in srgb,var(--panel2) 70%,transparent);font-size:.86rem;line-height:1.25;cursor:pointer}
+.ups.chips input{width:16px;height:16px;margin:0}
+.ups.chips label:has(input:checked){border-color:var(--acc);background:color-mix(in srgb,var(--acc) 18%,var(--panel2));box-shadow:0 0 10px -3px var(--glow)}
+.ups.chips .cost{font-size:.8rem;color:var(--muted)}
+.ups.chips label:has(input:checked) .cost{color:var(--text)}
+.ups.chips .rep{font-size:.75rem;color:var(--muted)}
+/* What you just added glows once, so you see where it landed. */
+@keyframes fresh{from{background:color-mix(in srgb,var(--acc) 32%,transparent);box-shadow:inset 3px 0 0 var(--acc)}to{background:transparent;box-shadow:inset 3px 0 0 transparent}}
+.item.ru.fresh{margin:0 -12px;padding-left:12px;padding-right:12px;animation:fresh 1.8s ease-out}
+.item.tc.fresh{animation:fresh 1.8s ease-out}
+@media (prefers-reduced-motion:reduce){.item.fresh{animation:none}}
+/* Empty states that say what to do next. */
+.empty{border:1px dashed color-mix(in srgb,var(--acc) 45%,var(--line));padding:16px 14px;text-align:center;color:var(--muted);font-size:.9rem;margin:2px 0 6px;background:color-mix(in srgb,var(--acc) 4%,transparent)}
+.empty b{display:block;color:var(--text);font:700 .82rem var(--display);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.have{font-size:.8rem;color:var(--acc);margin-right:6px}
+.cattabs{margin-bottom:8px}.cattabs button{font-size:.85rem}
+.cathint{margin:0 0 8px}
+details#pickU,details#pickT{margin-top:8px}
+/* The add pickers are the main action on a phone: a dashed "add" bar. */
+details#pickU>summary,details#pickT>summary{border:1px dashed color-mix(in srgb,var(--acc) 55%,var(--line));padding:10px 12px;text-align:center;font:700 .82rem var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--text);background:color-mix(in srgb,var(--acc) 6%,transparent)}
+details#pickU>summary:hover,details#pickT>summary:hover{border-style:solid;border-color:var(--acc)}
+details#pickU[open]>summary,details#pickT[open]>summary{border-style:solid;border-color:var(--acc);background:color-mix(in srgb,var(--acc) 16%,transparent)}
+details#pickU .picker,details#pickT .picker{margin-top:6px}
+/* Phone sticky bar: borderless readouts so it stays slim. */
+.resbar .meter{background:none;border:0;padding:2px 0 0}
+.resbar .meter .n{font-size:1.25rem}
 :root{--maxw:1240px}
 .pick[aria-current="true"]{border-color:var(--acc);background:linear-gradient(90deg,color-mix(in srgb,var(--acc) 22%,var(--panel2)),var(--panel2));box-shadow:0 0 12px -2px var(--glow)}
 @media (min-width:600px){
@@ -328,7 +375,6 @@ dialog .mh h3{text-transform:uppercase;letter-spacing:.05em}
   #v-setup,#v-play{max-width:720px;margin:0 auto}
   .bgrid{display:grid;grid-template-columns:minmax(0,1fr) clamp(236px,36%,300px);gap:14px;align-items:start}
   .bgrid.l3{grid-template-columns:240px minmax(0,1fr) 300px}
-  .bgrid.l2 .status .meters{grid-template-columns:1fr;gap:8px}
   /* Narrow status column (Fold): short slot labels so "Support" fits. */
   .bgrid.l2 .sc .lf{display:none}
   .bgrid.l2 .sc .ls{display:inline}
@@ -1400,50 +1446,69 @@ function showTac(id){const t=T(id);openModal(t.n,tacCardHTML(t))}
 function missionHTML(m,scale){const v=m[scale==="sk"?"sk":"std"];return `<div class="note">${scale==="sk"?"Skirmish":"Standard"} · starting Supply ${v.sup}, +${v.esc} per Round · ${v.len} Rounds · ${v.lead?`ends early on a ${v.lead}+ VP lead`:"no early-win VP lead"}</div><div class="phh">Mission parameters</div><div class="ab">${rt(v.params)}</div><div class="phh">Scoring</div><div class="ab">${rt(v.score)}</div>${v.extra?`<div class="phh">Additional</div><div class="ab">${rt(v.extra)}</div>`:""}`}
 
 /* ===================== BUILD VIEW ===================== */
+// Build tab view state (not saved): which desktop catalog tab is showing,
+// which phone/Fold picker stays open after adding from it, and which unit or
+// card was just added (it glows once so you see where it landed).
+let catTab="units",openPick="",freshKey="";
 function renderBuild(){
   const b=st.build;setRace(b.race);const L=limits(b),t=totals(b);
   const facs=TAC.filter(x=>x.r===b.race&&x.type==="Faction");
   const tacs=TAC.filter(x=>x.r===b.race&&x.type!=="Faction");
   const units=UNITS.filter(u=>u.r===b.race&&!u.sum);
   const pct=(a,m)=>Math.min(100,m?a/m*100:0);
-  const lay=buildLayout();
+  const lay=buildLayout(),where=lay===3?"catalog on the left":"list below";
   const form=`<div class="panel bform"><div class="row"><div class="grow"><label class="f" for="bName">Roster name</label><input type="text" id="bName" value="${esc(b.name)}"></div></div>
   <div style="margin-top:10px"><label class="f">Race</label><div class="seg" role="group">${Object.entries(RACES).map(([k,v])=>`<button data-race="${k}" aria-pressed="${b.race===k}">${v}</button>`).join("")}</div></div>
   <div class="row" style="margin-top:10px"><div class="grow"><label class="f" for="bScale">Engagement scale</label><select id="bScale">${Object.entries(SCALES).map(([k,v])=>`<option value="${k}" ${b.scale===k?"selected":""}>${v.n}${k!=="go"?` (${v.min} / ${v.min/10})`:""}</option>`).join("")}</select></div>
   ${b.scale==="go"?`<div style="width:120px"><label class="f" for="bGo">Minerals</label><input type="number" id="bGo" min="2001" step="50" value="${b.goMin}"></div>`:""}</div>
   <div style="margin-top:10px"><label class="f" for="bFac">Faction Card</label><select id="bFac"><option value="">Choose…</option>${facs.map(f=>`<option value="${f.id}" ${b.faction===f.id?"selected":""}>${f.n} — ${Object.entries(f.slots).map(e=>e[1]+" "+e[0]).join(", ")}</option>`).join("")}</select>
   ${b.faction?`<button class="link" style="margin-top:6px" data-tac="${b.faction}">Read ${esc(T(b.faction).n)} card</button>`:""}</div></div>`;
+
+  // ---- Status readouts ----
+  // Phone sticky bar: compact bars. Wide status panel: ring gauges (a 270° arc,
+  // echoing the ring in the Data Disc logo).
   const meters=`<div class="meters">
    <div class="meter ${t.min>L.min?"over":""}"><div class="n">${t.min} <span>/ ${L.min}</span></div><div class="k">Minerals · ${L.min-t.min>=0?(L.min-t.min)+" left":"over"}</div><div class="bar"><i style="width:${pct(t.min,L.min)}%"></i></div></div>
    <div class="meter ${t.gas>L.gas?"over":""}"><div class="n">${t.gas} <span>/ ${L.gas}</span></div><div class="k">Vespene Gas · ${L.gas-t.gas>=0?(L.gas-t.gas)+" left":"over"}</div><div class="bar"><i style="width:${pct(t.gas,L.gas)}%"></i></div></div></div>`;
-  // Five slot types in one row; types this roster can't use are dimmed.
-  const slotGrid=`<div class="slotgrid">${SLOT_TYPES.map(s=>{const u=t.used[s],a=t.avail[s];return `<div class="sc ${u>a?"over":a&&u===a?"full":!a&&!u?"none":""}"><b>${u}/${a}</b><small><span class="lf">${s}</span><span class="ls">${s==="Support"?"Supp":s}</span></small></div>`}).join("")}</div>`;
+  const gauge=(k,label,v,max)=>{const over=v>max;return `<div class="gauge${over?" over":""}" data-g="${k}"><div class="dial"><div class="ring" style="--p:${pct(v,max).toFixed(1)}"></div><div class="gv"><b class="n">${v}</b><span>/ ${max}</span></div><div class="gk">${label}</div></div><div class="gleft">${over?(v-max)+" over":(max-v)+" left"}</div></div>`};
+  const gauges=`<div class="gauges">${gauge("min","Minerals",t.min,L.min)}${gauge("gas","Gas",t.gas,L.gas)}</div>`;
+  // Slots: a pip per slot (lit = used, red = over), so what's left reads at a glance.
+  const slotGrid=`<div class="slotgrid">${SLOT_TYPES.map(s=>{const u=t.used[s],a=t.avail[s],n=Math.max(u,a);
+    const pips=n&&n<=8?Array.from({length:n},(_,i)=>`<i class="${i<u?(i<a?"on":"x"):""}"></i>`).join(""):"";
+    return `<div class="sc ${u>a?"over":a&&u===a?"full":!a&&!u?"none":""}" title="${s}: ${u} of ${a} used"><span class="pips" aria-hidden="true">${pips}</span><b>${u}/${a}</b><small><span class="lf">${s}</span><span class="ls">${s==="Support"?"Supp":s}</span></small></div>`}).join("")}</div>`;
   const is=issues(b),legal=!is.length;
   const res=`<div class="resbar">${meters}${slotGrid}<button class="chkline ${legal?"ok":"bad"}" data-gochk>${legal?"Roster is legal":`${is.length} issue${is.length===1?"":"s"} · see Roster check`}</button></div>`;
-  // tactical
-  let tac=`<div class="panel"><h2>Tactical cards <small>${t.gas} gas spent</small></h2>`;
-  tacs.forEach(tc=>{const q=b.tac[tc.id]||0;const el=eligible(b,tc.tags);const sl=Object.entries(tc.slots).filter(e=>e[1]).map(e=>`+${e[1]} ${e[0]}`).join(" ");
-    tac+=`<div class="item tc${q?" on":""}"><div class="hd"><div class="grow"><button class="link" data-tac="${tc.id}">${esc(tc.n)}</button><div class="meta">${tc.type==="Creep"||tc.type==="Virus"?tc.type+" card":sl||(tc.unk?"slots: set below":"")}${tc.uq?' <span class="tag">Unique</span>':""}${tc.unk?' <span class="tag warn">No card text</span>':""}${!el?' <span class="tag warn">Not allowed with this faction</span>':""}</div></div>
-    <span class="cost">${tc.gas}</span><span class="step"><button data-tq="${tc.id}" data-d="-1" aria-label="Remove ${esc(tc.n)}">−</button><output>${q}</output><button data-tq="${tc.id}" data-d="1" aria-label="Add ${esc(tc.n)}" ${(tc.uq&&q>=1)?"disabled":""}>+</button></span></div>
-    ${tc.unk&&q?`<div class="row" style="margin-top:6px">${SLOT_TYPES.map(s=>`<label style="font-size:.8rem;width:58px">${s}<input type="number" min="0" max="4" data-ts="${tc.id}" data-s="${s}" value="${(b.tacSlots[tc.id]||{})[s]||0}"></label>`).join("")}</div>`:""}</div>`});
-  tac+=`</div>`;
-  // units
+
+  // ---- Tactical cards: the middle shows only the ones you've taken ----
+  const tacMeta=tc=>{const sl=Object.entries(tc.slots).filter(e=>e[1]).map(e=>`+${e[1]} ${e[0]}`).join(" ");return tc.type==="Creep"||tc.type==="Virus"?tc.type+" card":sl||(tc.unk?"slots: set below":"")};
+  const taken=tacs.filter(tc=>b.tac[tc.id]);
+  let tac=`<div class="panel"><h2>Tactical cards <small>${taken.length?`${taken.length} card${taken.length===1?"":"s"} · `:""}${t.gas} gas</small></h2>`;
+  taken.forEach(tc=>{const q=b.tac[tc.id];const el=eligible(b,tc.tags);
+    tac+=`<div class="item tc on${freshKey==="t:"+tc.id?" fresh":""}"><div class="hd"><div class="grow"><button class="link" data-tac="${tc.id}">${esc(tc.n)}</button><div class="meta">${tacMeta(tc)}${tc.uq?' <span class="tag">Unique</span>':""}${tc.unk?' <span class="tag warn">No card text</span>':""}${!el?' <span class="tag warn">Not allowed with this faction</span>':""}</div></div>
+    <span class="cost">${tc.gas}</span><span class="step"><button data-tq="${tc.id}" data-d="-1" aria-label="Remove ${esc(tc.n)}">−</button><output>${q}</output><button data-tq="${tc.id}" data-d="1" aria-label="Add ${esc(tc.n)}" ${tc.uq?"disabled":""}>+</button></span></div>
+    ${tc.unk?`<div class="row" style="margin-top:6px">${SLOT_TYPES.map(s=>`<label style="font-size:.8rem;width:58px">${s}<input type="number" min="0" max="4" data-ts="${tc.id}" data-s="${s}" value="${(b.tacSlots[tc.id]||{})[s]||0}"></label>`).join("")}</div>`:""}</div>`});
+  if(!taken.length){const need=b.race==="Z"?((b.faction&&T(b.faction).need)||"Creep"):"";
+    tac+=`<div class="empty"><b>No tactical cards yet</b>Tactical cards open slots for your units${need?`, and this army needs exactly one ${need} card`:""}. Add them from the ${where}.</div>`}
+  const tacPickList=tacs.map(tc=>{const q=b.tac[tc.id]||0,el=eligible(b,tc.tags),dis=!el||(tc.uq&&q);
+    return `<button class="pick" data-tq="${tc.id}" data-d="1" ${dis?"disabled":""}><span><b>${esc(tc.n)}</b><br><span class="note">${tacMeta(tc)}${tc.uq?" · Unique":""}${!el?" · not with this faction":""}</span></span><span class="cost">${q?`<span class="have">✓${q>1?" "+q:""}</span>`:""}${tc.gas} gas</span></button>`}).join("");
+  tac+=lay===3?`</div>`:`<details id="pickT" ${openPick==="t"?"open":""}><summary>Add a tactical card</summary><div class="picker dense">${tacPickList}</div></details></div>`;
+
+  // ---- Units ----
   let un=`<div class="panel"><h2>Units <small>${b.units.length} unit${b.units.length===1?"":"s"}</small></h2>`;
-  if(!b.units.length)un+=`<p class="note">Add units from the ${lay===3?"catalog on the left":"list below"}. Each unit fills slots equal to its starting Supply.</p>`;
+  if(!b.units.length)un+=`<div class="empty"><b>No units deployed</b>Add units from the ${where}. Each one fills slots equal to its starting Supply.</div>`;
   b.units.forEach((bu,i)=>{const u=U(bu.id);const ci=bu.ci;
-    un+=`<div class="item"><div class="hd"><div class="grow"><button class="link" data-unit="${u.id}" data-bi="${i}">${esc(u.n)}</button><div class="meta">${u.unk?`<select data-uslot="${i}" style="min-height:32px;padding:3px 6px;width:auto">${SLOT_TYPES.map(s=>`<option ${ (bu.slot||u.slot)===s?"selected":""}>${s}</option>`).join("")}</select> slot`:u.slot+" slot"} · Supply ${u.comps[ci][2]}${u.unk?' <span class="tag warn">No card</span>':""}</div></div><span class="cost">${unitCost(bu)}</span><button class="btn sm danger" data-urm="${i}" aria-label="Remove ${esc(u.n)}">✕</button></div>
+    un+=`<div class="item ru${freshKey==="u:"+bu.uid?" fresh":""}"><div class="hd"><div class="grow"><button class="link" data-unit="${u.id}" data-bi="${i}">${esc(u.n)}</button><div class="meta">${u.unk?`<select data-uslot="${i}" style="min-height:32px;padding:3px 6px;width:auto">${SLOT_TYPES.map(s=>`<option ${ (bu.slot||u.slot)===s?"selected":""}>${s}</option>`).join("")}</select> slot`:u.slot+" slot"} · Supply ${u.comps[ci][2]}${u.unk?' <span class="tag warn">No card</span>':""}</div></div><span class="cost">${unitCost(bu)}</span><button class="btn sm danger" data-urm="${i}" aria-label="Remove ${esc(u.n)}">✕</button></div>
     ${u.comps.length>1?`<div class="row" style="margin-top:6px"><select data-uci="${i}">${u.comps.map((c,j)=>`<option value="${j}" ${j===ci?"selected":""}>${c[0]} models — ${c[1]} minerals, Supply ${c[2]}</option>`).join("")}</select></div>`:`<div class="meta" style="margin-top:4px">${u.comps[0][0]} model${u.comps[0][0]>1?"s":""} — ${u.comps[0][1]} minerals</div>`}
-    ${u.up.length?`<div class="ups">${u.up.map(x=>`<label><input type="checkbox" data-uup="${i}" value="${esc(x.n)}" ${(bu.ups||[]).includes(x.n)?"checked":""}><span class="grow">${esc(x.n)}${x.spec?' <span class="tag">Specialist</span>':""}${x.rep?` <span class="note">replaces ${esc(x.rep)}</span>`:""}</span><span class="cost">+${x.c[Math.min(ci,x.c.length-1)]}</span></label>`).join("")}</div>`:""}</div>`});
+    ${u.up.length?`<div class="ups chips">${u.up.map(x=>`<label><input type="checkbox" data-uup="${i}" value="${esc(x.n)}" ${(bu.ups||[]).includes(x.n)?"checked":""}><span>${esc(x.n)}${x.spec?' <span class="tag">Specialist</span>':""}${x.rep?` <span class="rep">replaces ${esc(x.rep)}</span>`:""}</span><span class="cost">+${x.c[Math.min(ci,x.c.length-1)]}</span></label>`).join("")}</div>`:""}</div>`});
   const pickList=units.map(u=>{const el=eligible(b,u.tags);return `<button class="pick" data-uadd="${u.id}" ${!el?"disabled":""}><span><b>${esc(u.n)}</b><br><span class="note">${u.unk?"slot unconfirmed":u.slot}${u.uq?" · Unique":""}${!el?" · needs "+u.tags.slice(1).join(", "):""}</span></span><span class="cost">${u.comps.map(c=>c[1]).join(" / ")}</span></button>`}).join("");
-  // Desktop shows the picker as an always-open catalog column instead.
-  un+=lay===3?`</div>`:`<details style="margin-top:8px"><summary>Add a unit</summary><div class="picker dense" style="margin-top:6px">${pickList}</div></details></div>`;
-  // missions
+  un+=lay===3?`</div>`:`<details id="pickU" ${openPick==="u"?"open":""}><summary>Add a unit</summary><div class="picker dense">${pickList}</div></details></div>`;
+
+  // ---- Draft cards, check, save, tools, saved rosters ----
   const deps=DEPLOYS.filter(d=>(b.scale==="sk")===(d.sc==="sk"));
   const draft=`<div class="panel quiet"><h2>Draft cards <small>2 Missions, 2 Deployments</small></h2>
-   <div class="ups">${MISSIONS.map(m=>`<label><input type="checkbox" data-mis="${m.id}" ${b.missions.includes(m.id)?"checked":""}><span class="grow">${m.n}</span></label>`).join("")}</div>
+   <div class="ups chips">${MISSIONS.map(m=>`<label><input type="checkbox" data-mis="${m.id}" ${b.missions.includes(m.id)?"checked":""}><span class="grow">${m.n}</span></label>`).join("")}</div>
    <div class="grp">Deployments (${b.scale==="sk"?"Skirmish 36×36″":"Standard 54×36″"})</div>
-   <div class="ups">${deps.map(d=>`<label><input type="checkbox" data-dep="${d.id}" ${b.deps.includes(d.id)?"checked":""}><span class="grow">${d.n}</span></label>`).join("")}</div></div>`;
-  // issues
+   <div class="ups chips">${deps.map(d=>`<label><input type="checkbox" data-dep="${d.id}" ${b.deps.includes(d.id)?"checked":""}><span class="grow">${d.n}</span></label>`).join("")}</div></div>`;
   const issuesList=`<ul class="issues">${is.length?is.map(x=>`<li>${esc(x)}</li>`).join(""):'<li class="ok">Roster is legal.</li>'}</ul>`;
   // Save is the one loud action; file tools and saved rosters are quiet panels.
   const saveRow=`<div class="row saverow"><button class="btn pri" id="bSave">Save roster</button>${st.rosters.some(r=>r.id===b.id)?`<button class="btn" id="bSaveAs">Save as new</button>`:""}</div>`;
@@ -1452,28 +1517,35 @@ function renderBuild(){
   const saved=st.rosters.length?`<div class="panel quiet"><h2>Saved rosters <small>${st.rosters.length}</small></h2>${st.rosters.map(r=>`<div class="sr${r.id===b.id?" cur":""}"><div class="grow"><b class="nm" title="${esc(r.name)}">${esc(r.name)}</b><div class="meta">${r.id===b.id?'<span class="tag">Editing</span>':""}${RACES[r.race]} · ${SCALES[r.scale].n} · ${totals(r).min} minerals</div></div><button class="btn sm" data-rload="${r.id}">Load</button>${net.user?`<button class="btn sm" data-rshare="${r.id}">Share</button>`:""}<button class="btn sm danger" data-rdel="${r.id}" aria-label="Delete ${esc(r.name)}">✕</button></div>`).join("")}</div>`:"";
   // Phone: the check sits with Save at the end of the list. Wide: one status panel.
   const chk=`<div class="panel" id="bChk"><h2>Roster check</h2>${issuesList}${saveRow}</div>`;
-  const status=`<div class="panel status" id="bChk">${meters}${slotGrid}<div class="grp">Roster check</div>${issuesList}${saveRow}</div>`;
-  // Same panels, arranged for the screen (see buildLayout). On desktop Units
-  // moves up under the form, so units added from the catalog land in view.
-  // The side columns
-  // scroll on their own, so keep their place across re-renders.
+  const status=`<div class="panel status" id="bChk">${gauges}${slotGrid}<div class="grp">Roster check</div>${issuesList}${saveRow}</div>`;
+
+  // ---- Arrange: catalog (what you could add) | roster (what's in it) | status (does it work) ----
+  // Same panels for every screen (see buildLayout); on desktop Units moves up
+  // under the form so additions from the catalog land in view.
   let h;
   if(lay===1)h=form+res+tac+un+draft+chk+tools+saved;
-  else{const cat=lay===3?`<aside class="bcat" aria-label="Unit catalog"><div class="panel quiet"><h2>Add units <small>tap to add</small></h2><div class="picker dense">${pickList}</div></div></aside>`:"";
+  else{const cat=lay===3?`<aside class="bcat" aria-label="Catalog"><div class="panel quiet cat"><div class="seg cattabs" role="group" aria-label="Catalog">${[["units","Units"],["tac","Tactical cards"]].map(([k,v])=>`<button data-ctab="${k}" aria-pressed="${catTab===k}">${v}</button>`).join("")}</div>
+      <p class="note cathint">${catTab==="tac"?"Tap to add. Tactical cards open slots for units.":"Tap to add. Grey units need a different faction."}</p><div class="picker dense">${catTab==="tac"?tacPickList:pickList}</div></div></aside>`:"";
     h=`<div class="bgrid l${lay}">${cat}<div class="bmain">${lay===3?form+un+tac+draft:form+tac+un+draft}</div><aside class="bside" aria-label="Roster status">${status+tools+saved}</aside></div>`}
+  // The side columns scroll on their own: keep their place across re-renders.
   const keep=[".bcat",".bside"].map(q=>{const e=$("#v-build "+q);return e?e.scrollTop:0});
   $("#v-build").innerHTML=h;
   [".bcat",".bside"].forEach((q,i)=>{const e=$("#v-build "+q);if(e)e.scrollTop=keep[i]});
+  if(freshKey&&lay===3){const f=$("#v-build .fresh");if(f)f.scrollIntoView({block:"nearest"})}
+  freshKey="";
 }
 function onBuildClick(e){
   const b=st.build,el=e.target.closest("button,input,select");if(!el)return;const ds=el.dataset;
   if("gochk" in ds){const c=$("#bChk");if(c)c.scrollIntoView({behavior:"smooth",block:"center"});return}
+  if(ds.ctab){catTab=ds.ctab;renderBuild();return}
+  // Adding from a phone/Fold picker keeps that picker open for the next pick.
+  openPick=el.closest("#pickU")?"u":el.closest("#pickT")?"t":"";
   if(ds.race&&el.tagName==="BUTTON"){if(b.race!==ds.race){if(b.units.length||Object.keys(b.tac).length){if(!confirm("Switching race clears this roster's units and cards. Continue?"))return}Object.assign(b,{race:ds.race,faction:"",tac:{},tacSlots:{},units:[]})}}
   else if(ds.tac){showTac(ds.tac);return}
   else if(ds.unit){const bu=b.units[+ds.bi];showUnit(ds.unit,bu?bu.ups:null);return}
-  else if(ds.tq){const id=ds.tq,d=+ds.d;const q=Math.max(0,(b.tac[id]||0)+d);if(T(id).uq&&q>1)return;if(q)b.tac[id]=q;else delete b.tac[id]}
+  else if(ds.tq){const id=ds.tq,d=+ds.d;if(d>0)freshKey="t:"+id;const q=Math.max(0,(b.tac[id]||0)+d);if(T(id).uq&&q>1)return;if(q)b.tac[id]=q;else delete b.tac[id]}
   else if(ds.urm!==undefined){b.units.splice(+ds.urm,1)}
-  else if(ds.uadd){const u=U(ds.uadd);b.units.push({uid:++uidc,id:u.id,ci:0,ups:[],slot:u.slot});toast(u.n+" added")}
+  else if(ds.uadd){const u=U(ds.uadd);b.units.push({uid:++uidc,id:u.id,ci:0,ups:[],slot:u.slot});freshKey="u:"+uidc;toast(u.n+" added")}
   else if(el.id==="bExport"){openExport();return}
   else if(el.id==="bImport"){$("#bFile").click();return}
   else if(el.id==="bPaste"){openPaste();return}
@@ -1489,7 +1561,7 @@ function onBuildClick(e){
   save();renderBuild();
 }
 function onBuildChange(e){
-  const b=st.build,el=e.target,ds=el.dataset;
+  const b=st.build,el=e.target,ds=el.dataset;openPick="";
   if(el.id==="bFile"){if(el.files[0])importFile(el.files[0]);el.value="";return}
   if(el.id==="bName"){b.name=el.value;save();return}
   if(el.id==="bScale"){b.scale=el.value;b.deps=[]}

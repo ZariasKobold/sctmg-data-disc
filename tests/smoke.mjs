@@ -71,13 +71,17 @@ try {
     // One Creep card for Zerg, plus two ordinary tactical cards for everyone.
     const pickTac = data.TAC.filter(t => t.r === race && t.tags.length === 1 && t.type === "Tactical").slice(0, 2);
     if (race === "Z") pickTac.push(data.TAC.find(t => t.r === "Z" && t.type === "Creep" && t.tags.length === 1));
-    for (const t of pickTac) await $(`#v-build button[data-tq="${t.id}"][data-d="1"]`).click();
+    // Tactical cards come from the "Add a tactical card" picker; the roster only lists taken ones.
+    expect(await $("#v-build .item.tc").count() === 0, "a new roster shouldn't list any tactical cards");
+    await $("#pickT summary").click();
+    for (const t of pickTac) await $(`#pickT button[data-tq="${t.id}"]`).click(); // picker stays open between picks
+    expect(await $("#v-build .item.tc").count() === pickTac.length, "taken tactical cards didn't land in the roster");
+    expect(await $("#pickT").evaluate(d => d.open), "tactical picker should stay open after adding");
 
-    for (let i = 0; i < 2; i++) {
-      await $("#v-build details summary").click(); // re-render closes the picker each time
-      await $("#v-build button[data-uadd]:not([disabled])").first().click();
-    }
+    await $("#pickU summary").click();
+    for (let i = 0; i < 2; i++) await $("#pickU button[data-uadd]:not([disabled])").first().click();
     expect(await $("#v-build button[data-urm]").count() === 2, "units didn't land in the roster");
+    expect(await $("#pickU").evaluate(d => d.open), "unit picker should stay open after adding");
 
     // Exercise the composition picker and an upgrade checkbox where the unit has them.
     if (await $("#v-build select[data-uci]").count()) await $("#v-build select[data-uci]").first().selectOption("1");
@@ -305,20 +309,26 @@ try {
   await nav("build");
   await $("#bNew").click();
   expect(await $("#v-build .bside").isVisible(), "Build summary column missing at 690px");
-  expect(await $("#v-build .bside .meters").isVisible() && await $("#v-build .bside .issues").isVisible(), "meters and roster check should be in the summary column");
+  expect(await $("#v-build .bside .gauges").isVisible() && await $("#v-build .bside .issues").isVisible(), "gauges and roster check should be in the status column");
   expect(await $("#v-build .bcat").count() === 0, "the unit catalog column is desktop-only");
-  await $("#v-build details summary").click();
+  await $("#pickU summary").click();
   await $("#v-build button[data-uadd]:not([disabled])").first().click();
   expect(await $("#v-build button[data-urm]").count() === 1, "adding a unit at 690px didn't work");
 
   log("desktop (1440): Build adds an always-open unit catalog");
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.waitForFunction(() => document.querySelector("#v-build .bcat")); // resize re-arranges Build live
-  expect(await $("#v-build details summary").count() === 0, "desktop should show the catalog, not the Add a unit dropdown");
-  const minBefore = await text("#v-build .bside .meter:first-child .n");
+  expect(await $("#pickU").count() === 0, "desktop should show the catalog, not the Add a unit dropdown");
+  const minBefore = await text('#v-build .gauge[data-g="min"] .n');
   await $("#v-build .bcat button[data-uadd]:not([disabled])").nth(1).click();
   expect(await $("#v-build button[data-urm]").count() === 2, "adding from the catalog didn't add a unit");
-  expect((await text("#v-build .bside .meter:first-child .n")) !== minBefore, "minerals in the summary didn't update");
+  expect((await text('#v-build .gauge[data-g="min"] .n')) !== minBefore, "minerals gauge didn't update");
+  await $('#v-build [data-ctab="tac"]').click();
+  const tacBefore = await $("#v-build .bmain .item.tc").count();
+  await $("#v-build .bcat button[data-tq]:not([disabled])").first().click();
+  expect(await $("#v-build .bmain .item.tc").count() === tacBefore + 1, "adding from the catalog's Tactical tab didn't add a card");
+  expect(await $("#v-build .bmain .item.tc.fresh").count() === 1, "the card just added should be marked so it glows");
+  await $('#v-build [data-ctab="units"]').click();
   await page.setViewportSize({ width: 1440, height: 600 }); // short window, so the catalog has room to scroll
   await $("#v-build .bcat").evaluate(e => { e.scrollTop = 250; });
   const scrolled = await $("#v-build .bcat").evaluate(e => e.scrollTop);
@@ -339,7 +349,7 @@ try {
   await nav("build");
   await page.setViewportSize({ width: 400, height: 850 });
   await page.waitForFunction(() => !document.querySelector("#v-build .bgrid"));
-  expect(await $("#v-build details summary").count() === 1, "back at phone width, Build should be the single stack with its dropdown");
+  expect(await $("#pickU").count() === 1, "back at phone width, Build should be the single stack with its Add a unit picker");
   await nav("cards");
   await $("#v-cards button.pick").first().click();
   expect(await modalOpen(), "back at phone width, a card should open in the pop-up again");
