@@ -31,7 +31,9 @@ page.on("dialog", d => d.accept()); // "Switching race clears…", "Replace the 
 const $ = s => page.locator(s);
 const nav = v => $(`nav.tabs button[data-v="${v}"]`).click();
 const fireChange = (sel, value) => $(sel).evaluate((el, v) => { el.value = v; el.dispatchEvent(new Event("change", { bubbles: true })); }, value);
-const text = sel => $(sel).innerText();
+// textContent, not innerText: innerText reports text as displayed, so CSS
+// like text-transform:uppercase on headings would break these checks.
+const text = sel => $(sel).textContent();
 const modalOpen = () => $("#modal").evaluate(d => d.open);
 
 try {

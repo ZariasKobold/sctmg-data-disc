@@ -188,6 +188,100 @@ input[type=search]{width:100%;background:var(--panel2);border:1px solid var(--li
 .toast{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--text);color:var(--bg);padding:8px 14px;border-radius:6px;font-weight:600;z-index:20;opacity:0;transition:opacity .2s;pointer-events:none}
 .toast.on{opacity:1}
 @media (prefers-reduced-motion:reduce){.toast{transition:none}}
+
+/* ===================== HUD SKIN
+   The sci-fi look, layered over the base styles above. Everything keys off
+   the race accent (--acc), so Terran glows blue, Zerg purple, Protoss gold.
+   --hl   frame line: accent mixed into the normal line colour
+   --glow soft glow colour: transparent in light mode, so the same rules
+          give a clean console look there and a lit HUD in dark mode
+   --space page backdrop: blueprint grid (light) or nebula + stars (dark) */
+body{
+  --hl:color-mix(in srgb,var(--acc) 45%,var(--line));
+  --glow:transparent;
+  --tint:color-mix(in srgb,var(--acc) 7%,var(--panel));
+  --space:
+    radial-gradient(ellipse 120% 60% at 50% -10%,color-mix(in srgb,var(--acc) 14%,transparent),transparent 70%),
+    linear-gradient(rgba(19,33,58,.045) 1px,transparent 1px) 0 0/22px 22px,
+    linear-gradient(90deg,rgba(19,33,58,.045) 1px,transparent 1px) 0 0/22px 22px;
+  background:var(--space),var(--bg);background-attachment:fixed;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) body{
+    --glow:color-mix(in srgb,var(--acc) 38%,transparent);
+    --tint:color-mix(in srgb,var(--acc) 12%,var(--panel));
+    --space:
+      radial-gradient(1px 1px at 23px 41px,#fffa,transparent),radial-gradient(1px 1px at 141px 17px,#fff8,transparent),
+      radial-gradient(1.5px 1.5px at 87px 133px,#fff9,transparent),radial-gradient(1px 1px at 190px 102px,#fff6,transparent),
+      radial-gradient(1px 1px at 52px 188px,#fff7,transparent),radial-gradient(1.5px 1.5px at 166px 211px,#cfe3ffaa,transparent),
+      radial-gradient(ellipse 90% 55% at 15% -5%,color-mix(in srgb,var(--acc) 30%,transparent),transparent 70%),
+      radial-gradient(ellipse 70% 45% at 100% 45%,rgba(174,107,224,.13),transparent 70%),
+      radial-gradient(ellipse 80% 40% at 30% 105%,rgba(74,149,230,.14),transparent 70%);
+    background-size:230px 230px,230px 230px,230px 230px,230px 230px,230px 230px,230px 230px,auto,auto,auto;
+  }
+}
+:root[data-theme="dark"] body{
+  --glow:color-mix(in srgb,var(--acc) 38%,transparent);
+  --tint:color-mix(in srgb,var(--acc) 12%,var(--panel));
+  --space:
+    radial-gradient(1px 1px at 23px 41px,#fffa,transparent),radial-gradient(1px 1px at 141px 17px,#fff8,transparent),
+    radial-gradient(1.5px 1.5px at 87px 133px,#fff9,transparent),radial-gradient(1px 1px at 190px 102px,#fff6,transparent),
+    radial-gradient(1px 1px at 52px 188px,#fff7,transparent),radial-gradient(1.5px 1.5px at 166px 211px,#cfe3ffaa,transparent),
+    radial-gradient(ellipse 90% 55% at 15% -5%,color-mix(in srgb,var(--acc) 30%,transparent),transparent 70%),
+    radial-gradient(ellipse 70% 45% at 100% 45%,rgba(174,107,224,.13),transparent 70%),
+    radial-gradient(ellipse 80% 40% at 30% 105%,rgba(74,149,230,.14),transparent 70%);
+  background-size:230px 230px,230px 230px,230px 230px,230px 230px,230px 230px,230px 230px,auto,auto,auto;
+}
+
+/* Header and tab bar: frosted glass with a glowing accent rail. */
+header.top{background:color-mix(in srgb,var(--bg) 80%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--hl)}
+header.top::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:2px;background:linear-gradient(90deg,transparent,var(--acc) 25%,var(--acc) 75%,transparent);box-shadow:0 0 12px 1px var(--glow);pointer-events:none}
+header.top #title{font-family:var(--display);text-transform:uppercase;letter-spacing:.06em;font-size:1rem}
+.resbar{background:color-mix(in srgb,var(--bg) 82%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+nav.tabs{background:linear-gradient(180deg,color-mix(in srgb,var(--panel) 92%,transparent),color-mix(in srgb,var(--bg) 96%,transparent));-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-top:1px solid var(--hl)}
+nav.tabs::before{content:"";position:absolute;left:0;right:0;top:-2px;height:1px;background:linear-gradient(90deg,transparent,var(--acc),transparent);box-shadow:0 0 10px 1px var(--glow)}
+nav.tabs button{text-transform:uppercase;letter-spacing:.06em;font-size:.76rem}
+nav.tabs button[aria-current="true"]{color:var(--text);background:linear-gradient(180deg,color-mix(in srgb,var(--acc) 22%,transparent),transparent 85%);text-shadow:0 0 10px var(--glow)}
+nav.tabs button[aria-current="true"]::before{left:12%;right:12%;clip-path:polygon(0 0,100% 0,calc(100% - 4px) 100%,4px 100%);height:4px;box-shadow:0 0 10px var(--glow)}
+
+/* Panels: squared frames, accent corner brackets, a lit top edge. */
+.panel{position:relative;border-radius:2px;border-color:var(--hl);background:linear-gradient(180deg,var(--tint),var(--panel) 140px);box-shadow:0 0 22px -6px var(--glow),inset 0 1px 0 color-mix(in srgb,var(--acc) 25%,transparent)}
+.panel::before,.panel::after{content:"";position:absolute;width:14px;height:14px;pointer-events:none;border:0 solid var(--acc)}
+.panel::before{top:-1px;left:-1px;border-top-width:2px;border-left-width:2px}
+.panel::after{bottom:-1px;right:-1px;border-bottom-width:2px;border-right-width:2px}
+.panel h2{font-size:.95rem;text-transform:uppercase;letter-spacing:.07em;padding:0 0 7px 11px;margin-bottom:10px;
+  background:linear-gradient(var(--acc),var(--acc)) 0 3px/3px 1em no-repeat,linear-gradient(90deg,var(--hl),transparent 85%) 0 100%/100% 1px no-repeat}
+.panel h2 small{text-transform:none;letter-spacing:0}
+
+/* Controls: chamfered corners, the HUD's signature cut. */
+.btn,.seg,.toast{border-radius:0;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
+.btn{font-family:var(--display);letter-spacing:.03em;border-color:var(--hl);background:linear-gradient(180deg,var(--panel2),var(--panel))}
+.btn.pri{background:linear-gradient(180deg,color-mix(in srgb,var(--acc) 80%,#fff),var(--acc) 55%);border-color:var(--acc);text-shadow:none}
+.btn.sm{clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)}
+.seg{border-color:var(--hl)}
+.seg button[aria-pressed="true"]{background:linear-gradient(180deg,color-mix(in srgb,var(--acc) 80%,#fff),var(--acc) 55%)}
+select,input[type=text],input[type=number],input[type=search],textarea,.step,.pick,.cardchip,.meter,.stat,.slot,.vp .box,.banner,.rtext,.sgrid div,.phases div,.sup,.tag,.kind{border-radius:2px}
+select,input[type=text],input[type=number],input[type=search],textarea{border-color:var(--hl);background:color-mix(in srgb,var(--panel2) 85%,var(--bg))}
+select:focus,input:focus,textarea:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 1px var(--acc),0 0 14px var(--glow)}
+.pick,.cardchip{border-color:color-mix(in srgb,var(--acc) 25%,var(--line));border-left:3px solid var(--acc)}
+.phases div.on{background:linear-gradient(180deg,color-mix(in srgb,var(--acc) 80%,#fff),var(--acc) 55%);box-shadow:0 0 12px var(--glow)}
+
+/* Readouts: glowing numbers and segmented gauges. */
+.meter,.stat{border-color:var(--hl);background:linear-gradient(180deg,var(--tint),var(--panel))}
+.meter .n,.stat .n,.vp .n{text-shadow:0 0 14px var(--glow)}
+.meter .bar{height:6px;border-radius:0;background:repeating-linear-gradient(90deg,var(--panel2) 0 6px,transparent 6px 8px)}
+.meter .bar i{background:repeating-linear-gradient(90deg,var(--acc) 0 6px,transparent 6px 8px);box-shadow:0 0 8px var(--glow)}
+.meter.over .bar i{background:repeating-linear-gradient(90deg,var(--bad) 0 6px,transparent 6px 8px)}
+.stat.hl{box-shadow:inset 0 0 0 1px var(--acc),0 0 16px var(--glow)}
+.vp .box{border:1px solid var(--hl);background:linear-gradient(180deg,var(--tint),var(--panel2))}
+
+/* Card sheet: framed, with the same glowing rail under the title. */
+dialog{border:1px solid var(--hl);border-bottom:0;border-radius:3px 3px 0 0;box-shadow:0 0 40px var(--glow)}
+dialog::backdrop{background:rgba(3,7,15,.7);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+dialog .mh{border-bottom:1px solid var(--hl);background:linear-gradient(180deg,var(--tint),var(--panel))}
+dialog .mh::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:2px;background:linear-gradient(90deg,transparent,var(--acc) 25%,var(--acc) 75%,transparent);box-shadow:0 0 10px var(--glow)}
+dialog .mh h3{text-transform:uppercase;letter-spacing:.05em}
+.phh,.gletter{text-transform:uppercase;letter-spacing:.07em}
 </style>
 </head>
 <body data-race="T">

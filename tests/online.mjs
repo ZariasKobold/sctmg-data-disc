@@ -78,7 +78,7 @@ try {
   log("signed out: Sign in button shows, account sheet offers Discord");
   await alice1.until(() => !document.querySelector("#acctBtn").hidden, null, "Sign in button");
   await alice1.$("#acctBtn").click();
-  expect((await alice1.$("#mBody").innerText()).includes("Sign in with Discord"), "account sheet has no Discord button");
+  expect((await alice1.$("#mBody").textContent()).includes("Sign in with Discord"), "account sheet has no Discord button");
   await alice1.$("#mClose").click();
 
   log("roster sync between two devices");
@@ -88,7 +88,7 @@ try {
   await alice2.signIn();
   await alice2.until(() => st.rosters.some((r) => r.name === "Alpha Squad"), null, "Alpha Squad to sync to the second device");
   await alice2.nav("build");
-  expect((await alice2.$("#v-build").innerText()).includes("Alpha Squad"), "synced roster not listed");
+  expect((await alice2.$("#v-build").textContent()).includes("Alpha Squad"), "synced roster not listed");
 
   log("a delete on one device reaches the other");
   await makeRoster(alice2, "Doomed");
@@ -111,7 +111,7 @@ try {
   expect(/#share=[A-Z0-9]{8}$/.test(link), "bad share link " + link);
   await bob.page.goto(link);
   await bob.until(() => document.querySelector("[data-share-import]"), null, "share preview");
-  expect((await bob.$("#mBody").innerText()).includes("Shared by Alice"), "share preview doesn't say who shared it");
+  expect((await bob.$("#mBody").textContent()).includes("Shared by Alice"), "share preview doesn't say who shared it");
   await bob.$("[data-share-import]").click();
   await bob.until(() => st.rosters.some((r) => r.name === "Alpha Squad"), null, "the shared roster");
 
@@ -125,7 +125,7 @@ try {
   await alice1.$("#sHost").click();
   await alice1.until(() => st.game && st.game.online, null, "the hosted game");
   const code = await alice1.st(() => st.game.online.code);
-  expect((await alice1.$("#v-play").innerText()).includes("Waiting for your opponent"), "host isn't told to wait");
+  expect((await alice1.$("#v-play").textContent()).includes("Waiting for your opponent"), "host isn't told to wait");
 
   log("Bob joins with the code");
   await bob.nav("setup");
@@ -135,7 +135,7 @@ try {
   await bob.$("#sJoin").click();
   await bob.until(() => st.game && st.game.online && st.game.opp, null, "joining");
   await alice1.until(() => st.game.opp && st.game.opp.name === "Bob", null, "Bob to appear for Alice");
-  expect((await alice1.$("#v-play").innerText()).includes("Bob's army"), "opponent panel missing");
+  expect((await alice1.$("#v-play").textContent()).includes("Bob's army"), "opponent panel missing");
 
   log("VP: each player's changes reach the other");
   await bob.$('#v-play button[data-vp="0"][data-d="1"]').click();
@@ -184,7 +184,7 @@ try {
   log("ending the game reaches the opponent");
   await alice1.$("#pEnd").click();
   await bob.until(() => st.game.online.status === "ended", null, "ended status");
-  expect((await bob.$("#v-play").innerText()).includes("was ended"), "Bob isn't told the game ended");
+  expect((await bob.$("#v-play").textContent()).includes("was ended"), "Bob isn't told the game ended");
 
   log("account delete");
   await bob.$("#acctBtn").click();
