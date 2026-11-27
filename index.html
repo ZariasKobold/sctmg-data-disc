@@ -40,7 +40,6 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background
 header.top h1{font-size:1.15rem;flex:1;display:flex;align-items:center;gap:8px;min-width:0;white-space:nowrap}
 header.top .brand{height:34px;width:auto;flex:none;align-self:center}
 header.top #title{overflow:hidden;text-overflow:ellipsis}
-header.top .race-mark{width:14px;height:22px;background:var(--acc);clip-path:polygon(0 0,100% 18%,100% 82%,0 100%)}
 main{padding:12px 12px 96px;max-width:720px;margin:0 auto}
 nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;display:grid;grid-template-columns:repeat(5,1fr);background:var(--panel);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
 nav.tabs button{background:none;border:0;padding:10px 0 12px;font-family:var(--display);font-weight:600;font-size:.9rem;color:var(--muted);position:relative}
@@ -311,9 +310,11 @@ dialog .mh h3{text-transform:uppercase;letter-spacing:.05em}
 .picker.dense .pick .cost{font-weight:600;color:var(--muted)}
 .picker.dense .pick .note{font-size:.8rem}
 /* Saved rosters: one line each, long names cut short instead of wrapping. */
-.sr{display:flex;align-items:center;gap:6px;padding:8px 0;border-top:1px solid color-mix(in srgb,var(--line) 70%,transparent)}
+.sr{padding:10px 0;border-top:1px solid color-mix(in srgb,var(--line) 70%,transparent)}
 .sr:first-of-type{border-top:0}
-.sr .nm,.sr .meta{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sr .nm{display:block;overflow-wrap:anywhere}
+.sr .acts{display:flex;gap:6px;margin-top:8px}
+.sr .acts .danger{margin-left:auto}
 .sr.cur .nm{color:var(--acc)}
 .sr .tag{margin-right:6px}
 /* Ring gauges (wide status panel): a segmented 270° arc, open at the
@@ -422,7 +423,7 @@ details#pickU .picker,details#pickT .picker{margin-top:6px}
 </style>
 </head>
 <body data-race="T">
-<header class="top"><div class="race-mark" aria-hidden="true"></div><h1><img class="brand" src="icons/logo.webp" alt="SCTMG Data Disc" width="125" height="40"><span id="title">Army builder</span></h1><button class="btn sm" id="acctBtn" hidden>Sign in</button><button class="btn sm" id="themeBtn" aria-label="Toggle light or dark theme">◐</button></header>
+<header class="top"><h1><img class="brand" src="icons/logo.webp" alt="SCTMG Data Disc" width="125" height="40"><span id="title">Army builder</span></h1><button class="btn sm" id="acctBtn" hidden>Sign in</button><button class="btn sm" id="themeBtn" aria-label="Toggle light or dark theme">◐</button></header>
 <main>
   <section class="view on" id="v-build"></section>
   <section class="view" id="v-setup"></section>
@@ -1514,7 +1515,7 @@ function renderBuild(){
   const saveRow=`<div class="row saverow"><button class="btn pri" id="bSave">Save roster</button>${st.rosters.some(r=>r.id===b.id)?`<button class="btn" id="bSaveAs">Save as new</button>`:""}</div>`;
   const tools=`<div class="panel quiet"><h2>Roster tools</h2><div class="row"><button class="btn sm" id="bNew">New roster</button><button class="btn sm" id="bCopy">Copy as text</button><button class="btn sm" id="bPaste">Paste text</button><button class="btn sm" id="bExport">Export file</button><button class="btn sm" id="bImport">Import file</button><input type="file" id="bFile" accept=".json,.disc,application/json" hidden></div>
   <p class="note" style="margin-bottom:0">${net.user?"Saved rosters sync to your account.":net.available?"Sign in (top right) to sync saved rosters across devices.":"Export a file to move rosters to another device."}</p></div>`;
-  const saved=st.rosters.length?`<div class="panel quiet"><h2>Saved rosters <small>${st.rosters.length}</small></h2>${st.rosters.map(r=>`<div class="sr${r.id===b.id?" cur":""}"><div class="grow"><b class="nm" title="${esc(r.name)}">${esc(r.name)}</b><div class="meta">${r.id===b.id?'<span class="tag">Editing</span>':""}${RACES[r.race]} · ${SCALES[r.scale].n} · ${totals(r).min} minerals</div></div><button class="btn sm" data-rload="${r.id}">Load</button>${net.user?`<button class="btn sm" data-rshare="${r.id}">Share</button>`:""}<button class="btn sm danger" data-rdel="${r.id}" aria-label="Delete ${esc(r.name)}">✕</button></div>`).join("")}</div>`:"";
+  const saved=st.rosters.length?`<div class="panel quiet"><h2>Saved rosters <small>${st.rosters.length}</small></h2>${st.rosters.map(r=>`<div class="sr${r.id===b.id?" cur":""}"><b class="nm" title="${esc(r.name)}">${esc(r.name)}</b><div class="meta">${r.id===b.id?'<span class="tag">Editing</span>':""}${RACES[r.race]} · ${SCALES[r.scale].n} · ${totals(r).min} minerals</div><div class="acts"><button class="btn sm" data-rload="${r.id}">Load</button>${net.user?`<button class="btn sm" data-rshare="${r.id}">Share</button>`:""}<button class="btn sm danger" data-rdel="${r.id}" aria-label="Delete ${esc(r.name)}">✕</button></div></div>`).join("")}</div>`:"";
   // Phone: the check sits with Save at the end of the list. Wide: one status panel.
   const chk=`<div class="panel" id="bChk"><h2>Roster check</h2>${issuesList}${saveRow}</div>`;
   const status=`<div class="panel status" id="bChk">${gauges}${slotGrid}<div class="grp">Roster check</div>${issuesList}${saveRow}</div>`;
