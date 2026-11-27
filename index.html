@@ -270,7 +270,7 @@ dialog .mh h3{text-transform:uppercase;letter-spacing:.05em}
    Mobile first: everything above is the phone layout. Wider screens only
    rearrange the same panels so related things sit side by side; nothing
    here adds a feature a phone doesn't have.
-   760px+  (Fold unfolded, tablets): Build list + sticky summary column
+   600px+  (Fold unfolded, about 690px wide; tablets): Build list + sticky summary column
            (meters, roster check, save), Cards list + card detail, Glossary
            filters pinned beside the list (one reading column: two columns
            on a long scrolling list make you scroll back up mid-read).
@@ -280,10 +280,10 @@ dialog .mh h3{text-transform:uppercase;letter-spacing:.05em}
    reading order matches what's on screen. */
 .cdetail{display:none}
 .pick[aria-current="true"]{border-color:var(--acc);background:linear-gradient(90deg,color-mix(in srgb,var(--acc) 22%,var(--panel2)),var(--panel2));box-shadow:0 0 12px -2px var(--glow)}
-@media (min-width:760px){
+@media (min-width:600px){
   main{max-width:1240px}
   #v-setup,#v-play{max-width:720px;margin:0 auto}
-  .bgrid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px;align-items:start}
+  .bgrid{display:grid;grid-template-columns:minmax(0,1fr) clamp(236px,36%,300px);gap:14px;align-items:start}
   .bgrid.l3{grid-template-columns:272px minmax(0,1fr) 290px}
   /* Side columns stay in view and scroll on their own (above the bottom tab bar). */
   .bcat,.bside{position:sticky;top:calc(env(safe-area-inset-top,0px) + 64px);max-height:calc(100vh - 128px);overflow:auto;overscroll-behavior:contain;
@@ -1560,10 +1560,10 @@ $("#v-play").addEventListener("click",e=>{
 
 /* ===================== CARDS VIEW ===================== */
 let cardFilter={q:"",race:null};
-// Wide screens (760px+, same as the CSS) show the chosen card in a panel
+// Wide screens (600px+, same as the CSS) show the chosen card in a panel
 // beside the list instead of a pop-up. cardSel is that card: {k:"unit"|"tac"|"mis", id}.
 let cardSel=null;
-const wideCards=()=>matchMedia("(min-width:760px)").matches;
+const wideCards=()=>matchMedia("(min-width:600px)").matches;
 // Build tab: 1 = phone stack, 2 = list + sticky summary (Fold), 3 = catalog + list + summary (desktop).
 // Breakpoints match the WIDE SCREENS CSS.
 const buildLayout=()=>matchMedia("(min-width:1280px)").matches?3:wideCards()?2:1;
@@ -1876,7 +1876,7 @@ $("#themeBtn").onclick=()=>{const r=document.documentElement;const dark=r.datase
 try{const th=localStorage.getItem(KEY+"-theme");if(th)document.documentElement.dataset.theme=th}catch(e){}
 syncThemeColor();
 show(st.game?"play":"build");
-["(min-width:760px)","(min-width:1280px)"].forEach(q=>{try{matchMedia(q).addEventListener("change",()=>{if($("#v-build").classList.contains("on"))renderBuild()})}catch(e){}});
+["(min-width:600px)","(min-width:1280px)"].forEach(q=>{try{matchMedia(q).addEventListener("change",()=>{if($("#v-build").classList.contains("on"))renderBuild()})}catch(e){}});
 netInit();
 // Installable app + offline start (sw.js). Not on the offline file copy: service workers need http(s).
 if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol))window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
