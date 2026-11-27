@@ -285,6 +285,36 @@ try {
   }
   await page.reload();
   expect(!(await modalOpen()), "the notice should only appear once (the cleaned save is written back)");
+
+  // Wide screens rearrange the same panels (see "WIDE SCREENS" in index.html).
+  log("Fold width (840): Cards opens beside the list, not in a pop-up");
+  await page.setViewportSize({ width: 840, height: 1000 });
+  await nav("cards");
+  expect(await $("#cDetail").isVisible(), "card detail panel isn't showing at 840px");
+  const pick = $("#v-cards button.pick").nth(4), pickName = (await pick.locator("b").textContent()).trim();
+  await pick.click();
+  expect(!(await modalOpen()), "a card opened a pop-up at 840px instead of the side panel");
+  expect((await text("#cDetail")).includes(pickName), `side panel doesn't show ${pickName}`);
+  expect(await pick.getAttribute("aria-current") === "true", "chosen card isn't highlighted");
+  await $("#cDetail button.gl").first().click();
+  expect(await page.evaluate(() => document.querySelector("#gloss").open), "term link in the side panel didn't open");
+  await $("#gClose").click();
+  expect(await $("nav.tabs").evaluate(n => n.getBoundingClientRect().width > 700), "tab bar should still be at the bottom at 840px");
+
+  log("desktop (1440): side rail, and every view still works");
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const rail = await $("nav.tabs").evaluate(n => { const r = n.getBoundingClientRect(); return { w: r.width, h: r.height, top: r.top }; });
+  expect(rail.w < 300 && rail.h > 250 && rail.top < 100, `tab bar didn't become a side rail: ${JSON.stringify(rail)}`);
+  for (const v of ["build", "setup", "play", "cards", "gloss"]) {
+    await nav(v);
+    expect(await $(`#v-${v}`).isVisible(), `#v-${v} isn't visible on desktop`);
+    expect(await $(`nav.tabs button[data-v="${v}"]`).getAttribute("aria-current") === "true", `rail doesn't mark ${v} as current`);
+  }
+  await page.setViewportSize({ width: 400, height: 850 });
+  await nav("cards");
+  await $("#v-cards button.pick").first().click();
+  expect(await modalOpen(), "back at phone width, a card should open in the pop-up again");
+  await $("#mClose").click();
 } catch (e) {
   errors.push(e.message);
 } finally {
@@ -295,4 +325,4 @@ if (errors.length) {
   console.error(`smoke: FAILED\n  ${errors.join("\n  ")}`);
   process.exit(1);
 }
-console.log("smoke: all views, three races, full game and every card OK");
+console.log("smoke: all views, three races, full game, every card, Fold and desktop layouts OK");

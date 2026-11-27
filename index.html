@@ -265,6 +265,48 @@ dialog .mh{border-bottom:1px solid var(--hl);background:linear-gradient(180deg,v
 dialog .mh::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:2px;background:linear-gradient(90deg,transparent,var(--acc) 25%,var(--acc) 75%,transparent);box-shadow:0 0 10px var(--glow)}
 dialog .mh h3{text-transform:uppercase;letter-spacing:.05em}
 .phh,.gletter{text-transform:uppercase;letter-spacing:.07em}
+
+/* ===================== WIDE SCREENS
+   Mobile first: everything above is the phone layout. Wider screens only
+   rearrange the same panels so related things sit side by side; nothing
+   here adds a feature a phone doesn't have.
+   760px+  (Fold unfolded, tablets): Cards list + card detail, Glossary
+           filters pinned beside the list (one reading column: two columns
+           on a long scrolling list make you scroll back up mid-read).
+   1100px+ (desktop): bottom tab bar becomes a framed HUD side rail. */
+.cdetail{display:none}
+.pick[aria-current="true"]{border-color:var(--acc);background:linear-gradient(90deg,color-mix(in srgb,var(--acc) 22%,var(--panel2)),var(--panel2));box-shadow:0 0 12px -2px var(--glow)}
+@media (min-width:760px){
+  main{max-width:1240px}
+  #v-build,#v-setup,#v-play{max-width:720px;margin:0 auto}
+  .split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:14px;align-items:start}
+  .cdetail{display:block;position:sticky;top:calc(env(safe-area-inset-top,0px) + 64px);max-height:calc(100vh - 150px);overflow:auto;overscroll-behavior:contain}
+  .cdetail .empty{color:var(--muted);text-align:center;padding:40px 10px}
+  #v-gloss.on{display:grid;grid-template-columns:300px minmax(0,1fr);gap:14px;align-items:start}
+  #v-gloss>.panel:first-child{position:sticky;top:calc(env(safe-area-inset-top,0px) + 64px)}
+}
+@media (min-width:1100px){
+  main{padding:16px 16px 40px 248px}
+  /* Header lines up with the rail, so rail + content read as one centred console. */
+  header.top{padding-left:max(14px,calc((100vw - 1240px) / 2 + 12px));padding-right:max(14px,calc((100vw - 1240px) / 2 + 12px))}
+  .toast{bottom:24px}
+  dialog{margin:auto;border-bottom:1px solid var(--hl);border-radius:3px;max-height:85vh}
+  nav.tabs{position:fixed;top:calc(env(safe-area-inset-top,0px) + 68px);bottom:auto;right:auto;left:max(16px,calc((100vw - 1240px) / 2 + 12px));width:216px;
+    display:flex;flex-direction:column;gap:7px;padding:38px 12px 16px;counter-reset:nav;
+    border:1px solid var(--hl);border-radius:2px;background:linear-gradient(180deg,var(--tint),var(--panel) 70%);box-shadow:0 0 24px -6px var(--glow)}
+  nav.tabs::before{content:"Command";top:10px;left:14px;right:14px;height:auto;padding-bottom:6px;background:none;box-shadow:none;
+    font:700 .68rem var(--display);letter-spacing:.24em;text-transform:uppercase;color:var(--muted);
+    border-bottom:1px solid var(--hl)}
+  nav.tabs::after{content:"";position:absolute;right:-1px;bottom:-1px;width:14px;height:14px;border:0 solid var(--acc);border-bottom-width:2px;border-right-width:2px;pointer-events:none}
+  nav.tabs button{counter-increment:nav;display:flex;justify-content:space-between;align-items:center;text-align:left;padding:12px 14px 12px 16px;font-size:.84rem;
+    border:1px solid color-mix(in srgb,var(--acc) 22%,var(--line));background:linear-gradient(90deg,var(--panel2),color-mix(in srgb,var(--panel2) 30%,transparent));
+    clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));cursor:pointer}
+  nav.tabs button::after{content:"0" counter(nav);font-size:.68rem;letter-spacing:.12em;color:var(--muted)}
+  nav.tabs button:hover{border-color:var(--acc);color:var(--text)}
+  nav.tabs button[aria-current="true"]{border-color:var(--acc);background:linear-gradient(90deg,color-mix(in srgb,var(--acc) 38%,transparent),color-mix(in srgb,var(--acc) 6%,transparent))}
+  nav.tabs button[aria-current="true"]::after{color:var(--text)}
+  nav.tabs button[aria-current="true"]::before{top:0;bottom:0;left:0;right:auto;width:3px;height:auto;clip-path:none}
+}
 </style>
 </head>
 <body data-race="T">
@@ -1492,21 +1534,40 @@ $("#v-play").addEventListener("click",e=>{
 
 /* ===================== CARDS VIEW ===================== */
 let cardFilter={q:"",race:null};
+// Wide screens (760px+, same as the CSS) show the chosen card in a panel
+// beside the list instead of a pop-up. cardSel is that card: {k:"unit"|"tac"|"mis", id}.
+let cardSel=null;
+const wideCards=()=>matchMedia("(min-width:760px)").matches;
+const missionCardHTML=x=>missionHTML(x,"std")+"<hr style='border:0;border-top:1px solid var(--line);margin:12px 0'>"+missionHTML(x,"sk");
+function cardDetailHTML(){
+  const s=cardSel,x=s&&(s.k==="unit"?U(s.id):s.k==="tac"?T(s.id):M(s.id));
+  if(!x)return `<p class="empty">Pick a card to read it here.</p>`;
+  return `<h2>${esc(x.n)}</h2>`+(s.k==="unit"?unitCardHTML(x):s.k==="tac"?tacCardHTML(x):missionCardHTML(x));
+}
+function paintCardDetail(){
+  const d=$("#cDetail");if(!d)return;d.innerHTML=cardDetailHTML();d.scrollTop=0;
+  document.querySelectorAll("#v-cards .pick").forEach(b=>{const on=!!cardSel&&(b.dataset.unit||b.dataset.tac||b.dataset.mis)===cardSel.id;if(on)b.setAttribute("aria-current","true");else b.removeAttribute("aria-current")});
+}
 function renderCards(){
   const race=cardFilter.race||st.build.race;setRace(race);const q=cardFilter.q.toLowerCase();
   const m=x=>!q||x.n.toLowerCase().includes(q);
   const us=UNITS.filter(u=>u.r===race&&m(u)),ts=TAC.filter(t=>t.r===race&&m(t));
-  let h=`<div class="panel"><div class="seg" role="group">${Object.entries(RACES).map(([k,v])=>`<button data-cr="${k}" aria-pressed="${race===k}">${v}</button>`).join("")}</div>
+  // Keep the selection while it's still listed (missions show for every race); otherwise show the first card.
+  const listed=s=>s&&(s.k==="unit"?us.some(u=>u.id===s.id):s.k==="tac"?ts.some(t=>t.id===s.id):MISSIONS.filter(m).some(x=>x.id===s.id));
+  if(!listed(cardSel))cardSel=us[0]?{k:"unit",id:us[0].id}:ts[0]?{k:"tac",id:ts[0].id}:null;
+  let h=`<div class="split"><div class="clist"><div class="panel"><div class="seg" role="group">${Object.entries(RACES).map(([k,v])=>`<button data-cr="${k}" aria-pressed="${race===k}">${v}</button>`).join("")}</div>
   <p class="note" style="margin:8px 0 0">Costs: 09.10.2026 cost table.</p><label class="f" for="cQ" style="margin-top:10px">Search cards</label><input type="text" id="cQ" value="${esc(cardFilter.q)}" placeholder="e.g. Stimpack, Queen, Nexus"></div>`;
   h+=`<div class="panel"><h2>Unit cards</h2><div class="picker">${us.map(u=>`<button class="pick" data-unit="${u.id}"><span><b>${esc(u.n)}</b><br><span class="note">${u.sum?"Summoned":u.slot}${u.unk?" · no card text":""}</span></span><span class="cost">${u.sum?"—":u.comps.map(c=>c[1]).join(" / ")}</span></button>`).join("")||'<p class="note">No matches.</p>'}</div></div>`;
   h+=`<div class="panel"><h2>Faction, tactical and creep cards</h2><div class="picker">${ts.map(t=>`<button class="pick" data-tac="${t.id}"><span><b>${esc(t.n)}</b><br><span class="note">${t.type}${t.uq?" · Unique":""}</span></span><span class="cost">${t.gas} gas</span></button>`).join("")||'<p class="note">No matches.</p>'}</div></div>`;
   h+=`<div class="panel"><h2>Missions</h2><div class="picker">${MISSIONS.filter(m).map(x=>`<button class="pick" data-mis="${x.id}"><b>${x.n}</b><span class="note">Std ${x.std.sup}+${x.std.esc} · Skirm ${x.sk.sup}+${x.sk.esc}</span></button>`).join("")}</div></div>`;
-  h+=`<p class="note" style="margin:8px 4px">${LEGAL}</p>`;
-  $("#v-cards").innerHTML=h;
+  h+=`<p class="note" style="margin:8px 4px">${LEGAL}</p></div><aside class="panel cdetail" id="cDetail" aria-label="Selected card" aria-live="polite"></aside></div>`;
+  $("#v-cards").innerHTML=h;paintCardDetail();
 }
-$("#v-cards").addEventListener("click",e=>{const el=e.target.closest("button");if(!el)return;const ds=el.dataset;
-  if(ds.cr){cardFilter.race=ds.cr;renderCards()}else if(ds.unit)showUnit(ds.unit);else if(ds.tac)showTac(ds.tac);
-  else if(ds.mis){const x=M(ds.mis);openModal(x.n,missionHTML(x,"std")+"<hr style='border:0;border-top:1px solid var(--line);margin:12px 0'>"+missionHTML(x,"sk"))}});
+$("#v-cards").addEventListener("click",e=>{const el=e.target.closest("button");if(!el||el.closest("#cDetail"))return;const ds=el.dataset;
+  if(ds.cr){cardFilter.race=ds.cr;renderCards();return}
+  const sel=ds.unit?{k:"unit",id:ds.unit}:ds.tac?{k:"tac",id:ds.tac}:ds.mis?{k:"mis",id:ds.mis}:null;if(!sel)return;
+  if(wideCards()){cardSel=sel;paintCardDetail();return}
+  if(sel.k==="unit")showUnit(sel.id);else if(sel.k==="tac")showTac(sel.id);else{const x=M(sel.id);openModal(x.n,missionCardHTML(x))}});
 $("#v-cards").addEventListener("input",e=>{if(e.target.id==="cQ"){cardFilter.q=e.target.value;const pos=e.target.selectionStart;renderCards();const i=$("#cQ");i.focus();i.setSelectionRange(pos,pos)}});
 
 /* ===================== GLOSSARY VIEW ===================== */
