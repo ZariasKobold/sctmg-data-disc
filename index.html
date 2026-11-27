@@ -270,15 +270,27 @@ dialog .mh h3{text-transform:uppercase;letter-spacing:.05em}
    Mobile first: everything above is the phone layout. Wider screens only
    rearrange the same panels so related things sit side by side; nothing
    here adds a feature a phone doesn't have.
-   760px+  (Fold unfolded, tablets): Cards list + card detail, Glossary
+   760px+  (Fold unfolded, tablets): Build list + sticky summary column
+           (meters, roster check, save), Cards list + card detail, Glossary
            filters pinned beside the list (one reading column: two columns
            on a long scrolling list make you scroll back up mid-read).
-   1100px+ (desktop): bottom tab bar becomes a framed HUD side rail. */
+   1100px+ (desktop): bottom tab bar becomes a framed HUD side rail.
+   1280px+ Build adds an always-open unit catalog column on the left.
+   Build's columns are arranged by renderBuild() (buildLayout()), so the
+   reading order matches what's on screen. */
 .cdetail{display:none}
 .pick[aria-current="true"]{border-color:var(--acc);background:linear-gradient(90deg,color-mix(in srgb,var(--acc) 22%,var(--panel2)),var(--panel2));box-shadow:0 0 12px -2px var(--glow)}
 @media (min-width:760px){
   main{max-width:1240px}
-  #v-build,#v-setup,#v-play{max-width:720px;margin:0 auto}
+  #v-setup,#v-play{max-width:720px;margin:0 auto}
+  .bgrid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px;align-items:start}
+  .bgrid.l3{grid-template-columns:272px minmax(0,1fr) 290px}
+  /* Side columns stay in view and scroll on their own (above the bottom tab bar). */
+  .bcat,.bside{position:sticky;top:calc(env(safe-area-inset-top,0px) + 64px);max-height:calc(100vh - 128px);overflow:auto;overscroll-behavior:contain;
+    padding:1px;scrollbar-width:thin;scrollbar-color:var(--hl) transparent}
+  .bcat>.panel:last-child,.bside>.panel:last-child{margin-bottom:0}
+  .bside .resbar{position:static;background:none;-webkit-backdrop-filter:none;backdrop-filter:none;margin:0 0 12px;padding:0}
+  .bside .meters{grid-template-columns:1fr}
   .split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:14px;align-items:start}
   .cdetail{display:block;position:sticky;top:calc(env(safe-area-inset-top,0px) + 64px);max-height:calc(100vh - 150px);overflow:auto;overscroll-behavior:contain}
   .cdetail .empty{color:var(--muted);text-align:center;padding:40px 10px}
@@ -290,6 +302,7 @@ dialog .mh h3{text-transform:uppercase;letter-spacing:.05em}
   /* Header lines up with the rail, so rail + content read as one centred console. */
   header.top{padding-left:max(14px,calc((100vw - 1240px) / 2 + 12px));padding-right:max(14px,calc((100vw - 1240px) / 2 + 12px))}
   .toast{bottom:24px}
+  .bcat,.bside{max-height:calc(100vh - 88px)}
   dialog{margin:auto;border-bottom:1px solid var(--hl);border-radius:3px;max-height:85vh}
   nav.tabs{position:fixed;top:calc(env(safe-area-inset-top,0px) + 68px);bottom:auto;right:auto;left:max(16px,calc((100vw - 1240px) / 2 + 12px));width:216px;
     display:flex;flex-direction:column;gap:7px;padding:38px 12px 16px;counter-reset:nav;
@@ -1340,45 +1353,58 @@ function renderBuild(){
   const tacs=TAC.filter(x=>x.r===b.race&&x.type!=="Faction");
   const units=UNITS.filter(u=>u.r===b.race&&!u.sum);
   const pct=(a,m)=>Math.min(100,m?a/m*100:0);
-  let h=`<div class="panel"><div class="row"><div class="grow"><label class="f" for="bName">Roster name</label><input type="text" id="bName" value="${esc(b.name)}"></div></div>
+  const lay=buildLayout();
+  const form=`<div class="panel"><div class="row"><div class="grow"><label class="f" for="bName">Roster name</label><input type="text" id="bName" value="${esc(b.name)}"></div></div>
   <div style="margin-top:10px"><label class="f">Race</label><div class="seg" role="group">${Object.entries(RACES).map(([k,v])=>`<button data-race="${k}" aria-pressed="${b.race===k}">${v}</button>`).join("")}</div></div>
   <div class="row" style="margin-top:10px"><div class="grow"><label class="f" for="bScale">Engagement scale</label><select id="bScale">${Object.entries(SCALES).map(([k,v])=>`<option value="${k}" ${b.scale===k?"selected":""}>${v.n}${k!=="go"?` (${v.min} / ${v.min/10})`:""}</option>`).join("")}</select></div>
   ${b.scale==="go"?`<div style="width:120px"><label class="f" for="bGo">Minerals</label><input type="number" id="bGo" min="2001" step="50" value="${b.goMin}"></div>`:""}</div>
   <div style="margin-top:10px"><label class="f" for="bFac">Faction Card</label><select id="bFac"><option value="">Choose…</option>${facs.map(f=>`<option value="${f.id}" ${b.faction===f.id?"selected":""}>${f.n} — ${Object.entries(f.slots).map(e=>e[1]+" "+e[0]).join(", ")}</option>`).join("")}</select>
   ${b.faction?`<button class="link" style="margin-top:6px" data-tac="${b.faction}">Read ${esc(T(b.faction).n)} card</button>`:""}</div></div>`;
-  h+=`<div class="resbar"><div class="meters">
+  const res=`<div class="resbar"><div class="meters">
    <div class="meter ${t.min>L.min?"over":""}"><div class="n">${t.min} <span>/ ${L.min}</span></div><div class="k">Minerals · ${L.min-t.min>=0?(L.min-t.min)+" left":"over"}</div><div class="bar"><i style="width:${pct(t.min,L.min)}%"></i></div></div>
    <div class="meter ${t.gas>L.gas?"over":""}"><div class="n">${t.gas} <span>/ ${L.gas}</span></div><div class="k">Vespene Gas · ${L.gas-t.gas>=0?(L.gas-t.gas)+" left":"over"}</div><div class="bar"><i style="width:${pct(t.gas,L.gas)}%"></i></div></div></div>
    <div class="slots">${SLOT_TYPES.map(s=>`<span class="slot ${t.used[s]>t.avail[s]?"over":(t.avail[s]&&t.used[s]===t.avail[s]?"full":"")}">${s} <b>${t.used[s]}/${t.avail[s]}</b></span>`).join("")}</div></div>`;
   // tactical
-  h+=`<div class="panel"><h2>Tactical cards <small>${t.gas} gas spent</small></h2>`;
+  let tac=`<div class="panel"><h2>Tactical cards <small>${t.gas} gas spent</small></h2>`;
   tacs.forEach(tc=>{const q=b.tac[tc.id]||0;const el=eligible(b,tc.tags);const sl=Object.entries(tc.slots).filter(e=>e[1]).map(e=>`+${e[1]} ${e[0]}`).join(" ");
-    h+=`<div class="item"><div class="hd"><div class="grow"><button class="link" data-tac="${tc.id}">${esc(tc.n)}</button><div class="meta">${tc.type==="Creep"||tc.type==="Virus"?tc.type+" card":sl||(tc.unk?"slots: set below":"")}${tc.uq?' <span class="tag">Unique</span>':""}${tc.unk?' <span class="tag warn">No card text</span>':""}${!el?' <span class="tag warn">Not allowed with this faction</span>':""}</div></div>
+    tac+=`<div class="item"><div class="hd"><div class="grow"><button class="link" data-tac="${tc.id}">${esc(tc.n)}</button><div class="meta">${tc.type==="Creep"||tc.type==="Virus"?tc.type+" card":sl||(tc.unk?"slots: set below":"")}${tc.uq?' <span class="tag">Unique</span>':""}${tc.unk?' <span class="tag warn">No card text</span>':""}${!el?' <span class="tag warn">Not allowed with this faction</span>':""}</div></div>
     <span class="cost">${tc.gas}</span><span class="step"><button data-tq="${tc.id}" data-d="-1" aria-label="Remove ${esc(tc.n)}">−</button><output>${q}</output><button data-tq="${tc.id}" data-d="1" aria-label="Add ${esc(tc.n)}" ${(tc.uq&&q>=1)?"disabled":""}>+</button></span></div>
     ${tc.unk&&q?`<div class="row" style="margin-top:6px">${SLOT_TYPES.map(s=>`<label style="font-size:.8rem;width:58px">${s}<input type="number" min="0" max="4" data-ts="${tc.id}" data-s="${s}" value="${(b.tacSlots[tc.id]||{})[s]||0}"></label>`).join("")}</div>`:""}</div>`});
-  h+=`</div>`;
+  tac+=`</div>`;
   // units
-  h+=`<div class="panel"><h2>Units <small>${b.units.length} unit${b.units.length===1?"":"s"}</small></h2>`;
-  if(!b.units.length)h+=`<p class="note">Add units from the list below. Each unit fills slots equal to its starting Supply.</p>`;
+  let un=`<div class="panel"><h2>Units <small>${b.units.length} unit${b.units.length===1?"":"s"}</small></h2>`;
+  if(!b.units.length)un+=`<p class="note">Add units from the ${lay===3?"catalog on the left":"list below"}. Each unit fills slots equal to its starting Supply.</p>`;
   b.units.forEach((bu,i)=>{const u=U(bu.id);const ci=bu.ci;
-    h+=`<div class="item"><div class="hd"><div class="grow"><button class="link" data-unit="${u.id}" data-bi="${i}">${esc(u.n)}</button><div class="meta">${u.unk?`<select data-uslot="${i}" style="min-height:32px;padding:3px 6px;width:auto">${SLOT_TYPES.map(s=>`<option ${ (bu.slot||u.slot)===s?"selected":""}>${s}</option>`).join("")}</select> slot`:u.slot+" slot"} · Supply ${u.comps[ci][2]}${u.unk?' <span class="tag warn">No card</span>':""}</div></div><span class="cost">${unitCost(bu)}</span><button class="btn sm danger" data-urm="${i}" aria-label="Remove ${esc(u.n)}">✕</button></div>
+    un+=`<div class="item"><div class="hd"><div class="grow"><button class="link" data-unit="${u.id}" data-bi="${i}">${esc(u.n)}</button><div class="meta">${u.unk?`<select data-uslot="${i}" style="min-height:32px;padding:3px 6px;width:auto">${SLOT_TYPES.map(s=>`<option ${ (bu.slot||u.slot)===s?"selected":""}>${s}</option>`).join("")}</select> slot`:u.slot+" slot"} · Supply ${u.comps[ci][2]}${u.unk?' <span class="tag warn">No card</span>':""}</div></div><span class="cost">${unitCost(bu)}</span><button class="btn sm danger" data-urm="${i}" aria-label="Remove ${esc(u.n)}">✕</button></div>
     ${u.comps.length>1?`<div class="row" style="margin-top:6px"><select data-uci="${i}">${u.comps.map((c,j)=>`<option value="${j}" ${j===ci?"selected":""}>${c[0]} models — ${c[1]} minerals, Supply ${c[2]}</option>`).join("")}</select></div>`:`<div class="meta" style="margin-top:4px">${u.comps[0][0]} model${u.comps[0][0]>1?"s":""} — ${u.comps[0][1]} minerals</div>`}
     ${u.up.length?`<div class="ups">${u.up.map(x=>`<label><input type="checkbox" data-uup="${i}" value="${esc(x.n)}" ${(bu.ups||[]).includes(x.n)?"checked":""}><span class="grow">${esc(x.n)}${x.spec?' <span class="tag">Specialist</span>':""}${x.rep?` <span class="note">replaces ${esc(x.rep)}</span>`:""}</span><span class="cost">+${x.c[Math.min(ci,x.c.length-1)]}</span></label>`).join("")}</div>`:""}</div>`});
-  h+=`<details style="margin-top:8px"><summary>Add a unit</summary><div class="picker" style="margin-top:6px">${units.map(u=>{const el=eligible(b,u.tags);return `<button class="pick" data-uadd="${u.id}" ${!el?"disabled":""}><span><b>${esc(u.n)}</b><br><span class="note">${u.unk?"slot unconfirmed":u.slot}${u.uq?" · Unique":""}${!el?" · needs "+u.tags.slice(1).join(", "):""}</span></span><span class="cost">${u.comps.map(c=>c[1]).join(" / ")}</span></button>`}).join("")}</div></details></div>`;
+  const pickList=units.map(u=>{const el=eligible(b,u.tags);return `<button class="pick" data-uadd="${u.id}" ${!el?"disabled":""}><span><b>${esc(u.n)}</b><br><span class="note">${u.unk?"slot unconfirmed":u.slot}${u.uq?" · Unique":""}${!el?" · needs "+u.tags.slice(1).join(", "):""}</span></span><span class="cost">${u.comps.map(c=>c[1]).join(" / ")}</span></button>`}).join("");
+  // Desktop shows the picker as an always-open catalog column instead.
+  un+=lay===3?`</div>`:`<details style="margin-top:8px"><summary>Add a unit</summary><div class="picker" style="margin-top:6px">${pickList}</div></details></div>`;
   // missions
   const deps=DEPLOYS.filter(d=>(b.scale==="sk")===(d.sc==="sk"));
-  h+=`<div class="panel"><h2>Draft cards <small>2 Missions, 2 Deployments</small></h2>
+  const draft=`<div class="panel"><h2>Draft cards <small>2 Missions, 2 Deployments</small></h2>
    <div class="ups">${MISSIONS.map(m=>`<label><input type="checkbox" data-mis="${m.id}" ${b.missions.includes(m.id)?"checked":""}><span class="grow">${m.n}</span></label>`).join("")}</div>
    <div class="grp">Deployments (${b.scale==="sk"?"Skirmish 36×36″":"Standard 54×36″"})</div>
    <div class="ups">${deps.map(d=>`<label><input type="checkbox" data-dep="${d.id}" ${b.deps.includes(d.id)?"checked":""}><span class="grow">${d.n}</span></label>`).join("")}</div></div>`;
   // issues
   const is=issues(b);
-  h+=`<div class="panel"><h2>Roster check</h2><ul class="issues">${is.length?is.map(x=>`<li>${esc(x)}</li>`).join(""):'<li class="ok">Roster is legal.</li>'}</ul></div>`;
-  h+=`<div class="panel"><div class="row"><button class="btn pri" id="bSave">Save roster</button>${st.rosters.some(r=>r.id===b.id)?`<button class="btn" id="bSaveAs">Save as new</button>`:""}<button class="btn" id="bCopy">Copy as text</button><button class="btn" id="bNew">New roster</button></div>
+  const chk=`<div class="panel"><h2>Roster check</h2><ul class="issues">${is.length?is.map(x=>`<li>${esc(x)}</li>`).join(""):'<li class="ok">Roster is legal.</li>'}</ul></div>`;
+  const acts=`<div class="panel"><div class="row"><button class="btn pri" id="bSave">Save roster</button>${st.rosters.some(r=>r.id===b.id)?`<button class="btn" id="bSaveAs">Save as new</button>`:""}<button class="btn" id="bCopy">Copy as text</button><button class="btn" id="bNew">New roster</button></div>
   <div class="row" style="margin-top:8px"><button class="btn sm" id="bExport">Export file</button><button class="btn sm" id="bImport">Import file</button><button class="btn sm" id="bPaste">Paste text</button><input type="file" id="bFile" accept=".json,.disc,application/json" hidden></div>
   <p class="note">${net.user?"Saved rosters sync to your account.":net.available?"Sign in (top right) to sync saved rosters across devices.":"Export a file to move rosters to another device."}</p>
   ${st.rosters.length?`<div class="grp">Saved rosters</div>`+st.rosters.map(r=>`<div class="item"><div class="hd"><div class="grow"><b>${esc(r.name)}</b><div class="meta">${RACES[r.race]} · ${SCALES[r.scale].n} · ${totals(r).min} minerals</div></div><button class="btn sm" data-rload="${r.id}">Load</button>${net.user?`<button class="btn sm" data-rshare="${r.id}">Share</button>`:""}<button class="btn sm danger" data-rdel="${r.id}" aria-label="Delete ${esc(r.name)}">✕</button></div></div>`).join(""):""}</div>`;
+  // Same panels, arranged for the screen (see buildLayout). On desktop Units
+  // moves up under the form, so units added from the catalog land in view.
+  // The side columns
+  // scroll on their own, so keep their place across re-renders.
+  let h;
+  if(lay===1)h=form+res+tac+un+draft+chk+acts;
+  else{const cat=lay===3?`<aside class="bcat" aria-label="Unit catalog"><div class="panel"><h2>Add units <small>tap to add</small></h2><div class="picker">${pickList}</div></div></aside>`:"";
+    h=`<div class="bgrid l${lay}">${cat}<div class="bmain">${lay===3?form+un+tac+draft:form+tac+un+draft}</div><aside class="bside" aria-label="Roster summary">${res+chk+acts}</aside></div>`}
+  const keep=[".bcat",".bside"].map(q=>{const e=$("#v-build "+q);return e?e.scrollTop:0});
   $("#v-build").innerHTML=h;
+  [".bcat",".bside"].forEach((q,i)=>{const e=$("#v-build "+q);if(e)e.scrollTop=keep[i]});
 }
 function onBuildClick(e){
   const b=st.build,el=e.target.closest("button,input,select");if(!el)return;const ds=el.dataset;
@@ -1538,6 +1564,9 @@ let cardFilter={q:"",race:null};
 // beside the list instead of a pop-up. cardSel is that card: {k:"unit"|"tac"|"mis", id}.
 let cardSel=null;
 const wideCards=()=>matchMedia("(min-width:760px)").matches;
+// Build tab: 1 = phone stack, 2 = list + sticky summary (Fold), 3 = catalog + list + summary (desktop).
+// Breakpoints match the WIDE SCREENS CSS.
+const buildLayout=()=>matchMedia("(min-width:1280px)").matches?3:wideCards()?2:1;
 const missionCardHTML=x=>missionHTML(x,"std")+"<hr style='border:0;border-top:1px solid var(--line);margin:12px 0'>"+missionHTML(x,"sk");
 function cardDetailHTML(){
   const s=cardSel,x=s&&(s.k==="unit"?U(s.id):s.k==="tac"?T(s.id):M(s.id));
@@ -1847,6 +1876,7 @@ $("#themeBtn").onclick=()=>{const r=document.documentElement;const dark=r.datase
 try{const th=localStorage.getItem(KEY+"-theme");if(th)document.documentElement.dataset.theme=th}catch(e){}
 syncThemeColor();
 show(st.game?"play":"build");
+["(min-width:760px)","(min-width:1280px)"].forEach(q=>{try{matchMedia(q).addEventListener("change",()=>{if($("#v-build").classList.contains("on"))renderBuild()})}catch(e){}});
 netInit();
 // Installable app + offline start (sw.js). Not on the offline file copy: service workers need http(s).
 if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol))window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));

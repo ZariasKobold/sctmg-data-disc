@@ -301,6 +301,32 @@ try {
   await $("#gClose").click();
   expect(await $("nav.tabs").evaluate(n => n.getBoundingClientRect().width > 700), "tab bar should still be at the bottom at 840px");
 
+  log("Fold width (840): Build has the list beside a summary column");
+  await nav("build");
+  await $("#bNew").click();
+  expect(await $("#v-build .bside").isVisible(), "Build summary column missing at 840px");
+  expect(await $("#v-build .bside .meters").isVisible() && await $("#v-build .bside .issues").isVisible(), "meters and roster check should be in the summary column");
+  expect(await $("#v-build .bcat").count() === 0, "the unit catalog column is desktop-only");
+  await $("#v-build details summary").click();
+  await $("#v-build button[data-uadd]:not([disabled])").first().click();
+  expect(await $("#v-build button[data-urm]").count() === 1, "adding a unit at 840px didn't work");
+
+  log("desktop (1440): Build adds an always-open unit catalog");
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.waitForFunction(() => document.querySelector("#v-build .bcat")); // resize re-arranges Build live
+  expect(await $("#v-build details summary").count() === 0, "desktop should show the catalog, not the Add a unit dropdown");
+  const minBefore = await text("#v-build .bside .meter:first-child .n");
+  await $("#v-build .bcat button[data-uadd]:not([disabled])").nth(1).click();
+  expect(await $("#v-build button[data-urm]").count() === 2, "adding from the catalog didn't add a unit");
+  expect((await text("#v-build .bside .meter:first-child .n")) !== minBefore, "minerals in the summary didn't update");
+  await page.setViewportSize({ width: 1440, height: 600 }); // short window, so the catalog has room to scroll
+  await $("#v-build .bcat").evaluate(e => { e.scrollTop = 250; });
+  const scrolled = await $("#v-build .bcat").evaluate(e => e.scrollTop);
+  expect(scrolled > 100, `catalog should scroll in a short window (got ${scrolled})`);
+  await $("#v-build .bcat button[data-uadd]:not([disabled])").nth(6).click();
+  expect(await $("#v-build .bcat").evaluate(e => e.scrollTop) === scrolled, "the catalog jumped back to the top after adding a unit");
+  await page.setViewportSize({ width: 1440, height: 900 });
+
   log("desktop (1440): side rail, and every view still works");
   await page.setViewportSize({ width: 1440, height: 900 });
   const rail = await $("nav.tabs").evaluate(n => { const r = n.getBoundingClientRect(); return { w: r.width, h: r.height, top: r.top }; });
@@ -310,7 +336,10 @@ try {
     expect(await $(`#v-${v}`).isVisible(), `#v-${v} isn't visible on desktop`);
     expect(await $(`nav.tabs button[data-v="${v}"]`).getAttribute("aria-current") === "true", `rail doesn't mark ${v} as current`);
   }
+  await nav("build");
   await page.setViewportSize({ width: 400, height: 850 });
+  await page.waitForFunction(() => !document.querySelector("#v-build .bgrid"));
+  expect(await $("#v-build details summary").count() === 1, "back at phone width, Build should be the single stack with its dropdown");
   await nav("cards");
   await $("#v-cards button.pick").first().click();
   expect(await modalOpen(), "back at phone width, a card should open in the pop-up again");
@@ -325,4 +354,4 @@ if (errors.length) {
   console.error(`smoke: FAILED\n  ${errors.join("\n  ")}`);
   process.exit(1);
 }
-console.log("smoke: all views, three races, full game, every card, Fold and desktop layouts OK");
+console.log("smoke: all views, three races, full game, every card, Fold and desktop layouts (Cards, Glossary, Build) OK");
